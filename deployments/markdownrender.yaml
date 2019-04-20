@@ -5,14 +5,16 @@ metadata:
   labels:
     app: markdownrender
 spec:
-  type: NodePort
+  # type: NodePort
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       protocol: TCP
       targetPort: 8080
-      nodePort: 31118
+      # nodePort: 31118
   selector:
     app: markdownrender
+  type: ClusterIP
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
@@ -36,18 +38,19 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-    name: markdownrender-ingress
-    annotations:
-        kubernetes.io/ingress.class: traefik
-        traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-        traefik.ingress.kubernetes.io/redirect-entry-point: https
-        traefik.ingress.kubernetes.io/redirect-permanent: "true"
+  name: markdownrender
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    # traefik.ingress.kubernetes.io/redirect-entry-point: https
+    # traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    traefik.ingress.kubernetes.io/frontend-entry-points: http
 spec:
-    rules:
-    - host: markdown.cluster.local
-        http:
-          paths:
-          - path: /
-            backend:
-                serviceName: markdownrender
-                servicePort: 8080
+  rules:
+  - host: markdown.cluster.local
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: markdownrender
+          servicePort: 8080
