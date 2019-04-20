@@ -21,7 +21,7 @@ spec:
               mountPath: /persistentvolumes
           env:
             - name: PROVISIONER_NAME
-              value: nfs-provisioner/nfs-hdd1
+              value: nfs-provisioner/nfs-hdd
             - name: NFS_SERVER
               value: 10.0.0.1
             - name: NFS_PATH
