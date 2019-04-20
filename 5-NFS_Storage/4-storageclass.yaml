@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-hdd1
+  annotations:
+    storageclass.kubernetes.io/is-default-class: true
+provisioner: nfs-provisioner/nfs-hdd1
+parameters:
+  archiveOnDelete: "true"
