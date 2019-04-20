@@ -11,7 +11,7 @@ metadata:
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
-  - host: traefik.example.com
+  - host: traefik.cluster.local
     http:
       paths:
       - path: /
