@@ -5,23 +5,25 @@ metadata:
   labels:
     app: markdownrender
 spec:
-  # type: NodePort
   ports:
     - name: http
       port: 8080
       protocol: TCP
       targetPort: 8080
-      # nodePort: 31118
   selector:
     app: markdownrender
-  type: ClusterIP
 ---
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: markdownrender
+  labels:
+    app: markdownrender
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: markdownrender
   template:
     metadata:
       labels:
