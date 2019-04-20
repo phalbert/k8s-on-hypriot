@@ -179,3 +179,5 @@ $ sudo reboot
 ```
 $ sudo apt-get install nfs-common
 ```
+
+add label `node-role.kubernetes.io/edge` to edge node (master)
