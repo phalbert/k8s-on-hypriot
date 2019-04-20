@@ -1,4 +1,3 @@
-#
 ---
 kind: DaemonSet
 apiVersion: apps/v1
@@ -17,13 +16,16 @@ spec:
         k8s-app: traefik-ingress-controller
         name: traefik-ingress-controller
     spec:
-      #hostNetwork: true
+      # nodeSelector:
+        # beta.kubernetes.io/arch: arm
+      # tolerations:
+        # - operator: Exists
+        # effect: NoSchedule
       nodeSelector:
-        beta.kubernetes.io/arch: arm
-        # role: edge-router # FIXME: Add role to master
+        node-role.kubernetes.io/master: ""
       tolerations:
-        - operator: Exists
-          effect: NoSchedule
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       serviceAccountName: traefik-ingress-serviceaccount
       terminationGracePeriodSeconds: 35
       volumes:
