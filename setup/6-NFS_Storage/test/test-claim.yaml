@@ -2,8 +2,8 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: test-claim
-  annotations:
-#    volume.beta.kubernetes.io/storage-class: "nfs-master-hdd"
+  annotations: {}
+    # volume.beta.kubernetes.io/storage-class: "nfs-hdd"
 spec:
   accessModes:
     - ReadWriteMany
