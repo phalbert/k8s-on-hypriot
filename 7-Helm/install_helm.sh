@@ -6,6 +6,8 @@ wget https://kubernetes-helm.storage.googleapis.com/helm-$HELM_VERSION-linux-arm
 tar xvzf helm-$HELM_VERSION-linux-arm.tar.gz
 sudo mv linux-arm/helm $HELM_INSTALL_DIR/helm
 rm -rf linux-arm helm-$HELM_VERSION-linux-arm.tar.gz
+
+# curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 helm list
 kubectl create -f rbac-config.yaml
 helm init --service-account tiller --tiller-image jessestuart/tiller
