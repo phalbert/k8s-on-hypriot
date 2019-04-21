@@ -71,7 +71,7 @@ sudo systemctl stop dhcpcd.service
 sudo apt-get install rfkill  
 ```
 
-
+FIXME: Is dnsmasq needed?
 then, edit `/etc/default/dnsmasq` to add the `-2` flag to the default options (disable DHCP and TFTP): uncomment the `DNSMASQ` line and make sure it reads:
 
 ```

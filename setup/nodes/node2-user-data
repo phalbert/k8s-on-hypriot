@@ -41,33 +41,7 @@ packages:
   - ntp
   - nano
 
-# WiFi connect to HotSpot
-# - use `wpa_passphrase SSID PASSWORD` to encrypt the psk
-# write_files:
-#   - content: |
-#       allow-hotplug wlan0
-#       iface wlan0 inet dhcp
-#       wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
-#       iface default inet dhcp
-#     path: /etc/network/interfaces.d/wlan0
-#   - content: |
-#       country=gb
-#       ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
-#       update_config=1
-#       network={
-#       ssid="SSID_HERE"
-#       psk="PASSWORD_HERE"
-#       proto=RSN
-#       key_mgmt=WPA-PSK
-#       pairwise=CCMP
-#       auth_alg=OPEN
-#       }
-#     path: /etc/wpa_supplicant/wpa_supplicant.conf
-
 # These commands will be ran once on first boot only
 runcmd:
   # Pickup the hostname changes
   - 'systemctl restart avahi-daemon'
-
-  # Activate WiFi interface
-  # - 'ifup wlan0'
