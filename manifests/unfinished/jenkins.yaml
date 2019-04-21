@@ -1,0 +1,150 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: jenkins
+  namespace: devops
+  annotations: {}
+  # volume.beta.kubernetes.io/storage-class: "nfs-hdd"
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-config
+  namespace: devops
+data:
+  plugins.txt: |
+    ansicolor
+    cloudbees-folder
+    kubernetes
+    github
+    github-branch-source
+    environment-dashboard
+    slack
+    workflow-multibranch
+    rebuild
+    mask-passwords
+    parameterized-trigger
+    show-build-parameters
+    extensible-choice-parameter
+    credentials-binding
+    validating-string-parameter
+    timestamper
+    greenballs
+    jobConfigHistory
+    workflow-aggregator
+    active-directory
+    role-strategy
+    user-build-vars
+    shelve-project
+    flexible-publish
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations: {}
+  labels:
+    run: jenkins
+  name: jenkins
+  namespace: devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jenkins
+  template:
+    metadata:
+      labels:
+        run: jenkins
+    spec:
+      containers:
+        - image: dahrkael/jenkins-armv7
+          env:
+            - name: JAVA_OPTS
+              value: "-Djenkins.install.runSetupWizard=false -Dorg.jenkinsci.remoting.engine.JNLP3-connect.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol2.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol1.disabled=true"
+          imagePullPolicy: IfNotPresent
+          name: jenkins
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+              name: web
+            - containerPort: 50000
+              protocol: TCP
+              name: slaves
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/json
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 20
+          volumeMounts:
+            - mountPath: /var/jenkins_home
+              name: jenkinshome
+      initContainers:
+        - name: install-plugins
+          image: dahrkael/jenkins-armv7
+          command:
+            - /bin/sh
+            - -c
+            - /usr/local/bin/install-plugins.sh < /ref/plugins.txt
+          volumeMounts:
+            - mountPath: /var/jenkins_home
+              name: jenkinshome
+            - mountPath: /ref
+              name: ref-volume
+      volumes:
+        - name: jenkinshome
+          persistentVolumeClaim:
+            claimName: jenkins
+        - name: ref-volume
+          configMap:
+            name: jenkins-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: jenkins
+  name: jenkins
+  namespace: devops
+spec:
+  ports:
+    - name: web
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: slaves
+      port: 50000
+      protocol: TCP
+      targetPort: 50000
+  selector:
+    run: jenkins
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins
+  namespace: devops
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    traefik.ingress.kubernetes.io/redirect-entry-point: http
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+spec:
+  rules:
+    - host: jenkins.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: jenkins
+              servicePort: 8080
