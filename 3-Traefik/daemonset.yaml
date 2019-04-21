@@ -21,11 +21,16 @@ spec:
       # tolerations:
         # - operator: Exists
         # effect: NoSchedule
+      # FIXME: FIGURE OUT HOW TO REMOVE MASTER
       nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/edge: ""
         node-role.kubernetes.io/master: ""
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/edge
       serviceAccountName: traefik-ingress-serviceaccount
       terminationGracePeriodSeconds: 35
       volumes:
