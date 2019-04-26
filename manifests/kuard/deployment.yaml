@@ -26,79 +26,54 @@ spec:
         - name: kuard
           image: gcr.io/kuar-demo/kuard-arm:1 # :latest
           imagePullPolicy: Always # IfNotPresent
+          command:
+            - "/kuard"
+            - "$(EXTRA_PARAM)"
           ports:
             - containerPort: 8080
               name: http
               protocol: TCP
+          env:
+            - name: ANOTHER_PARAM
+              valueFrom:
+                configMapKeyRef:
+                  name: kuard-config
+                  key: another-param
+            - name: EXTRA_PARAM
+              valueFrom:
+                configMapKeyRef:
+                  name: kuard-config
+                  key: extra-param
+          livenessProbe:
+            httpGet:
+              path: /healthy
+              port: 8080
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "128Mi"
+            limits:
+              cpu: "1000m"
+              memory: "256Mi"
           volumeMounts:
             - mountPath: "/data"
               name: "kuard-data"
+            - name: config-volume
+              mountPath: /config
+            - name: tls-certs
+              mountPath: "/tls"
+              readOnly: true
       volumes:
         - name: "kuard-data"
           persistentVolumeClaim:
             claimName: kuard-claim
-
-
-
-
-
-
-
-
-
-
-#          ports:
-#            - name: http
-#              protocol: TCP
-#              containerPort: 8080
-
-
-
-
-#          command:
-#            - "/kuard"
-#            - "$(EXTRA_PARAM)"
-#          env:
-#            - name: ANOTHER_PARAM
-#              valueFrom:
-#                configMapKeyRef:
-#                  name: kuard-config
-#                  key: another-param
-#            - name: EXTRA_PARAM
-#              valueFrom:
-#                configMapKeyRef:
-#                  name: kuard-config
-#                  key: extra-param
-#          resources:
-#            requests:
-#              cpu: "500m"
-#              memory: "128Mi"
-#            limits:
-#              cpu: "1000m"
-#              memory: "256Mi"
-#          livenessProbe:
-#            httpGet:
-#              path: /healthy
-#              port: 8080
-#            initialDelaySeconds: 5
-#            timeoutSeconds: 1
-#            periodSeconds: 10
-#            failureThreshold: 3
-#          volumeMounts:
-#            - mountPath: "/data"
-#              name: "kuard-data"
-#            - name: config-volume
-#              mountPath: /config
-#            - name: tls-certs
-#              mountPath: "/tls"
-#              readOnly: true
-#      volumes:
-#        - name: "kuard-data"
-#          persistentVolumeClaim:
-#            claimName: kuard-claim
-#        - name: config-volume
-#          configMap:
-#            name: kuard-config
-#        - name: tls-certs
-#          secret:
-#            secretName: kuard-tls
+        - name: config-volume
+          configMap:
+            name: kuard-config
+        - name: tls-certs
+          secret:
+            secretName: kuard-tls
