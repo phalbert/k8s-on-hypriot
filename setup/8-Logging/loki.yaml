@@ -89,6 +89,7 @@ data:
     ingester:
       chunk_idle_period: 15m
       lifecycler:
+        address: 127.0.0.1
         ring:
           replication_factor: 1
           store: inmemory
@@ -138,8 +139,8 @@ spec:
           image: rebelinblue/loki:latest
           imagePullPolicy: Always
           args:
-            - "-config.file=/etc/loki/loki.yaml"
-            - "-log.level=debug"
+            - -config.file=/etc/loki/loki.yaml
+            - -log.level=info
           volumeMounts:
             - name: config
               mountPath: /etc/loki
@@ -149,16 +150,19 @@ spec:
             - name: http-metrics
               containerPort: 3100
               protocol: TCP
-#          livenessProbe:
-#            httpGet:
-#              path: /ready
-#              port: http-metrics
-#            initialDelaySeconds: 45
 #          readinessProbe:
 #            httpGet:
-#              path: /ready
+#              # GET /ready returns 204, which doesn't seem to work
+#              path: /loki/api/prom/label
 #              port: http-metrics
 #            initialDelaySeconds: 45
+#            periodSeconds: 10
+#          livenessProbe:
+#            httpGet:
+#              path: /loki/api/prom/label
+#              port: http-metrics
+#            initialDelaySeconds: 45
+#            periodSeconds: 10
           securityContext:
             readOnlyRootFilesystem: true
       volumes:
