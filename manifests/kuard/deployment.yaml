@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app: kuard
-  replicas: 1
+  replicas: 3
   # minReadySeconds: 15
   # revisionHistoryLimit: 14
   strategy:
@@ -67,6 +67,15 @@ spec:
             - name: tls-certs
               mountPath: "/tls"
               readOnly: true
+      tolerations: # See https://github.com/kubernetes/kubernetes/issues/74651
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 5
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 5
       volumes:
         - name: "kuard-data"
           persistentVolumeClaim:

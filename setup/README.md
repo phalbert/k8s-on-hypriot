@@ -217,15 +217,18 @@ sudo reboot
 add label `node-role.kubernetes.io/edge` to edge node (master)
 
 
-#### /etc/kubernetes/manifests/kube-controller-manager.yaml
+##### /etc/kubernetes/manifests/kube-controller-manager.yaml
 
 ```
     - --node-monitor-period=2s
     - --node-monitor-grace-period=16s
-    - --pod-eviction-timeout=5s
+    # - --pod-eviction-timeout=5s
+    # - --feature-gates=TaintBasedEvictions=false
 ```
 
-#### /var/lib/kubelet/kubeadm-flags.env
+##### /var/lib/kubelet/config.yaml
 ```
 --node-status-update-frequency=4s
 ```
+
+https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/ TaintBasedEvictions
