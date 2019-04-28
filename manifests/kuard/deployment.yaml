@@ -2,25 +2,31 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kuard
-  # annotations:
-  #   kubernetes.io/change-cause: "Update revisionHistoryLimit"
 spec:
   selector:
     matchLabels:
       app: kuard
   replicas: 3
-  # minReadySeconds: 15
-  # revisionHistoryLimit: 14
+  minReadySeconds: 15
   strategy:
     type: RollingUpdate # Recreate
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
+      maxSurge: 1 # Maximum above replicas
+      maxUnavailable: 1 # Maximum below replicas
   template:
     metadata:
       labels:
         app: kuard
     spec:
+      tolerations: # See https://github.com/kubernetes/kubernetes/issues/74651
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 5
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 5
       restartPolicy: Always # Only allowed values in deployments
       containers:
         - name: kuard
@@ -48,10 +54,10 @@ spec:
             httpGet:
               path: /healthy
               port: 8080
-            initialDelaySeconds: 5
-            timeoutSeconds: 1
-            periodSeconds: 10
-            failureThreshold: 3
+            initialDelaySeconds: 5 # Wait before first probe
+            timeoutSeconds: 1 # Maximum time to wait for probe
+            periodSeconds: 10 # How often to perform probe
+            failureThreshold: 3 # Number of consecutive failures before killing the pod
           resources:
             requests:
               cpu: "500m"
@@ -60,24 +66,15 @@ spec:
               cpu: "1000m"
               memory: "256Mi"
           volumeMounts:
-            - mountPath: "/data"
-              name: "kuard-data"
+            - mountPath: /data
+              name: kuard-data
             - name: config-volume
               mountPath: /config
             - name: tls-certs
-              mountPath: "/tls"
+              mountPath: /tls
               readOnly: true
-      tolerations: # See https://github.com/kubernetes/kubernetes/issues/74651
-        - key: "node.kubernetes.io/unreachable"
-          operator: "Exists"
-          effect: "NoExecute"
-          tolerationSeconds: 5
-        - key: "node.kubernetes.io/not-ready"
-          operator: "Exists"
-          effect: "NoExecute"
-          tolerationSeconds: 5
       volumes:
-        - name: "kuard-data"
+        - name: kuard-data
           persistentVolumeClaim:
             claimName: kuard-claim
         - name: config-volume
