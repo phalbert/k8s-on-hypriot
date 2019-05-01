@@ -27,7 +27,7 @@ data:
 
     [kubernetes]
       [kubernetes.ingressEndpoint]
-        publishedService = "kube-system/traefik-ingress-controller-http-service"
+        publishedService = "infra/traefik-ingress-controller-http-service"
 
     [ping]
     entryPoint = "http"
