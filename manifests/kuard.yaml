@@ -75,7 +75,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: kuard
-          image: gcr.io/kuar-demo/kuard-arm:1
+          image: gcr.io/kuar-demo/kuard-arm:purple
           imagePullPolicy: Always
           command:
             - "/kuard"

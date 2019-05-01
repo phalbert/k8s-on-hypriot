@@ -1,0 +1,48 @@
+# See https://jeremievallee.com/2018/05/28/kubernetes-rbac-namespace-user.html
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: stephen
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: stephen
+  namespace: stephen
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: stephen
+  namespace: stephen
+rules:
+  - apiGroups: ["", "extensions", "apps"]
+    resources: ["*"]
+    verbs: ["*"]
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["*"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: stephen
+  namespace: stephen
+subjects:
+  - kind: ServiceAccount
+    name: stephen
+    namespace: stephen
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: stephen
+---
+
+# kubectl -n stephen describe sa stephen
+# kubectl -n stephen get secret stephen-token-8mnfn -o "jsonpath={.data.token}" | base64 -d
+# kubectl -n stephen get secret stephen-token-8mnfn -o "jsonpath={.data['ca\.crt']}"
