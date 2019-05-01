@@ -40,5 +40,5 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: traefik-ingress-serviceaccount
-  namespace: kube-system
+  namespace: infra
 

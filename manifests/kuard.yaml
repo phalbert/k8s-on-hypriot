@@ -3,6 +3,8 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: kuard-config
+  labels:
+    app: kuard
 data:
   another-param: another-value
   extra-param: extra-value
@@ -19,6 +21,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: kuard-claim
+  labels:
+    app: kuard
 spec:
   accessModes:
     - ReadWriteMany
@@ -30,6 +34,8 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: kuard-tls
+  labels:
+    app: kuard
 type: Opaque
 data:
   kuard.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUMyekNDQWNPZ0F3SUJBZ0lKQUkyQXhWem5QUU5OTUEwR0NTcUdTSWIzRFFFQkN3VUFNQnd4R2pBWUJnTlYKQkFNTUVXdDFZWEprTG1WNFlXMXdiR1V1WTI5dE1CNFhEVEUzTURNeE9USXdNVFF5TVZvWERURTRNRE14T1RJdwpNVFF5TVZvd0hERWFNQmdHQTFVRUF3d1JhM1ZoY21RdVpYaGhiWEJzWlM1amIyMHdnZ0VpTUEwR0NTcUdTSWIzCkRRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRRE82SGplVmMvT3pDcUNLVGI5RVNCNGZPdUh5d001UjkzcTNzc2wKNXVGeTZzb29PdlJmcFExQURMWmpOd2ZOYUVrVmNORXNzSFdDSCtEaGJ2c3RhOTB6VFhZZFBGV3ZWYVhjMzJ1eQpkUURSK0ZJUnhsNWMxb0hyaEQ2eVlKSm9wOU55dzBod3JmT3lqNytOVVcwZmdTYVZ0YmRyTGxoUVAwVnVvUVVHClJsSHBsN2ltcVAzUGxnUUxtbzh4bk5RMStSMDcybDByQi9CcVVHZEc2TUE2UlhmOU5peGFFQ05WZ1N4dXUrQkIKd3gxdXBMLzZjMHJKYXFqTHBjRXFveXA1RkdvOHR0T3ZXcXdEdWtNQVRKRC83RWk1TXpTNlJkUWpGQzE5cmg4OAoxenBRNWhCUHhjeTNMa2ovWGFmNmVoWDVuclBjdVJ4NHZhZEdhZ0xucnhUZ2prN1hBZ01CQUFHaklEQWVNQndHCkExVWRFUVFWTUJPQ0VXdDFZWEprTG1WNFlXMXdiR1V1WTI5dE1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ2IKdk9hNnBDTEp3OUsyLzkyOVdzbjZDRXVaclpmaFhVck5HVDg3Y1ZpYlFTajJhNDhzTWRibElqeGJ2a0FIdG1iZwptTXhNT01nZWExaEN3WkNhSnczRUNFbUNCNExIbEJUbkZEV2JkcW5SdnMrL1VpTGhwYXE0eDVqMnNwZjRWeXNZCjFYcWdrZEhJK0pRMUlJMDdwb3FCL0xrbXBCUHkzcC92Q25IbDVxZ1o1U2hTM0dDWkY0NWxIck1yd21xOHVqSmMKbkNhMENDWnBqellScDhwVDVXLzg4T0wrdG9lYjlyTjNja0ttQnR3czVxN0ozRGJma212MXNDUHdTdXNCZkFUWgp6NHNLZTRtb3BCTXdFNXlKemNqb1BlaVk2ZGhNWjJGc21PRTliNFhhTWtEUFZJemVaUzNTLzBuVUQzNnZDV3NQCmprRkpTOVk2dXFJUkY3VHA3K3EzCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
@@ -39,6 +45,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kuard
+  labels:
+    app: kuard
 spec:
   selector:
     matchLabels:
@@ -148,6 +156,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: kuard
+  labels:
+    app: kuard
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/frontend-entry-points: http,https

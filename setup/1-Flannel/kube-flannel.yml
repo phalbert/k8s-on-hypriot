@@ -86,19 +86,19 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: flannel
-  namespace: kube-system
+  namespace: infra
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: flannel
-  namespace: kube-system
+  namespace: infra
 ---
 kind: ConfigMap
 apiVersion: v1
 metadata:
   name: kube-flannel-cfg
-  namespace: kube-system
+  namespace: infra
   labels:
     tier: node
     k8s-app: flannel
@@ -134,7 +134,7 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: kube-flannel-ds
-  namespace: kube-system
+  namespace: infra
   labels:
     tier: node
     k8s-app: flannel

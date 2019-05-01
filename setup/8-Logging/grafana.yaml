@@ -1,16 +1,10 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: logging
----
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
   annotations:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: 'docker/default'
     seccomp.security.alpha.kubernetes.io/defaultProfileName:  'docker/default'
@@ -57,9 +51,9 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 type: Opaque
 data:
   admin-user: "YWRtaW4="
@@ -70,9 +64,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 data:
   grafana.ini: |
     [analytics]
@@ -91,30 +85,30 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: grafana-clusterrole
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 rules: []
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: grafana-clusterrolebinding
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 subjects:
   - kind: ServiceAccount
     name: grafana
-    namespace: logging
+    namespace: infra
 roleRef:
   kind: ClusterRole
   name: grafana-clusterrole
@@ -124,9 +118,9 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 rules:
 - apiGroups:      ['extensions']
   resources:      ['podsecuritypolicies']
@@ -137,9 +131,9 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -147,15 +141,15 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: grafana
-  namespace: logging
+  namespace: infra
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 spec:
   type: ClusterIP
   ports:
@@ -163,26 +157,26 @@ spec:
       protocol: TCP
       targetPort: 3000
   selector:
-    app: grafana
+    k8s-app: grafana
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: grafana
+      k8s-app: grafana
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: grafana
+        k8s-app: grafana
     spec:
       serviceAccountName: grafana
       securityContext:
@@ -248,9 +242,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: grafana
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 spec:
   rules:
     - host: grafana.cluster.local
@@ -265,9 +259,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-claim
-  namespace: logging
+  namespace: infra
   labels:
-    app: grafana
+    k8s-app: grafana
 spec:
   accessModes:
     - ReadWriteOnce

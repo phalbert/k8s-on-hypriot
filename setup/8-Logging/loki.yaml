@@ -1,16 +1,10 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: logging
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 rules:
   - apiGroups:      ['extensions']
     resources:      ['podsecuritypolicies']
@@ -21,15 +15,15 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
     name: loki
 roleRef:
@@ -44,9 +38,9 @@ apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 spec:
   privileged: false
   allowPrivilegeEscalation: false
@@ -80,9 +74,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 data:
   loki.yaml: |
     auth_enabled: false
@@ -117,21 +111,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 spec:
   replicas: 1
   minReadySeconds: 60
   selector:
     matchLabels:
-      app: loki
+      k8s-app: loki
   strategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: loki
+        k8s-app: loki
     spec:
       serviceAccountName: loki
       containers:
@@ -177,9 +171,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: loki
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 spec:
   type: ClusterIP
   ports:
@@ -188,15 +182,15 @@ spec:
       name: http-metrics
       targetPort: http-metrics
   selector:
-    app: loki
+    k8s-app: loki
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: loki-claim
-  namespace: logging
+  namespace: infra
   labels:
-    app: loki
+    k8s-app: loki
 spec:
   accessModes:
     - ReadWriteOnce

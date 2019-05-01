@@ -9,6 +9,6 @@ rm -rf linux-arm helm-$HELM_VERSION-linux-arm.tar.gz
 
 # curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 helm list
-kubectl create -f rbac-config.yaml
+kubectl apply -f rbac-config.yaml
 helm init --service-account tiller --tiller-image jessestuart/tiller
 kubectl patch deployment tiller-deploy -n kube-system --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'

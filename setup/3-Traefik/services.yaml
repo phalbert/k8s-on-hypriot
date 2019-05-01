@@ -3,7 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: traefik-ingress-controller-http-service
-  namespace: kube-system
+  namespace: infra
 spec:
   selector:
     k8s-app: traefik-ingress-controller
@@ -19,7 +19,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: traefik-ingress-controller-dashboard-service
-  namespace: kube-system
+  namespace: infra
 spec:
   selector:
     k8s-app: traefik-ingress-controller

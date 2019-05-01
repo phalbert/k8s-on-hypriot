@@ -1,16 +1,10 @@
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: logging
----
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 spec:
   privileged: false
   allowPrivilegeEscalation: false
@@ -37,9 +31,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 data:
   promtail.yaml: |
     server:
@@ -250,16 +244,16 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: promtail-clusterrole
   labels:
-    app: promtail
+    k8s-app: promtail
 rules:
 - apiGroups: [""] # "" indicates the core API group
   resources:
@@ -274,13 +268,13 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: promtail-clusterrolebinding
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 subjects:
   - kind: ServiceAccount
     name: promtail
-    namespace: logging
+    namespace: infra
 roleRef:
   kind: ClusterRole
   name: promtail-clusterrole
@@ -290,9 +284,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 rules:
 - apiGroups:      ['extensions']
   resources:      ['podsecuritypolicies']
@@ -303,9 +297,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -318,19 +312,19 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: promtail
-  namespace: logging
+  namespace: infra
   labels:
-    app: promtail
+    k8s-app: promtail
 spec:
   selector:
     matchLabels:
-      app: promtail
+      k8s-app: promtail
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
       labels:
-        app: promtail
+        k8s-app: promtail
     spec:
       serviceAccountName: promtail
       containers:
