@@ -89,8 +89,5 @@ spec:
         #     add:
         #       - NET_BIND_SERVICE
         args:
-        #- --web
-        #- --kubernetes
-        #- --logLevel=DEBUG
         - --logLevel=INFO
         - --configfile=/config/traefik.toml

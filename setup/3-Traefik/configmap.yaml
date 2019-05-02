@@ -22,8 +22,8 @@ data:
 
       [entryPoints.traefik]
         address = ":8080"
-        [entryPoints.traefik.auth.basic]
-        users = ["admin:$apr1$0csMKt3r$sX/.atPLDHTpyHGquWmQX."]
+        #        [entryPoints.traefik.auth.basic]
+        #        users = ["admin:$apr1$0csMKt3r$sX/.atPLDHTpyHGquWmQX."]
 
     [kubernetes]
       [kubernetes.ingressEndpoint]
@@ -34,3 +34,9 @@ data:
 
     [api]
     entryPoint = "traefik"
+
+    [metrics]
+      [metrics.prometheus]
+        entryPoint = "traefik"
+        buckets = [0.1,0.3,1.2,5.0]
+
