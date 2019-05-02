@@ -3149,7 +3149,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Kubernetes Pod Metrics",
+  "title": "Kubernetes Pods",
   "uid": "gRGG1CBik",
   "version": 15
 }

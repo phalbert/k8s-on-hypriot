@@ -138,11 +138,6 @@ kind: Ingress
 metadata:
   name: jenkins
   namespace: devops
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-    traefik.ingress.kubernetes.io/redirect-entry-point: http
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
     - host: jenkins.cluster.local

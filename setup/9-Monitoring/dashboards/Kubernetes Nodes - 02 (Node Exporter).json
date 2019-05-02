@@ -1622,7 +1622,7 @@
   "schemaVersion": 16,
   "style": "dark",
   "tags": [
-    "prometheus"
+    "kubernetes"
   ],
   "templating": {
     "list": [
@@ -1681,7 +1681,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Kubernetes Nodes - 02 (Node Exporter )",
+  "title": "Kubernetes Nodes - 02 (Node Exporter)",
   "uid": "5oUKj2_mk",
   "version": 3
 }

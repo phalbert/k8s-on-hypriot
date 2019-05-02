@@ -68,6 +68,7 @@ metadata:
   labels:
     k8s-app: grafana
 data:
+  plugins: grafana-piechart-panel
   grafana.ini: |
     [analytics]
     check_for_updates = true
@@ -213,6 +214,11 @@ spec:
                 secretKeyRef:
                   name: grafana
                   key: admin-password
+            - name: GF_INSTALL_PLUGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: grafana
+                  key: plugins
           livenessProbe:
             failureThreshold: 10
             httpGet:

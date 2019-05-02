@@ -158,11 +158,6 @@ metadata:
   name: kuard
   labels:
     app: kuard
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
-    traefik.ingress.kubernetes.io/redirect-entry-point: http
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
     - host: kuard.cluster.local
