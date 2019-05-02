@@ -190,10 +190,6 @@ kind: Ingress
 metadata:
   name: kubernetes-dashboard
   namespace: kube-system
-  annotations:
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http
-    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
     - host: dashboard.cluster.local

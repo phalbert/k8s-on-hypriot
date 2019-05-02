@@ -211,7 +211,7 @@ sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 sudo reboot
 ```
 
-####More stuff
+##More stuff - to add, test etc
 
 
 add label `node-role.kubernetes.io/edge` to edge node (master)
@@ -245,3 +245,5 @@ https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
 192.168.0.33    dashboard.cluster.local traefik.cluster.local
 192.168.0.33    grafana.cluster.local alertmanager.cluster.local prometheus.cluster.local
 ```
+
+TODO: Switch from flannel to canal when the images have arm7 versions

@@ -68,7 +68,7 @@ metadata:
   labels:
     k8s-app: grafana
 data:
-  plugins: grafana-piechart-panel
+  plugins: grafana-piechart-panel,sbueringer-consul-datasource
   grafana.ini: |
     [analytics]
     check_for_updates = true
