@@ -232,3 +232,16 @@ add label `node-role.kubernetes.io/edge` to edge node (master)
 ```
 
 https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/ TaintBasedEvictions
+##### /etc/hosts
+
+```
+# Cluster - Machines
+192.168.0.33    master master.local cluster cluster.local
+
+# Cluster - Tests Apps
+192.168.0.33    markdown.cluster.local welcome.cluster.local whoami.cluster.local kuard.cluster.local
+
+# Cluster - Infra Apps
+192.168.0.33    dashboard.cluster.local traefik.cluster.local
+192.168.0.33    grafana.cluster.local alertmanager.cluster.local prometheus.cluster.local
+```
