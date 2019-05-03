@@ -144,19 +144,21 @@ spec:
             - name: http-metrics
               containerPort: 3100
               protocol: TCP
-#          readinessProbe:
-#            httpGet:
-#              # GET /ready returns 204, which doesn't seem to work
-#              path: /loki/api/prom/label
-#              port: http-metrics
-#            initialDelaySeconds: 45
-#            periodSeconds: 10
-#          livenessProbe:
-#            httpGet:
-#              path: /loki/api/prom/label
-#              port: http-metrics
-#            initialDelaySeconds: 45
-#            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              # GET /ready returns 500
+              path: /api/prom/label
+              # path: /ready
+              port: http-metrics
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/prom/label
+              # path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+            periodSeconds: 10
           securityContext:
             readOnlyRootFilesystem: true
       volumes:

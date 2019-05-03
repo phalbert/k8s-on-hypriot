@@ -8,12 +8,12 @@ spec:
   selector:
     k8s-app: traefik-ingress-controller
   ports:
-  - protocol: TCP
-    port: 80
-    name: http
-  - protocol: TCP
-    port: 443
-    name: https
+    - protocol: TCP
+      port: 80
+      name: http
+    - protocol: TCP
+      port: 443
+      name: https
 ---
 kind: Service
 apiVersion: v1
@@ -24,6 +24,6 @@ spec:
   selector:
     k8s-app: traefik-ingress-controller
   ports:
-  - protocol: TCP
-    port: 8080
-    name: dashboard
+    - protocol: TCP
+      port: 8080
+      name: dashboard

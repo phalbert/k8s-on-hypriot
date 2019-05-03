@@ -138,9 +138,9 @@ roleRef:
   kind: Role
   name: grafana
 subjects:
-- kind: ServiceAccount
-  name: grafana
-  namespace: infra
+  - kind: ServiceAccount
+    name: grafana
+    namespace: infra
 ---
 apiVersion: v1
 kind: Service

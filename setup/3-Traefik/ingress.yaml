@@ -14,10 +14,10 @@ metadata:
   #    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
-  - host: traefik.cluster.local
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: traefik-ingress-controller-dashboard-service
-          servicePort: 8080
+    - host: traefik.cluster.local
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: traefik-ingress-controller-dashboard-service
+            servicePort: 8080
