@@ -128,7 +128,7 @@ spec:
         - containerPort: 8443
           protocol: TCP
         args:
-          - --enable-insecure-login
+#          - --enable-insecure-login
           - --port=8444
           - --insecure-port=8443
           - --insecure-bind-address=0.0.0.0
@@ -138,7 +138,7 @@ spec:
           # If not specified, Dashboard will attempt to auto discover the API server and connect
           # to it. Uncomment only if the default does not work.
           # - --apiserver-host=http://my-address:port
-          - --enable-skip-login
+          # - --enable-skip-login
         volumeMounts:
          # - name: kubernetes-dashboard-certs
          #   mountPath: /certs
@@ -190,6 +190,11 @@ kind: Ingress
 metadata:
   name: kubernetes-dashboard
   namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
     - host: dashboard.cluster.local

@@ -42,6 +42,9 @@ data:
 
     scrape_configs:
     - job_name: 'traefik'
+      basic_auth:
+        username: admin
+        password: welcomewelcome1 # FIXME: Figure out how to get this from configmap
       static_configs:
       - targets: ['traefik-ingress-controller-dashboard-service:8080']
 
@@ -371,6 +374,9 @@ kind: Ingress
 metadata:
   name: prometheus
   namespace: infra
+  annotations:
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
 spec:
   rules:
     - host: prometheus.cluster.local

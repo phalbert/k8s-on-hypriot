@@ -48,19 +48,6 @@ spec:
   readOnlyRootFilesystem: false
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: grafana
-  namespace: infra
-  labels:
-    k8s-app: grafana
-type: Opaque
-data:
-  admin-user: "YWRtaW4="
-  admin-password: "d2VsY29tZXdlbGNvbWUx"
-  ldap-toml: ""
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana
@@ -81,6 +68,17 @@ data:
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
+    [auth]
+    disable_login_form = true
+    disable_signout_menu = true
+
+    [auth.anonymous]
+    enabled = true
+    ;org_name = Raspberry Pi
+    org_role = Editor
+
+    [auth.basic]
+    enabled = false
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -185,15 +183,12 @@ spec:
         runAsUser: 472
       containers:
         - name: grafana
-          image: "grafana/grafana:6.1.3"
+          image: "grafana/grafana:6.1.6"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
               mountPath: "/etc/grafana/grafana.ini"
               subPath: grafana.ini
-            - name: ldap
-              mountPath: "/etc/grafana/ldap.toml"
-              subPath: ldap.toml
             - name: storage
               mountPath: "/var/lib/grafana"
           ports:
@@ -204,16 +199,6 @@ spec:
               containerPort: 3000
               protocol: TCP
           env:
-            - name: GF_SECURITY_ADMIN_USER
-              valueFrom:
-                secretKeyRef:
-                  name: grafana
-                  key: admin-user
-            - name: GF_SECURITY_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: grafana
-                  key: admin-password
             - name: GF_INSTALL_PLUGINS
               valueFrom:
                 configMapKeyRef:
@@ -234,12 +219,6 @@ spec:
         - name: config
           configMap:
             name: grafana
-        - name: ldap
-          secret:
-            secretName: grafana
-            items:
-              - key: ldap-toml
-                path: ldap.toml
         - name: storage
           persistentVolumeClaim:
             claimName: grafana-claim
@@ -251,6 +230,9 @@ metadata:
   namespace: infra
   labels:
     k8s-app: grafana
+  annotations:
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
 spec:
   rules:
     - host: grafana.cluster.local

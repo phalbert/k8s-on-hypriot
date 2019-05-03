@@ -129,6 +129,9 @@ metadata:
   namespace: infra
   labels:
     name: alertmanager
+  annotations:
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
 spec:
   rules:
     - host: alertmanager.cluster.local

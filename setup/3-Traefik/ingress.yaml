@@ -4,6 +4,9 @@ kind: Ingress
 metadata:
   name: traefik-ingress-controller-dashboard-ingress
   namespace: infra
+  annotations:
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
   #  annotations:
   #    kubernetes.io/ingress.class: traefik
   #    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
