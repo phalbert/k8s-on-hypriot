@@ -112,6 +112,7 @@ spec:
         - name: kubernetes-dashboard
           # image: k8s.gcr.io/kubernetes-dashboard-arm:v1.10.1
           image: kubernetesdashboarddev/kubernetes-dashboard-arm:head
+          imagePullPolicy: Always
           ports:
             - containerPort: 9090
               protocol: TCP
