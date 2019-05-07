@@ -317,15 +317,26 @@ spec:
         app: prometheus-server
     spec:
       serviceAccountName: monitoring
+      initContainers:
+        - name: init-chown-data
+          image: busybox:latest
+          imagePullPolicy: IfNotPresent
+          # 65534 is the nobody user that prometheus uses.
+          command: ["chown", "-R", "65534:65534", "/prometheus/"]
+          volumeMounts:
+            - name: prometheus-storage-volume
+              mountPath: /prometheus/
       containers:
         - name: prometheus
           image: prom/prometheus:master
           args:
-            - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/prometheus/"
-            - "--web.enable-lifecycle"
-            - "--storage.tsdb.no-lockfile"
-            - "--web.external-url=http://prometheus.cluster.local"
+            - --storage.tsdb.retention.time=360h
+            - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.path=/prometheus/
+            - --web.enable-lifecycle
+            - --storage.tsdb.no-lockfile
+            - --web.enable-admin-api
+            - --web.external-url=http://prometheus.cluster.local
           ports:
             - name: prometheus
               containerPort: 9090
@@ -336,10 +347,17 @@ spec:
               mountPath: /prometheus/
             - name: rules-volume
               mountPath: /etc/prometheus-rules
-      securityContext:
-        fsGroup: 2000
-        runAsNonRoot: true
-        runAsUser: 1000
+        - name: prometheus-reload
+          image: carlosedp/configmap-reload:v0.2.2-arm
+          args:
+            - --volume-dir=/etc/config
+            - --volume-dir=/etc/prometheus-rules
+            - --webhook-url=http://127.0.0.1:9090/-/reload
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/config
+            - name: rules-volume
+              mountPath: /etc/prometheus-rules
       volumes:
         - name: prometheus-config-volume
           configMap:

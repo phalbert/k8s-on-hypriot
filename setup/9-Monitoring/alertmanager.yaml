@@ -12,6 +12,7 @@ data:
 
     templates:
     - '/etc/alertmanager-templates/*.tmpl'
+
     route:
       group_by: ['alertname', 'cluster', 'service']
       group_wait: 10s
@@ -85,16 +86,30 @@ spec:
         - name: alertmanager
           image: prom/alertmanager:master
           args:
-            - '--config.file=/etc/alertmanager/config.yml'
-            - '--storage.path=/alertmanager'
+            - --config.file=/etc/alertmanager/config.yml
+            - --storage.path=/alertmanager
           ports:
             - name: alertmanager
               containerPort: 9093
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
           volumeMounts:
             - name: config-volume
               mountPath: /etc/alertmanager
             - name: alertmanager
               mountPath: /alertmanager
+        - name: alertmanager-reload
+          image: carlosedp/configmap-reload:v0.2.2-arm
+          args:
+            - --volume-dir=/etc/alertmanager
+            - --webhook-url=http://127.0.0.1:9093/-/reload
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/alertmanager
       volumes:
         - name: config-volume
           configMap:
