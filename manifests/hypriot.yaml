@@ -16,6 +16,8 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: hypriot
+  labels:
+    app: hypriot
 spec:
   replicas: 3
   template:
@@ -35,6 +37,8 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: hypriot
+  labels:
+    app: hypriot
 spec:
   rules:
     - host: welcome.cluster.local

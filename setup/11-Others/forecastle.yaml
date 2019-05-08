@@ -102,7 +102,8 @@ data:
       - test
       - demo
       - default
-    title: Forecastle
+      - kube-system
+    title: Launch Pad
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -111,7 +112,7 @@ metadata:
   namespace: infra
 spec:
   rules:
-    - host: forecastle.cluster.local
+    - host: launchpad.cluster.local
       http:
         paths:
           - path: /

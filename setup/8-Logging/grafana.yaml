@@ -231,9 +231,12 @@ metadata:
   labels:
     k8s-app: grafana
   annotations:
+    kubernetes.io/ingress.class: traefik
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/grafana.png"
 spec:
   rules:
     - host: grafana.cluster.local
