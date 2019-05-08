@@ -47,6 +47,9 @@ metadata:
   name: kuard
   labels:
     app: kuard
+  annotations:
+    configmap.reloader.stakater.com/reload: kuard-config
+    secret.reloader.stakater.com/reload: kuard-tls
 spec:
   selector:
     matchLabels:
