@@ -1,0 +1,120 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: forecastle
+  namespace: infra
+  labels:
+    app: forecastle
+  annotations:
+    configmap.reloader.stakater.com/reload: forecastle
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: forecastle
+  template:
+    metadata:
+      labels:
+        app: forecastle
+    spec:
+      containers:
+      - name: forecastle
+        image: "rebelinblue/forecastle:1.0.0"
+        env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        volumeMounts:
+          - name: forecastle-config
+            mountPath: /etc/forecastle
+      volumes:
+        - name: forecastle-config
+          configMap:
+            name: forecastle
+      serviceAccountName: forecastle
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: forecastle
+  namespace: infra
+  labels:
+    app: forecastle
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: forecastle-cluster-ingress-role
+  namespace: infra
+  labels:
+    app: forecastle
+rules:
+  - apiGroups: ["", "extensions"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: forecastle-cluster-ingress-role-binding
+  namespace: infra
+  labels:
+    app: forecastle
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: forecastle-cluster-ingress-role
+subjects:
+  - kind: ServiceAccount
+    name: forecastle
+    namespace: infra
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: forecastle
+  namespace: infra
+  labels:
+    app: forecastle
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    app: forecastle
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forecastle
+  namespace: infra
+  labels:
+    app: forecastle
+data:
+  config.yaml: |-
+    namespaces:
+      - infra
+      - test
+      - demo
+      - default
+    title: Forecastle
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: forecastle
+  namespace: infra
+spec:
+  rules:
+    - host: forecastle.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: forecastle
+              servicePort: 80

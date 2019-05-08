@@ -396,6 +396,7 @@ metadata:
   annotations:
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
+    forecastle.stakater.com/expose: "true"
 spec:
   rules:
     - host: prometheus.cluster.local
