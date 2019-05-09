@@ -116,7 +116,7 @@ metadata:
     k8s-app: loki
 spec:
   replicas: 1
-  minReadySeconds: 60
+  #minReadySeconds: 60
   selector:
     matchLabels:
       k8s-app: loki

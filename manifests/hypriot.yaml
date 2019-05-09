@@ -24,6 +24,8 @@ spec:
     metadata:
       labels:
         app: hypriot
+        blinktShow: "true"
+        blinktColor: "ffff00"
     spec:
       containers:
       - name: hypriot

@@ -28,6 +28,8 @@ spec:
     metadata:
       labels:
         app: markdownrender
+        blinktShow: "true"
+        blinktColor: "ff00ff"
     spec:
       containers:
       - name: markdownrender

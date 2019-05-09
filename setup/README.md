@@ -244,7 +244,7 @@ https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
 # Cluster - Infra Apps
 192.168.0.33    dashboard.cluster.local traefik.cluster.local consul.cluster.local vault.cluster.local
 192.168.0.33    grafana.cluster.local alertmanager.cluster.local prometheus.cluster.local
-192.168.0.33    launchpad.cluster.local
+192.168.0.33    launchpad.cluster.local kubeview.cluster.local
 
 ```
 
