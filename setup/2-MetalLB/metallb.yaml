@@ -27,7 +27,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   namespace: infra
-  name: speaker
+  name: metallb-speaker
   labels:
     k8s-app: metallb
 ---
@@ -99,7 +99,7 @@ metadata:
     k8s-app: metallb
 subjects:
   - kind: ServiceAccount
-    name: speaker
+    name: metallb-speaker
     namespace: infra
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -117,7 +117,7 @@ subjects:
   - kind: ServiceAccount
     name: metallb-controller
   - kind: ServiceAccount
-    name: speaker
+    name: metallb-speaker
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
