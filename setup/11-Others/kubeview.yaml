@@ -11,28 +11,13 @@ metadata:
   name: kubeview-role
 rules:
   - apiGroups: ["extensions"]
-    resources:
-      - ingresses
+    resources: ["ingresses"]
     verbs: ["get", "list"]
   - apiGroups: ["apps"]
-    resources:
-      - deployments
-      - replicasets
-      - daemonsets
-      - statefulsets
+    resources: ["deployments", "replicasets", "daemonsets", "statefulsets"]
     verbs: ["get", "list"]
   - apiGroups: [""]
-    resources:
-      - pods
-      - ingresses
-      - events
-      - endpoints
-      - namespaces
-      - nodes
-      - persistentvolumes
-      - persistentvolumeclaims
-      - resourcequotas
-      - services
+    resources: ["pods", "ingresses", "events", "endpoints", "namespaces", "nodes", "persistentvolumes", "persistentvolumeclaims", "resourcequotas", "services"]
     verbs: ["get", "list"]
   - nonResourceURLs: ["*"]
     verbs: ["get", "list"]

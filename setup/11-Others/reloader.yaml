@@ -32,27 +32,12 @@ metadata:
   labels:
     app: reloader
 rules:
-  - apiGroups:
-      - ""
-    resources:      
-      - secrets
-      - configmaps
-    verbs:
-      - list
-      - get
-      - watch
-  - apiGroups:
-      - "extensions"
-      - "apps"
-    resources:
-      - deployments
-      - daemonsets
-      - statefulsets
-    verbs:
-      - list
-      - get
-      - update
-      - patch
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments", "daemonsets", "statefulsets"]
+    verbs: ["get", "list", "update", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
