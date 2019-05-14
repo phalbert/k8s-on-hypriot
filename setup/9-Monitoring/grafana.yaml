@@ -55,7 +55,7 @@ metadata:
   labels:
     k8s-app: grafana
 data:
-  plugins: grafana-piechart-panel,sbueringer-consul-datasource
+  plugins: grafana-piechart-panel
   grafana.ini: |
     [analytics]
     check_for_updates = true
@@ -69,14 +69,11 @@ data:
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
     [auth]
-    disable_login_form = true
+    disable_login_form = false
     disable_signout_menu = true
-
     [auth.anonymous]
     enabled = true
-    ;org_name = Raspberry Pi
-    org_role = Editor
-
+    org_role = Admin
     [auth.basic]
     enabled = false
 ---
