@@ -211,6 +211,17 @@ sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 sudo reboot
 ```
 
+#### To remove everything
+```bash
+sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremove -y --purge
+docker stop $(docker ps | awk '{print $1}')
+docker rm $(docker ps -a | awk '{print $1}')
+docker rmi $(docker images | awk '{print $3}')
+sudo apt-get remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
+sudo reboot
+sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
+```
+
 ##More stuff - to add, test etc
 
 
