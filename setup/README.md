@@ -222,10 +222,9 @@ sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 ```
 
-##More stuff - to add, test etc
 
 
-add label `node-role.kubernetes.io/edge` to edge node (master)
+##### NOTES - TO FINISHG
 
 
 ##### /etc/kubernetes/manifests/kube-controller-manager.yaml
