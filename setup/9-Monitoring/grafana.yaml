@@ -1,3 +1,4 @@
+---
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -76,6 +77,20 @@ data:
     org_role = Admin
     [auth.basic]
     enabled = false
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        url: http://prometheus:8080
+        access: proxy
+        isDefault: true
+      - name: Loki
+        type: loki
+        url: http://loki:3100
+        access: proxy
+        editable: false
+        isDefault: false
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -186,6 +201,9 @@ spec:
             - name: config
               mountPath: "/etc/grafana/grafana.ini"
               subPath: grafana.ini
+            - name: config
+              mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
+              subPath: datasources.yaml
             - name: storage
               mountPath: "/var/lib/grafana"
           ports:
