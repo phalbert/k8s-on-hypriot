@@ -171,7 +171,7 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
 sudo apt update
 sudo apt upgrade
-sudo apt install -y kubelet kubeadm kubectl kubernetes-cni
+sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
 ```
 
 ### On master
@@ -217,9 +217,11 @@ sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremov
 docker stop $(docker ps | awk '{print $1}')
 docker rm $(docker ps -a | awk '{print $1}')
 docker rmi $(docker images | awk '{print $3}')
-sudo apt-get remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
+sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
+rm -rf ~/.kube/
+
 ```
 
 
