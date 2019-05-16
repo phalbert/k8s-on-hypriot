@@ -44,7 +44,7 @@ kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spe
 e_header "Installing Helm"
 kubectl -n kube-system apply -f 7-Helm/rbac-config.yaml
 helm init --service-account tiller --tiller-image jessestuart/tiller
-#kubectl -n kube-system delete deployment tiller-deploy
+#helm reset
 kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Loki & Promtail"
@@ -52,6 +52,9 @@ kubectl -n infra apply -f 8-Logging/
 
 e_header "Installing Node Exporter"
 kubectl -n kube-system apply -f 9-Monitoring/node-exporter.yaml
+
+e_header "Installing Blackbox Exporter"
+kubectl -n kube-system apply -f 9-Monitoring/blackbox-exporter.yaml
 
 e_header "Installing Prometheus & Alert Manager"
 kubectl -n infra apply -f 9-Monitoring/prometheus.yaml

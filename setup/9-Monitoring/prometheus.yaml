@@ -48,14 +48,14 @@ data:
       static_configs:
       - targets: ['traefik-ingress-controller-dashboard-service:8080']
 
-    #- job_name: 'node'
-    #  scrape_interval: 60s
-    #  static_configs:
-    #  - targets:
-    #    - 'master:9100'
-    #    - 'node-1:9100'
-    #    - 'node-2:9100'
-    #    - 'node-3:9100'
+    - job_name: 'node'
+      scrape_interval: 60s
+      static_configs:
+      - targets:
+        - '10.0.0.1:9100'
+        - '10.0.0.2:9100'
+        - '10.0.0.3:9100'
+        - '10.0.0.4:9100'
 
     - job_name: 'loki'
       static_configs:
@@ -146,7 +146,7 @@ data:
           action: keep
           regex: default;kubernetes;https
 
-    - job_name: kubernetes-services
+    - job_name: 'kubernetes-services'
       kubernetes_sd_configs:
         - role: service
       metrics_path: /probe
@@ -154,25 +154,40 @@ data:
         module:
           - http_2xx
       relabel_configs:
-        - action: keep
-          regex: true
-          source_labels:
-            - __meta_kubernetes_service_annotation_prometheus_io_probe
-        - source_labels:
-            - __address__
+        - source_labels: [__address__]
           target_label: __param_target
-        - replacement: blackbox
-          target_label: __address__
-        - source_labels:
-            - __param_target
+        - target_label: __address__
+          replacement: blackbox-exporter:9115
+        - source_labels: [__param_target]
           target_label: instance
         - action: labelmap
           regex: __meta_kubernetes_service_label_(.+)
-        - source_labels:
-            - __meta_kubernetes_namespace
+        - source_labels: [__meta_kubernetes_namespace]
           target_label: kubernetes_namespace
-        - source_labels:
-            - __meta_kubernetes_service_name
+        - source_labels: [__meta_kubernetes_service_name]
+          target_label: kubernetes_name
+
+    - job_name: kubernetes-ingresses
+      kubernetes_sd_configs:
+        - role: ingress
+      metrics_path: /probe
+      params:
+        module:
+          - http_2xx
+      relabel_configs:
+        - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
+          regex: (.+);(.+);(.+)
+          replacement: ${1}://${2}${3}
+          target_label: __param_target
+        - target_label: __address__
+          replacement: blackbox-exporter:9115
+        - source_labels: [__param_target]
+          target_label: instance
+        - action: labelmap
+          regex: __meta_kubernetes_ingress_label_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: kubernetes_namespace
+        - source_labels: [__meta_kubernetes_ingress_name]
           target_label: kubernetes_name
 
     - job_name: kubernetes-service-endpoints

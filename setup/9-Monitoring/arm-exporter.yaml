@@ -34,7 +34,6 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
 spec:
-  clusterIP: None
   ports:
     - name: prometheus-arm-exporter
       port: 9243
@@ -43,5 +42,4 @@ spec:
   selector:
     app: prometheus
     component: arm-exporter
-  type: ClusterIP
 ---

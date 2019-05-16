@@ -1,0 +1,106 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blackbox-exporter
+  namespace: infra
+  labels:
+    app: blackbox-exporter
+data:
+  blackbox.yaml: |
+    modules:
+      http_2xx:
+        http:
+          no_follow_redirects: false
+          preferred_ip_protocol: ip4
+          valid_http_versions:
+          - HTTP/1.1
+          - HTTP/2
+        prober: http
+        timeout: 5s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blackbox-exporter
+  namespace: infra
+  labels:
+    app: blackbox-exporter
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  ports:
+    - name: http
+      port: 9115
+      protocol: TCP
+      targetPort: 9115
+  selector:
+    app: blackbox-exporter
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: blackbox-exporter
+  namespace: infra
+  labels:
+    app: blackbox-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blackbox-exporter
+  template:
+    metadata:
+      labels:
+        app: blackbox-exporter
+    spec:
+      containers:
+        - name: prometheus-blackbox-exporter
+          image: lwolf/blackbox-exporter:v0.14.0-armv6
+          imagePullPolicy: IfNotPresent
+          args:
+            - --config.file=/config/blackbox.yaml
+          ports:
+            - containerPort: 9115
+              name: http
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          securityContext:
+            procMount: Default
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /config
+              name: config
+        - name: configmap-reload
+          image: carlosedp/configmap-reload:v0.2.2-arm
+          imagePullPolicy: IfNotPresent
+          args:
+            - --volume-dir=/etc/config
+            - --webhook-url=http://localhost:9115/-/reload
+          volumeMounts:
+            - mountPath: /etc/config
+              name: config
+              readOnly: true
+      volumes:
+        - configMap:
+            defaultMode: 420
+            name: blackbox-exporter
+          name: config
+---
