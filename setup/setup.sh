@@ -44,6 +44,7 @@ kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spe
 e_header "Installing Helm"
 kubectl -n kube-system apply -f 7-Helm/rbac-config.yaml
 helm init --service-account tiller --tiller-image jessestuart/tiller
+#kubectl -n kube-system delete deployment tiller-deploy
 kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Loki & Promtail"

@@ -59,8 +59,9 @@ Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```bash
 sudo apt update
-sudo apt upgrade
-sudo apt install isc-dhcp-server nfs-server rfkill
+sudo apt upgrade -y
+sudo apt install -y isc-dhcp-server nfs-server rfkill
+sudo apt autoremove -y
 sudo systemctl disable dhcpcd.service
 sudo systemctl stop dhcpcd.service
 ```
@@ -102,14 +103,6 @@ host node-3 {
 
 ```
 denyinterfaces cni*,docker*,wlan*,flannel*,veth*
-```
-
-### On nodes
-
-```bash
-sudo apt update
-sudo apt upgrade
-sudo apt install rfkill nfs-common
 ```
 
 ### Setup NAT
@@ -162,33 +155,10 @@ sudo chmod +x /etc/init.d/enable_nat
 sudo update-rc.d enable_nat defaults
 ```
 
-Edit `/etc/sysctl.conf` to enable IP routing: uncomment the `net.ipv2.ip_forward=1` line if it is commented out
+Edit `/etc/sysctl.conf` to enable IP routing: uncomment the `net.ipv4.ip_forward=1` line if it is commented out
 
-### On master and all nodes
-
-```bash
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
-sudo apt update
-sudo apt upgrade
-sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
-```
 
 ### On master
-```bash
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
-sudo mkdir /media/usb
-sudo chown -R pirate:pirate /media/usb
-sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
-```
-
-### On nodes
-
-```bash
-sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
-```
-
-Get UUID of drive
 
 ```bash
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
@@ -207,9 +177,49 @@ Edit `/etc/exports`
 ```
 
 ```bash
+sudo exportfs -a
 sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 sudo reboot
 ```
+
+### On nodes
+
+```bash
+sudo apt update
+sudo apt upgrade -y 
+sudo apt install -y rfkill nfs-common
+sudo apt autoremove -y
+sudo update-rc.d nfs-common enable
+```
+
+### On master and all nodes
+
+```bash
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
+```
+
+### On master
+```bash
+sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
+#sudo mkdir /media/usb
+sudo chown -R pirate:pirate /media/usb
+#sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+```
+
+### On nodes
+
+```bash
+sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
+```
+
 
 #### To remove everything
 ```bash
@@ -226,8 +236,7 @@ rm -rf ~/.kube/
 
 
 
-##### NOTES - TO FINISHG
-
+##### NOTES - TO FINISH
 
 ##### /etc/kubernetes/manifests/kube-controller-manager.yaml
 
