@@ -41,11 +41,11 @@ kubectl -n infra apply -f 6-NFS_Storage/
 kubectl -n infra patch storageclass nfs-hdd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
 kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
-e_header "Installing Helm"
-kubectl -n kube-system apply -f 7-Helm/rbac-config.yaml
-helm init --service-account tiller --tiller-image jessestuart/tiller
+#e_header "Installing Helm"
+#kubectl -n kube-system apply -f 7-Helm/rbac-config.yaml
+#helm init --service-account tiller --tiller-image jessestuart/tiller
 #helm reset
-kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
+#kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Loki & Promtail"
 kubectl -n infra apply -f 8-Logging/
@@ -75,8 +75,8 @@ kubectl -n infra apply -f 10-Blinkt/
 e_header "Installing Forecastle"
 kubectl -n infra apply -f 11-Others/forecastle.yaml
 
-e_header "Installing Reloader"
-kubectl -n infra apply -f 11-Others/reloader.yaml
+#e_header "Installing Reloader"
+#kubectl -n infra apply -f 11-Others/reloader.yaml
 
 e_header "Installing Kubeview"
 kubectl -n infra apply -f 11-Others/kubeview.yaml

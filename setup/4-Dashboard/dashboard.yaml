@@ -132,9 +132,16 @@ spec:
         - name: tmp-volume
           emptyDir: {}
       serviceAccountName: kubernetes-dashboard
+      # FIXME: FIGURE OUT HOW TO REMOVE EDGE
+      nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/edge: ""
+        node-role.kubernetes.io/master: ""
       tolerations:
-        - key: node-role.kubernetes.io/master
-          effect: NoSchedule
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/edge
 
 ---
 # ------------------- Dashboard Service ------------------- #
