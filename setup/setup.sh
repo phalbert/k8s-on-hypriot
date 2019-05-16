@@ -63,10 +63,7 @@ kubectl -n infra apply -f 9-Monitoring/alertmanager.yaml
 e_header "Installing Grafana"
 kubectl -n infra apply -f 9-Monitoring/grafana.yaml
 
-e_header "Installing ARM exporter"
-kubectl -n infra apply -f 9-Monitoring/arm-exporter.yaml
-
-e_header "Installing Kube-state Metrics"
+e_header "Installing Kube State Metrics"
 kubectl -n kube-system apply -f 9-Monitoring/kube-state-metrics.yaml
 
 e_header "Installing Blinkt"
