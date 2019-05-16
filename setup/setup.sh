@@ -77,8 +77,8 @@ kubectl -n infra apply -f 11-Others/reloader.yaml
 e_header "Installing Kubeview"
 kubectl -n infra apply -f 11-Others/kubeview.yaml
 
-e_header "Installing Kubernetes Descheduler"
-kubectl -n kube-system apply -f 11-Others/descheduler.yaml
+#e_header "Installing Kubernetes Descheduler"
+#kubectl -n kube-system apply -f 11-Others/descheduler.yaml
 
 e_header "Getting Dashboard Token"
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep kubernetes-dashboard | awk '{print $1}')
