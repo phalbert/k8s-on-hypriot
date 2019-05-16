@@ -1080,7 +1080,10 @@
   "refresh": "30s",
   "schemaVersion": 16,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "kubernetes",
+    "prometheus"
+  ],
   "templating": {
     "list": [
       {
