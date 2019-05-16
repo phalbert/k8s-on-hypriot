@@ -88,16 +88,16 @@ spec:
           volumeMounts:
             - mountPath: /config
               name: config
-        - name: configmap-reload
-          image: carlosedp/configmap-reload:v0.2.2-arm
-          imagePullPolicy: IfNotPresent
-          args:
-            - --volume-dir=/etc/config
-            - --webhook-url=http://localhost:9115/-/reload
-          volumeMounts:
-            - mountPath: /etc/config
-              name: config
-              readOnly: true
+        # - name: configmap-reload
+        #   image: carlosedp/configmap-reload:v0.2.2-arm
+        #   imagePullPolicy: IfNotPresent
+        #   args:
+        #     - --volume-dir=/etc/config
+        #     - --webhook-url=http://localhost:9115/-/reload
+        #   volumeMounts:
+        #     - mountPath: /etc/config
+        #       name: config
+        #       readOnly: true
       volumes:
         - configMap:
             defaultMode: 420

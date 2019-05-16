@@ -11,7 +11,7 @@ data:
       #victorops_api_url: "<your_victorops_hook>"
 
     templates:
-    - '/etc/alertmanager-templates/*.tmpl'
+      - '/etc/alertmanager-templates/*.tmpl'
 
     route:
       group_by: ['alertname', 'cluster', 'service']
@@ -20,39 +20,39 @@ data:
       repeat_interval: 5m  
       receiver: default 
       routes:
-      - match:
-          team: devops
-        receiver: devops
-        continue: true 
-      - match: 
-          team: dev
-        receiver: dev
-        continue: true
+        - match:
+            team: devops
+          receiver: devops
+          continue: true
+        - match:
+            team: dev
+          receiver: dev
+          continue: true
 
     receivers:
-    - name: 'default'
+      - name: 'default'
 
-    - name: 'devops'
-      #victorops_configs:
-      #- api_key: '<YOUR_API_KEY>'
-      #  routing_key: 'devops'
-      #  message_type: 'CRITICAL'
-      #  entity_display_name: '{{ .CommonLabels.alertname }}'
-      #  state_message: 'Alert: {{ .CommonLabels.alertname }}. Summary:{{ .CommonAnnotations.summary }}. RawData: {{ .CommonLabels }}'
-      slack_configs:
-      - channel: '#k8-alerts'
-        send_resolved: true
+      - name: 'devops'
+        #victorops_configs:
+        #- api_key: '<YOUR_API_KEY>'
+        #  routing_key: 'devops'
+        #  message_type: 'CRITICAL'
+        #  entity_display_name: '{{ .CommonLabels.alertname }}'
+        #  state_message: 'Alert: {{ .CommonLabels.alertname }}. Summary:{{ .CommonAnnotations.summary }}. RawData: {{ .CommonLabels }}'
+        slack_configs:
+          - channel: '#k8-alerts'
+            send_resolved: true
 
-    - name: 'dev'
-      #victorops_configs:
-      #- api_key: '<YOUR_API_KEY>'
-      #  routing_key: 'dev'
-      #  message_type: 'CRITICAL'
-      #  entity_display_name: '{{ .CommonLabels.alertname }}'
-      #  state_message: 'Alert: {{ .CommonLabels.alertname }}. Summary:{{ .CommonAnnotations.summary }}. RawData: {{ .CommonLabels }}'
-      slack_configs:
-      - channel: '#k8-alerts'
-        send_resolved: true
+      - name: 'dev'
+        #victorops_configs:
+        #- api_key: '<YOUR_API_KEY>'
+        #  routing_key: 'dev'
+        #  message_type: 'CRITICAL'
+        #  entity_display_name: '{{ .CommonLabels.alertname }}'
+        #  state_message: 'Alert: {{ .CommonLabels.alertname }}. Summary:{{ .CommonAnnotations.summary }}. RawData: {{ .CommonLabels }}'
+        slack_configs:
+          - channel: '#k8-alerts'
+            send_resolved: true
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -102,14 +102,14 @@ spec:
               mountPath: /etc/alertmanager
             - name: alertmanager
               mountPath: /alertmanager
-        - name: alertmanager-reload
-          image: carlosedp/configmap-reload:v0.2.2-arm
-          args:
-            - --volume-dir=/etc/alertmanager
-            - --webhook-url=http://127.0.0.1:9093/-/reload
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/alertmanager
+        # - name: alertmanager-reload
+        #   image: carlosedp/configmap-reload:v0.2.2-arm
+        #   args:
+        #     - --volume-dir=/etc/alertmanager
+        #     - --webhook-url=http://127.0.0.1:9093/-/reload
+        #   volumeMounts:
+        #     - name: config-volume
+        #       mountPath: /etc/alertmanager
       volumes:
         - name: config-volume
           configMap:

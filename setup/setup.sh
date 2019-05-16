@@ -67,7 +67,7 @@ e_header "Installing ARM exporter"
 kubectl -n infra apply -f 9-Monitoring/arm-exporter.yaml
 
 e_header "Installing Kube-state Metrics"
-kubectl -n infra apply -f 9-Monitoring/kube-state-metrics.yaml
+kubectl -n kube-system apply -f 9-Monitoring/kube-state-metrics.yaml
 
 e_header "Installing Blinkt"
 kubectl -n infra apply -f 10-Blinkt/
