@@ -176,6 +176,9 @@ metadata:
   namespace: infra
   labels:
     k8s-app: loki
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3100"
 spec:
   type: ClusterIP
   ports:

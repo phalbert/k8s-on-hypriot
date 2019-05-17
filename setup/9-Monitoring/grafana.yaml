@@ -169,7 +169,7 @@ metadata:
     k8s-app: grafana
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: 3000
+    prometheus.io/port: "3000"
 spec:
   type: ClusterIP
   ports:

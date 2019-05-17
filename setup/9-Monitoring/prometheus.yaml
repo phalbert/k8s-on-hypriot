@@ -42,9 +42,9 @@ data:
 
     scrape_configs:
       # Make Prometheus scrape itself for metrics.
-      # - job_name: prometheus
-      #   static_configs:
-      #     - targets: ['localhost:9090']
+      - job_name: prometheus
+        static_configs:
+          - targets: ['localhost:9090']
 
       - job_name: traefik
         basic_auth:
@@ -60,10 +60,6 @@ data:
             - '10.0.0.2:9100'
             - '10.0.0.3:9100'
             - '10.0.0.4:9100'
-
-      - job_name: loki
-        static_configs:
-          - targets: ['loki.infra.svc:3100']
 
       # Scrape config for API servers.
       #
