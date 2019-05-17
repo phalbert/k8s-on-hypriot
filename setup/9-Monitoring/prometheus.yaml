@@ -439,11 +439,11 @@ spec:
         - name: prometheus
           image: prom/prometheus:master
           args:
-            - --storage.tsdb.retention.time=360h
             - --config.file=/etc/prometheus/prometheus.yml
+            - --storage.tsdb.retention.time=360h
             - --storage.tsdb.path=/prometheus/
-            - --web.enable-lifecycle
             - --storage.tsdb.no-lockfile
+            - --web.enable-lifecycle
             - --web.enable-admin-api
             - --web.external-url=http://prometheus.cluster.local
           ports:
