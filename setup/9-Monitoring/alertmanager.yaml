@@ -35,11 +35,45 @@ data:
         slack_configs:
           - channel: '#k8s-alerts'
             send_resolved: true
+            username: '{{ template "slack.default.username" . }}'
+            color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+            title: '{{ template "slack.default.title" . }}'
+            title_link: '{{ template "slack.default.titlelink" . }}'
+            pretext: '{{ .CommonAnnotations.summary }}'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Annotations.summary }}
+              *Description:* {{ .Annotations.description }}
+              *Details:*
+              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+              {{ end }}
+              *Source:* {{ .GeneratorURL }}
+              {{ end }}
+            fallback: '{{ template "slack.default.fallback" . }}'
+            icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+            icon_url: '{{ template "slack.default.iconurl" . }}'
 
       - name: 'dev'
         slack_configs:
           - channel: '#k8s-alerts'
             send_resolved: true
+            username: '{{ template "slack.default.username" . }}'
+            color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+            title: '{{ template "slack.default.title" . }}'
+            title_link: '{{ template "slack.default.titlelink" . }}'
+            pretext: '{{ .CommonAnnotations.summary }}'
+            text: |-
+              {{ range .Alerts }}
+              *Alert:* {{ .Annotations.summary }}
+              *Description:* {{ .Annotations.description }}
+              *Details:*
+              {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
+              {{ end }}
+              *Source:* {{ .GeneratorURL }}
+              {{ end }}
+            fallback: '{{ template "slack.default.fallback" . }}'
+            icon_emoji: '{{ template "slack.default.iconemoji" . }}'
+            icon_url: '{{ template "slack.default.iconurl" . }}'
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
