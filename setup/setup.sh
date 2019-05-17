@@ -9,7 +9,6 @@ e_header() {
 }
 
 e_header "Adding Node Labels"
-kubectl label node master node-role.kubernetes.io/edge=""
 kubectl label node node-1 blinktShow=true
 kubectl label node node-2 blinktShow=true
 kubectl label node node-3 blinktShow=true
@@ -43,6 +42,7 @@ kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spe
 
 e_header "Installing Helm"
 kubectl -n kube-system apply -f 7-Helm/
+kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Loki & Promtail"
 kubectl -n infra apply -f 8-Logging/
@@ -51,7 +51,7 @@ e_header "Installing Node Exporter"
 kubectl -n kube-system apply -f 9-Monitoring/node-exporter.yaml
 
 e_header "Installing Blackbox Exporter"
-kubectl -n kube-system apply -f 9-Monitoring/blackbox-exporter.yaml
+kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
 
 e_header "Installing Prometheus & Alert Manager"
 kubectl -n infra apply -f 9-Monitoring/prometheus.yaml
