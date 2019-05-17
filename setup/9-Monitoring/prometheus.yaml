@@ -41,11 +41,6 @@ data:
             - targets: ['alertmanager.infra.svc:9093']
 
     scrape_configs:
-      # Make Prometheus scrape itself for metrics.
-      - job_name: prometheus
-        static_configs:
-          - targets: ['localhost:9090']
-
       - job_name: traefik
         basic_auth:
           username: admin
