@@ -56,6 +56,53 @@ data:
             - '10.0.0.3:9100'
             - '10.0.0.4:9100'
 
+      - job_name: prometheus
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_name]
+            regex: prometheus
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: prometheus
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: prometheus
+
+      - job_name: alertmanager
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - infra
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_name]
+            regex: alertmanager
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: alertmanager
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: alertmanager
+
       # Scrape config for API servers.
       #
       # Kubernetes exposes API servers as endpoints to the default/kubernetes
@@ -303,6 +350,121 @@ data:
           - source_labels: [__meta_kubernetes_ingress_name]
             target_label: kubernetes_name
 
+      - job_name: node-exporter
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - kube-system
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_k8s_app]
+            regex: node-exporter
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: metrics
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - source_labels: [__meta_kubernetes_service_label_k8s_app]
+            target_label: job
+            regex: (.+)
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: metrics
+
+      - job_name: kube-state-metrics
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - kube-system
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_k8s_app]
+            regex: kube-state-metrics
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: http-metrics
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - source_labels: [__meta_kubernetes_service_label_k8s_app]
+            target_label: job
+            regex: (.+)
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: http-metrics
+
+      - job_name: kube-controller-manager
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - kube-system
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_k8s_app]
+            regex: kube-controller-manager
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: http-metrics
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - source_labels: [__meta_kubernetes_service_label_k8s_app]
+            target_label: job
+            regex: (.+)
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: http-metrics
+
+      - job_name: kube-scheduler
+        kubernetes_sd_configs:
+          - role: endpoints
+            namespaces:
+              names:
+                - kube-system
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_k8s_app]
+            regex: kube-scheduler
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: http-metrics
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: job
+            replacement: ${1}
+          - source_labels: [__meta_kubernetes_service_label_k8s_app]
+            target_label: job
+            regex: (.+)
+            replacement: ${1}
+          - target_label: endpoint
+            replacement: http-metrics
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -446,6 +608,7 @@ spec:
             - --web.enable-lifecycle
             - --web.enable-admin-api
             - --web.external-url=http://prometheus.cluster.local
+            - --log.level=debug
           ports:
             - name: prometheus
               containerPort: 9090
