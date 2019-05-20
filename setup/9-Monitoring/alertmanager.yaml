@@ -16,22 +16,22 @@ data:
       group_by: ['alertname', 'cluster', 'service']
       group_wait: 10s
       group_interval: 1m
-      repeat_interval: 5m  
+      repeat_interval: 5m
       receiver: default
       routes:
         - match:
-            team: devops
+            severity: critical
           receiver: devops
           continue: true
         - match:
-            team: dev
+            severity: warning
           receiver: dev
           continue: true
 
     receivers:
       - name: 'default'
 
-      - name: 'devops'
+      - name: 'critical'
         slack_configs:
           - channel: '#k8s-alerts'
             send_resolved: true
@@ -53,7 +53,7 @@ data:
             icon_emoji: '{{ template "slack.default.iconemoji" . }}'
             icon_url: '{{ template "slack.default.iconurl" . }}'
 
-      - name: 'dev'
+      - name: 'warning'
         slack_configs:
           - channel: '#k8s-alerts'
             send_resolved: true
