@@ -7,7 +7,7 @@ data:
   config.yml: |-
     global:
       resolve_timeout: 5m
-      slack_api_url: 'http://example.com'
+      slack_api_url: 'https://hooks.slack.com/services/token'
 
     templates:
       - '/etc/alertmanager-templates/*.tmpl'
@@ -21,11 +21,11 @@ data:
       routes:
         - match:
             severity: critical
-          receiver: devops
+          receiver: critical
           continue: true
         - match:
             severity: warning
-          receiver: dev
+          receiver: warning
           continue: true
 
     receivers:
