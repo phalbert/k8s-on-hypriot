@@ -148,7 +148,7 @@ metadata:
   labels:
     app: kuard
   annotations:
-    prometheus.io/scrape: "true"
+    prometheus.io/probe: "true"
 spec:
   type: ClusterIP # LoadBalancer or NodePort
   ports:
