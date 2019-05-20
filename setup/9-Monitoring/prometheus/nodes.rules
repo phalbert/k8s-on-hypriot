@@ -1,0 +1,47 @@
+groups:
+  - name: Nodes
+    rules:
+      - alert: High Node Memory Usage
+        annotations:
+          summary: Node {{$labels.kubernetes_io_hostname}} has more than 80% memory used.
+        expr: |
+          (sum (container_memory_working_set_bytes{id="/",container_name!="POD"}) by (kubernetes_io_hostname) / sum (machine_memory_bytes{}) by (kubernetes_io_hostname) * 100) > 80
+        for: 5m
+        labels:
+          team: devops
+
+      - alert: High Node CPU Usage
+        annotations:
+          summary: Node {{$labels.kubernetes_io_hostname}} has more than 80% allocatable CPU used.
+        expr: |
+          (sum(rate(container_cpu_usage_seconds_total{id="/", container_name!="POD"}[1m])) by (kubernetes_io_hostname) / sum(machine_cpu_cores) by (kubernetes_io_hostname)  * 100) > 80
+        for: 5m
+        labels:
+          team: devops
+
+      - alert: High Node Disk Usage
+        annotations:
+          summary: Node {{$labels.kubernetes_io_hostname}} has more than 85% disk used.
+        expr: |
+          (sum(container_fs_usage_bytes{device=~"^/dev/([sv]d[a-z][1-9]|root)$",id="/",container_name!="POD"}) by (kubernetes_io_hostname) / sum(container_fs_limit_bytes{container_name!="POD",device=~"^/dev/([sv]d[a-z][1-9]|root)$",id="/"}) by (kubernetes_io_hostname)) * 100 > 85
+        for: 5m
+        labels:
+          team: devops
+
+      - alert: NodeDiskRunningFull
+        annotations:
+          message: Device {{ $labels.device }} of node-exporter {{ $labels.namespace }}/{{ $labels.pod }} will be full within the next 24 hours.
+        expr: |
+          (node:node_filesystem_usage: > 0.85) and (predict_linear(node:node_filesystem_avail:[6h], 3600 * 24) < 0)
+        for: 30m
+        labels:
+          severity: warning
+
+      - alert: NodeDiskRunningFull
+        annotations:
+          message: Device {{ $labels.device }} of node-exporter {{ $labels.namespace }}/{{ $labels.pod }} will be full within the next 2 hours.
+        expr: |
+          (node:node_filesystem_usage: > 0.85) and (predict_linear(node:node_filesystem_avail:[30m], 3600 * 2) < 0)
+        for: 10m
+        labels:
+          severity: critical

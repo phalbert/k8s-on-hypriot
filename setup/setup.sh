@@ -55,7 +55,7 @@ kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
 
 e_header "Installing Prometheus & Alert Manager"
 kubectl -n kube-system apply -f 9-Monitoring/services.yaml
-kubectl -n infra apply -f 9-Monitoring/prometheus.yaml
+./9-Monitoring/prometheus-apply.sh
 kubectl -n infra apply -f 9-Monitoring/alertmanager.yaml
 
 e_header "Installing Grafana"
