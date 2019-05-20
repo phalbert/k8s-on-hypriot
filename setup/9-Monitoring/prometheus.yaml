@@ -54,6 +54,7 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus:master
+          imagePullPolicy: Always
           args:
             - --config.file=/etc/prometheus/prometheus.yaml
             - --storage.tsdb.retention.time=360h
@@ -70,14 +71,14 @@ spec:
               mountPath: /etc/prometheus/
             - name: prometheus-storage-volume
               mountPath: /prometheus/
-        # - name: prometheus-reload
-        #   image: carlosedp/configmap-reload:v0.2.2-arm
-        #   args:
-        #     - --volume-dir=/etc/prometheus/
-        #     - --webhook-url=http://127.0.0.1:9090/-/reload
-        #   volumeMounts:
-        #     - name: prometheus-config-volume
-        #       mountPath: /etc/prometheus/
+        - name: prometheus-reload
+          image: carlosedp/configmap-reload:v0.2.2-arm
+          args:
+            - --volume-dir=/etc/prometheus/
+            - --webhook-url=http://127.0.0.1:9090/-/reload
+          volumeMounts:
+            - name: prometheus-config-volume
+              mountPath: /etc/prometheus/
       volumes:
         - name: prometheus-config-volume
           configMap:

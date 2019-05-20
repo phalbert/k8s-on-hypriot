@@ -20,6 +20,11 @@ scrape_configs:
     static_configs:
       - targets: ['traefik-ingress-controller-dashboard-service.infra.svc:8080']
 
+  # FIXME: This does not work
+  # - job_name: etcd
+  #  static_configs:
+  #      - targets: ['etcd-master.kube-system.svc:4001']
+
   - job_name: nodes
     static_configs:
       - targets:
@@ -437,3 +442,32 @@ scrape_configs:
         replacement: ${1}
       - target_label: endpoint
         replacement: http-metrics
+
+  - job_name: kube-dns
+    kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names:
+            - kube-system
+    relabel_configs:
+      - action: keep
+        source_labels: [__meta_kubernetes_service_label_k8s_app]
+        regex: kube-dns
+      - action: keep
+        source_labels: [__meta_kubernetes_endpoint_port_name]
+        regex: metrics
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: service
+      - source_labels: [__meta_kubernetes_service_name]
+        target_label: job
+        replacement: ${1}
+      - source_labels: [__meta_kubernetes_service_label_k8s_app]
+        target_label: job
+        regex: (.+)
+        replacement: ${1}
+      - target_label: endpoint
+        replacement: metrics

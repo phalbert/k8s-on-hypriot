@@ -1,27 +1,25 @@
 groups:
   - name: Pods
     rules:
-      - alert: KubePodCrashLooping
+      - alert: Pod Crash Looping
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodcrashlooping
+          summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
         expr: |
           rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * 60 * 5 > 0
         for: 1h
         labels:
           severity: critical
 
-      - alert: KubePodNotReady
+      - alert: Pod Not Ready
         annotations:
-          message: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
-          runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubepodnotready
+          summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
         expr: |
           sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown"}) > 0
         for: 1h
         labels:
           severity: critical
 
-      - alert: Container restarted
+      - alert: Container Restarted
         annotations:
           summary: Container named {{$labels.container}} in {{$labels.pod}} in {{$labels.namespace}} namespace was restarted
         expr: |
@@ -45,5 +43,14 @@ groups:
         expr: |
           ((sum(irate(container_cpu_usage_seconds_total{image!="",container_name!="POD", namespace!="kube-system"}[30s])) by (namespace,container_name,pod_name) / sum(container_spec_cpu_quota{image!="",container_name!="POD", namespace!="kube-system"} / container_spec_cpu_period{image!="",container_name!="POD", namespace!="kube-system"}) by (namespace,container_name,pod_name) ) * 100)  > 75
         for: 5m
+        labels:
+          severity: warning
+
+      - alert: Too Many Pods
+        annotations:
+          summary: Kubelet {{ $labels.instance }} is running {{ $value }} Pods, close to the limit of 110.
+        expr: |
+          kubelet_running_pod_count{job="kubelet"} > 110 * 0.9
+        for: 15m
         labels:
           severity: warning

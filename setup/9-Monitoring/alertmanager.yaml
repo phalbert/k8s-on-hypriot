@@ -7,7 +7,7 @@ data:
   config.yml: |-
     global:
       resolve_timeout: 5m
-      slack_api_url: 'https://hooks.slack.com/services/token'
+      slack_api_url: 'https://hooks.slack.com/services/TOKEN'
 
     templates:
       - '/etc/alertmanager-templates/*.tmpl'
@@ -106,6 +106,7 @@ spec:
       containers:
         - name: alertmanager
           image: prom/alertmanager:master
+          imagePullPolicy: Always
           args:
             - --config.file=/etc/alertmanager/config.yml
             - --storage.path=/alertmanager
@@ -124,14 +125,14 @@ spec:
               mountPath: /etc/alertmanager
             - name: alertmanager
               mountPath: /alertmanager
-        # - name: alertmanager-reload
-        #   image: carlosedp/configmap-reload:v0.2.2-arm
-        #   args:
-        #     - --volume-dir=/etc/alertmanager
-        #     - --webhook-url=http://127.0.0.1:9093/-/reload
-        #   volumeMounts:
-        #     - name: config-volume
-        #       mountPath: /etc/alertmanager
+        - name: alertmanager-reload
+          image: carlosedp/configmap-reload:v0.2.2-arm
+          args:
+            - --volume-dir=/etc/alertmanager
+            - --webhook-url=http://127.0.0.1:9093/-/reload
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/alertmanager
       volumes:
         - name: config-volume
           configMap:

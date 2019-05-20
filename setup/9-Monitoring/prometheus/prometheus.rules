@@ -1,9 +1,9 @@
 groups:
   - name: Prometheus
     rules:
-      - alert: PrometheusConfigReloadFailed
+      - alert: Prometheus Config Reload Failed
         annotations:
-          description: Reloading Prometheus' configuration has failed for {{$labels.namespace}}/{{$labels.pod}}
+          description: Reloading Prometheus' configuration has failed for {{ $labels.namespace }}/{{ $labels.pod }}
           summary: Reloading Prometheus' configuration failed
         expr: |
           prometheus_config_last_reload_successful{job="prometheus",namespace="infra"} == 0
@@ -11,10 +11,9 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusNotificationQueueRunningFull
+      - alert: Prometheus Notification Queue Running Full
         annotations:
-          description: Prometheus' alert notification queue is running full for {{$labels.namespace}}/{{
-            $labels.pod}}
+          description: Prometheus' alert notification queue is running full for {{$labels.namespace}}/{{$labels.pod}}
           summary: Prometheus' alert notification queue is running full
         expr: |
           predict_linear(prometheus_notifications_queue_length{job="prometheus",namespace="infra"}[5m], 60 * 30) > prometheus_notifications_queue_capacity{job="prometheus",namespace="infra"}
@@ -22,10 +21,9 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusErrorSendingAlerts
+      - alert: Prometheus Error Sending Alerts
         annotations:
-          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
-            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{$labels.pod}} to Alertmanager {{$labels.Alertmanager}}
           summary: Errors while sending alert from Prometheus
         expr: |
           rate(prometheus_notifications_errors_total{job="prometheus",namespace="infra"}[5m]) / rate(prometheus_notifications_sent_total{job="prometheus",namespace="infra"}[5m]) > 0.01
@@ -33,10 +31,9 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusErrorSendingAlerts
+      - alert: Prometheus Error Sending Alerts
         annotations:
-          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{
-            $labels.pod}} to Alertmanager {{$labels.Alertmanager}}
+          description: Errors while sending alerts from Prometheus {{$labels.namespace}}/{{$labels.pod}} to Alertmanager {{$labels.Alertmanager}}
           summary: Errors while sending alerts from Prometheus
         expr: |
           rate(prometheus_notifications_errors_total{job="prometheus",namespace="infra"}[5m]) / rate(prometheus_notifications_sent_total{job="prometheus",namespace="infra"}[5m]) > 0.03
@@ -44,18 +41,17 @@ groups:
         labels:
           severity: critical
 
-      - alert: PrometheusNotConnectedToAlertmanagers
+      - alert: Prometheus not Connected to Alert Manager
         annotations:
-          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} is not connected
-            to any Alertmanagers
-          summary: Prometheus is not connected to any Alertmanagers
+          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} is not connected to any Alert managers
+          summary: Prometheus is not connected to any Alert managers
         expr: |
           prometheus_notifications_alertmanagers_discovered{job="prometheus",namespace="infra"} < 1
         for: 10m
         labels:
           severity: warning
 
-      - alert: PrometheusTSDBReloadsFailing
+      - alert: Prometheus TSDB Reloads Failing
         annotations:
           description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize }} reload failures over the last four hours.'
           summary: Prometheus has issues reloading data blocks from disk
@@ -65,7 +61,7 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusTSDBCompactionsFailing
+      - alert: Prometheus TSDB Compactions Failing
         annotations:
           description: '{{$labels.job}} at {{$labels.instance}} had {{$value | humanize }} compaction failures over the last four hours.'
           summary: Prometheus has issues compacting sample blocks
@@ -75,7 +71,7 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusTSDBWALCorruptions
+      - alert: Prometheus TSDB WAL Corruptions
         annotations:
           description: '{{$labels.job}} at {{$labels.instance}} has a corrupted write-ahead log (WAL).'
           summary: Prometheus write-ahead log is corrupted
@@ -85,10 +81,9 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusNotIngestingSamples
+      - alert: Prometheus Not Ingesting Samples
         annotations:
-          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} isn't ingesting
-            samples.
+          description: Prometheus {{ $labels.namespace }}/{{ $labels.pod}} isn't ingesting samples.
           summary: Prometheus isn't ingesting samples
         expr: |
           rate(prometheus_tsdb_head_samples_appended_total{job="prometheus",namespace="infra"}[5m]) <= 0
@@ -96,7 +91,7 @@ groups:
         labels:
           severity: warning
 
-      - alert: PrometheusTargetScrapesDuplicate
+      - alert: Prometheus Target Scrapes Duplicate
         annotations:
           description: '{{$labels.namespace}}/{{$labels.pod}} has many samples rejected due to duplicate timestamps but different values'
           summary: Prometheus has many samples rejected
@@ -108,7 +103,7 @@ groups:
 
   - name: Alert Manager
     rules:
-      - alert: AlertmanagerFailedReload
+      - alert: Alert Manager Failed Reload
         annotations:
           message: Reloading Alertmanager's configuration has failed for {{ $labels.namespace }}/{{ $labels.pod}}.
         expr: |
