@@ -32,4 +32,3 @@ spec:
       targetPort: 10252
       protocol: TCP
 ---
-# todo add core dns and etcd
