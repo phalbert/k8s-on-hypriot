@@ -119,6 +119,10 @@ metadata:
     run: jenkins
   name: jenkins
   namespace: devops
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /prometheus/
+    prometheus.io/port: "8080"
 spec:
   ports:
     - name: web
