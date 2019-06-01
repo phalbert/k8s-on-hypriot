@@ -102,6 +102,7 @@ data:
       - test
       - demo
       - default
+      - devops
       - kube-system
     title: Launch Pad
 ---
