@@ -69,7 +69,7 @@ sudo systemctl stop dhcpcd.service
 Edit `/etc/dhcp/dhcpd.conf`
 
 ```
-option domain-name "cluster.home";
+option domain-name "cluster.local";
 option domain-name-servers 8.8.8.8, 8.8.4.4;
 
 default-lease-time 600;
