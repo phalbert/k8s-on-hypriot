@@ -49,7 +49,7 @@ Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```
 # Kubernetes cluster
-10.0.0.1 mater
+10.0.0.1 master
 10.0.0.2 node-1
 10.0.0.3 node-2
 10.0.0.4 node-3
