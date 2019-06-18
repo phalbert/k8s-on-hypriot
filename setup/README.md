@@ -186,7 +186,7 @@ sudo reboot
 
 ```bash
 sudo apt update
-sudo apt upgrade -y 
+sudo apt upgrade -y
 sudo apt install -y rfkill nfs-common
 sudo apt autoremove -y
 sudo update-rc.d nfs-common enable
@@ -195,7 +195,7 @@ sudo update-rc.d nfs-common enable
 ### On master and all nodes
 
 ```bash
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
 sudo apt update
 sudo apt upgrade -y
@@ -224,9 +224,9 @@ sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash s
 #### To remove everything
 ```bash
 sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremove -y --purge
-docker stop $(docker ps | awk '{print $1}')
-docker rm $(docker ps -a | awk '{print $1}')
-docker rmi $(docker images | awk '{print $3}')
+docker stop $(docker ps | grep -v '^CONTAINER' | awk '{print $1}')
+docker rm $(docker ps -a | grep -v '^CONTAINER' | awk '{print $1}')
+docker rmi $(docker images | grep -v '^REPOSITORY' | awk '{print $3}')
 sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
