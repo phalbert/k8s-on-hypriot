@@ -53,7 +53,7 @@ spec:
               mountPath: /prometheus/
       containers:
         - name: prometheus
-          image: prom/prometheus:master
+          image: prom/prometheus:v2.11.1
           imagePullPolicy: Always
           args:
             - --config.file=/etc/prometheus/prometheus.yaml
