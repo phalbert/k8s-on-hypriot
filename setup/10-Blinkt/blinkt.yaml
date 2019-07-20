@@ -103,3 +103,11 @@ spec:
 # kubectl label node node-2 blinktImage=pods
 # kubectl label node node-3 blinktImage=pods
 # blinktColor: "cpu" / blinktColor: "FF0000"
+# kubectl label node node-1 blinktShow-
+# kubectl label node node-2 blinktShow-
+# kubectl label node node-3 blinktShow-
+# kubectl label node master blinktShow-
+# kubectl label node master blinktImage-
+# kubectl label node node-1 blinktImage-
+# kubectl label node node-2 blinktImage-
+# kubectl label node node-3 blinktImage-
