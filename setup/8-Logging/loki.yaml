@@ -81,17 +81,37 @@ data:
   loki.yaml: |
     auth_enabled: false
     ingester:
-      chunk_idle_period: 15m
+      chunk_idle_period: 5m
+      chunk_retain_period: 30s
       lifecycler:
         address: 127.0.0.1
+        final_sleep: 0s
         ring:
+          kvstore:
+            store: inmemory
           replication_factor: 1
-          store: inmemory
     limits_config:
       enforce_metric_name: false
+      reject_old_samples: true
+      reject_old_samples_max_age: 168h
+    chunk_store_config:
+      max_look_back_period: 0
+    table_manager:
+      chunk_tables_provisioning:
+        inactive_read_throughput: 0
+        inactive_write_throughput: 0
+        provisioned_read_throughput: 0
+        provisioned_write_throughput: 0
+      index_tables_provisioning:
+        inactive_read_throughput: 0
+        inactive_write_throughput: 0
+        provisioned_read_throughput: 0
+        provisioned_write_throughput: 0
+      retention_deletes_enabled: false
+      retention_period: 0
     schema_config:
       configs:
-      - from: 0
+      - from: 2018-04-15
         index:
           period: 168h
           prefix: index_
@@ -144,21 +164,18 @@ spec:
             - name: http-metrics
               containerPort: 3100
               protocol: TCP
-#          readinessProbe:
-#            httpGet:
-#              # GET /ready returns 500
-#              path: /api/prom/label
-#              # path: /ready
-#              port: http-metrics
-#            initialDelaySeconds: 60
-#            periodSeconds: 10
-#          livenessProbe:
-#            httpGet:
-#              path: /api/prom/label
-#              # path: /ready
-#              port: http-metrics
-#            initialDelaySeconds: 45
-#            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ready
+              port: http-metrics
+            initialDelaySeconds: 45
+            periodSeconds: 10
           securityContext:
             readOnlyRootFilesystem: true
       volumes:

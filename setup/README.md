@@ -211,7 +211,6 @@ sudo chown -R pirate:pirate /media/usb
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
 ```
 
 ### On nodes
@@ -220,21 +219,19 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
 ```
 
-
 #### To remove everything
 ```bash
 sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremove -y --purge
 docker stop $(docker ps | grep -v '^CONTAINER' | awk '{print $1}')
 docker rm $(docker ps -a | grep -v '^CONTAINER' | awk '{print $1}')
 docker rmi $(docker images | grep -v '^REPOSITORY' | awk '{print $3}')
+docker volume prune
 sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 rm -rf ~/.kube/
 
 ```
-
-
 
 ##### NOTES - TO FINISH
 
