@@ -201,6 +201,12 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "7472"
     spec:
+      nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       serviceAccountName: metallb-controller
       terminationGracePeriodSeconds: 0
       securityContext:
