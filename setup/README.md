@@ -113,7 +113,7 @@ You want the master node to be the gateway for the rest of the cluster, and do t
 Create the file `/etc/init.d/enable_nat`
 
 ```bash
-#! /bin/sh
+#!/bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          routing
