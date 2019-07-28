@@ -1,0 +1,228 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: consul-gossip-key
+  labels:
+    app: consul
+type: Opaque
+data:
+  gossip-key: ZW9NakJIcmxhbXVrYzlSdDVNbUVTUlpt
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+  labels:
+    app: consul
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  selector:
+    app: consul
+  ports:
+  - name: http
+    port: 8500
+  - name: rpc
+    port: 8400
+  - name: serflan-tcp
+    protocol: TCP
+    port: 8301
+  - name: serflan-udp
+    protocol: UDP
+    port: 8301
+  - name: serfwan-tcp
+    protocol: TCP
+    port: 8302
+  - name: serfwan-udp
+    protocol: UDP
+    port: 8302
+  - name: server
+    port: 8300
+  - name: consuldns-tcp
+    port: 8600
+  - name: consuldns-udp
+    protocol: UDP
+    port: 8600
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul-ui
+  labels:
+    app: consul
+spec:
+  type: ClusterIP
+  selector:
+    app: consul
+  ports:
+  - name: http
+    port: 8500
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: consul
+  labels:
+    app: consul
+spec:
+  serviceName: consul
+  replicas: 3
+  # updateStrategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: consul
+  template:
+    metadata:
+      name: consul
+      labels:
+        app: consul
+    spec:
+      securityContext:
+        fsGroup: 1000
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - consul
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: consul
+        image: consul:1.5.2
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: http
+            containerPort: 8500
+          - name: rpc
+            containerPort: 8400
+          - name: serflan-tcp
+            protocol: TCP
+            containerPort: 8301
+          - name: serflan-udp
+            protocol: UDP
+            containerPort: 8301
+          - name: serfwan-tcp
+            protocol: TCP
+            containerPort: 8302
+          - name: serfwan-udp
+            protocol: UDP
+            containerPort: 8302
+          - name: server
+            containerPort: 8300
+          - name: consuldns-tcp
+            containerPort: 8600
+          - name: consuldns-udp
+            protocol: UDP
+            containerPort: 8600
+        resources: {}
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: CONSUL_CLUSTER_SIZE
+            value: "3"
+          - name: CONSUL_STATEFULSET_NAME
+            value: "consul"
+          - name: CONSUL_DNS_PORT
+            value: "8600"
+          - name: CONSUL_GOSSIP_ENCRYPTION_KEY
+            value: ""
+          - name: CONSUL_DATACENTER_NAME
+            value: "dc1"
+          - name: CONSUL_DOMAIN
+            value: "cluster.local"
+        args:
+          - "agent"
+          - "-advertise=$(POD_IP)"
+          - "-bind=0.0.0.0"
+          - "-bootstrap-expect=$(CONSUL_CLUSTER_SIZE)"
+          - "-retry-join=$(CONSUL_STATEFULSET_NAME)-0.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
+          - "-retry-join=$(CONSUL_STATEFULSET_NAME)-1.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
+          - "-retry-join=$(CONSUL_STATEFULSET_NAME)-2.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
+          - "-client=0.0.0.0"
+          #- "-rejoin"
+          - "-datacenter=$(CONSUL_DATACENTER_NAME)"
+          - "-data-dir=/var/lib/consul"
+          - "-domain=$(CONSUL_DOMAIN)"
+          - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
+          - "-server"
+          - "-ui"
+          - "-disable-host-node-id"
+        livenessProbe:
+          exec:
+            command:
+            - consul
+            - members
+            - -http-addr=http://127.0.0.1:8500
+          initialDelaySeconds: 300
+          timeoutSeconds: 5
+        lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - consul leave
+        volumeMounts:
+          - name: datadir
+            mountPath: /var/lib/consul
+      volumes:
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: vault-claim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vault-claim
+  annotations: {}
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: consul-ui
+  labels:
+    app: consul
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/appName: "Consul"
+    forecastle.stakater.com/group: "Tools"
+    # forecastle.stakater.com/icon: "https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png"
+spec:
+  rules:
+    - host: consul.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: consul-ui
+              servicePort: 8500

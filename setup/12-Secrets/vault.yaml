@@ -1,0 +1,235 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-config
+  labels:
+    app: vault
+data:
+  vault.hcl: |-
+    storage "consul" {
+        address = "127.0.0.1:8500"
+        path    = "vault/"
+        disable_registration = "true"
+    }
+
+    listener "tcp" {
+        address         = "0.0.0.0:8200"
+        tls_disable     = 1
+        #tls_cert_file = "/config/server.crt"
+        #tls_key_file = "/config/server.key"
+    }
+
+    #telemetry {
+    #  statsite_address = "127.0.0.1:8125"
+    #  disable_hostname = true
+    #}
+
+    api_addr = "http://0.0.0.0:8200"
+    cluster_address = "http://0.0.0.0:8201"
+    disable_mlock = true
+    ui = true
+    max_lease_ttl = "10h"
+    default_lease_ttl = "10h"
+    # raw_storage_endpoint = true
+    cluster_name = "pi-vault"
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault
+  labels:
+    app: vault
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  labels:
+    app: vault
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  type: ClusterIP
+  selector:
+    app: vault
+  ports:
+  - name: api
+    protocol: TCP
+    port: 8200
+    targetPort: 8200
+  - name: cluster
+    protocol: TCP
+    port: 8201
+    targetPort: 8201
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-ui
+  labels:
+    app: vault
+spec:
+  type: ClusterIP
+  selector:
+    app: vault
+  ports:
+    - name: api
+      port: 8200
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: vault
+  labels:
+    app: vault
+spec:
+  serviceName: vault
+  replicas: 2
+  # strategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      name: vault
+      labels:
+        app: vault
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - vault
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: vault
+        image: vault:1.1.2
+        imagePullPolicy: IfNotPresent
+        command: ["vault", "server", "-dev", "-dev-listen-address", "[::]:8200"]
+        #command: ["vault", "server", "-config", "/vault/config/vault.hcl"]
+        ports:
+          - name: api
+            containerPort: 8200
+          - name: cluster
+            containerPort: 8201
+        resources: {}
+        env:
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: VAULT_ADDR
+            value: "http://$(POD_IP):8200"
+          - name: VAULT_CLUSTER_ADDR
+            value: "http://$(POD_IP):8201"
+          - name: VAULT_LOG_LEVEL
+            value: "debug"
+#        livenessProbe:
+#          httpGet:
+#            path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
+#            port: 8200
+#            scheme: HTTP
+#          initialDelaySeconds: 35
+#          periodSeconds: 10
+#        readinessProbe:
+#          httpGet:
+#            path: /v1/sys/health?sealedcode=204&standbycode=204&uninitcode=204&
+#            port: 8200
+#            scheme: HTTP
+#          initialDelaySeconds: 35
+#          periodSeconds: 10
+        securityContext:
+          readOnlyRootFilesystem: true
+          capabilities:
+            add:
+            - IPC_LOCK
+        volumeMounts:
+          - name: vault-config-file
+            mountPath: /vault/config/vault.hcl
+            subPath: vault.hcl
+          - name: vault-root
+            mountPath: /root/
+      - name: vault-consul-agent
+        image: consul:1.5.2
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          readOnlyRootFilesystem: true
+        env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: CONSUL_GOSSIP_ENCRYPTION_KEY
+            value: ""
+          - name: CONSUL_AGENT_TOKEN
+            value: ""
+          - name: CONSUL_DATACENTER_NAME
+            value: "dc1"
+          - name: CONSUL_DOMAIN
+            value: "cluster.local"
+        command:
+          - "consul"
+        args:
+          - "agent"
+          - "-datacenter=$(CONSUL_DATACENTER_NAME)"
+          - "-retry-join=$(CONSUL_SERVICE_HOST)"
+          - "-client=0.0.0.0"
+          - "-bind=0.0.0.0"
+          - "-data-dir=/var/lib/consul"
+          - "-domain=$(CONSUL_DOMAIN)"
+          - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
+          - "-disable-host-node-id"
+        resources:
+          {}
+
+        volumeMounts:
+          - name: consul-data
+            mountPath: /var/lib/consul
+      serviceAccountName: vault
+      volumes:
+        - name: vault-config-file
+          configMap:
+            name: vault-config
+        - name: vault-root
+          emptyDir: {}
+        - name: consul-data
+          emptyDir: {}
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: vault-ui
+  labels:
+    app: vault
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/appName: "Vault"
+    forecastle.stakater.com/group: "Tools"
+    # forecastle.stakater.com/icon: "https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png"
+spec:
+  rules:
+    - host: vault.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: vault-ui
+              servicePort: 8200

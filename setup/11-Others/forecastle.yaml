@@ -104,6 +104,7 @@ data:
         - infra
         - kube-system
         - devops
+        - vault
     title: Launch Pad
 ---
 apiVersion: extensions/v1beta1
