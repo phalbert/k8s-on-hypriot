@@ -45,6 +45,7 @@ iface eth0 inet static
 Disable `eth0` in `/etc/network/interfaces.d/50-cloud-init.cfg`
 
 ### On master and all nodes
+
 Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```
@@ -162,12 +163,16 @@ Edit `/etc/sysctl.conf` to enable IP routing: uncomment the `net.ipv4.ip_forward
 
 ```bash
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+sudo mkdir /media/usb
+sudo chown -R pirate:pirate /media/usb
+#sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
 ```
 
 Edit `/etc/fstab`
 
 ```
-UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw,uid=pirate,gid=pirate 0 0
+#UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw,uid=pirate,gid=pirate 0 0
+UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw 0 0
 ```
 
 Edit `/etc/exports`
@@ -203,11 +208,9 @@ sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
 ```
 
 ### On master
+
 ```bash
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
-#sudo mkdir /media/usb
-sudo chown -R pirate:pirate /media/usb
-#sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
@@ -230,18 +233,16 @@ sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 rm -rf ~/.kube/
-
 ```
 
 ##### NOTES - TO FINISH
 
 ##### /etc/kubernetes/manifests/kube-controller-manager.yaml
-
 ```
     - --node-monitor-period=2s
     - --node-monitor-grace-period=16s
-    # - --pod-eviction-timeout=5s
-    # - --feature-gates=TaintBasedEvictions=false
+    - --pod-eviction-timeout=5s
+    - --feature-gates=TaintBasedEvictions=false
 ```
 
 ##### /var/lib/kubelet/config.yaml
