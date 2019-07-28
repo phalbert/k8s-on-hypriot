@@ -205,7 +205,7 @@ spec:
         runAsUser: 472
       containers:
         - name: grafana
-          image: "grafana/grafana:6.1.6"
+          image: grafana/grafana:6.2.5
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
