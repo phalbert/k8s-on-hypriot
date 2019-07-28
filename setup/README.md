@@ -204,7 +204,8 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt install -y docker-ce=18.06.3~ce~3-0~raspbian kubelet kubeadm kubectl kubernetes-cni --allow-downgrades
+sudo apt-mark hold docker-ce
 ```
 
 ### On master
