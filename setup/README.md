@@ -210,6 +210,7 @@ sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
 ### On master
 
 ```bash
+sudo kubeadm config images pull
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -219,6 +220,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ### On nodes
 
 ```bash
+sudo kubeadm config images pull
 sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
 ```
 
@@ -233,6 +235,7 @@ sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 rm -rf ~/.kube/
+sudo reboot
 ```
 
 ##### NOTES - TO FINISH
