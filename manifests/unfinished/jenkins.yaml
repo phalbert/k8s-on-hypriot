@@ -23,7 +23,6 @@ data:
     github
     github-branch-source
     environment-dashboard
-    slack
     workflow-multibranch
     rebuild
     mask-passwords
@@ -36,11 +35,11 @@ data:
     greenballs
     jobConfigHistory
     workflow-aggregator
-    active-directory
     role-strategy
-    user-build-vars
+    build-user-vars
     shelve-project
     flexible-publish
+    prometheus
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -61,11 +60,11 @@ spec:
         run: jenkins
     spec:
       containers:
-        - image: dahrkael/jenkins-armv7
+        - image: dahrkael/jenkins-armv7:latest
           env:
             - name: JAVA_OPTS
               value: "-Djenkins.install.runSetupWizard=false -Dorg.jenkinsci.remoting.engine.JNLP3-connect.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol2.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol1.disabled=true"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: jenkins
           ports:
             - containerPort: 8080
@@ -120,6 +119,10 @@ metadata:
     run: jenkins
   name: jenkins
   namespace: devops
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /prometheus/
+    prometheus.io/port: "8080"
 spec:
   ports:
     - name: web
@@ -138,6 +141,12 @@ kind: Ingress
 metadata:
   name: jenkins
   namespace: devops
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png"
+    forecastle.stakater.com/appName: Jenkins
 spec:
   rules:
     - host: jenkins.cluster.local

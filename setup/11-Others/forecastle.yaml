@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: forecastle
-        image: "rebelinblue/forecastle:1.0.0"
+        image: rebelinblue/forecastle:1.0.25
         env:
           - name: KUBERNETES_NAMESPACE
             valueFrom:
@@ -97,12 +97,14 @@ metadata:
     app: forecastle
 data:
   config.yaml: |-
-    namespaces:
-      - infra
-      - test
-      - demo
-      - default
-      - kube-system
+    namespaceSelector:
+      matchNames:
+        - infra
+        - test
+        - demo
+        - default
+        - devops
+        - kube-system
     title: Launch Pad
 ---
 apiVersion: extensions/v1beta1

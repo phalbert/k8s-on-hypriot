@@ -150,7 +150,7 @@ spec:
       hostNetwork: true
       containers:
         - name: speaker
-          image: metallb/speaker:v0.7.3
+          image: metallb/speaker:v0.8.1
           imagePullPolicy: IfNotPresent
           args:
             - --port=7472
@@ -201,6 +201,12 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "7472"
     spec:
+      nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       serviceAccountName: metallb-controller
       terminationGracePeriodSeconds: 0
       securityContext:
@@ -208,7 +214,7 @@ spec:
         runAsUser: 65534 # nobody
       containers:
         - name: controller
-          image: metallb/controller:v0.7.3
+          image: metallb/controller:v0.8.1
           imagePullPolicy: IfNotPresent
           args:
             - --port=7472

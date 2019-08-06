@@ -45,11 +45,12 @@ iface eth0 inet static
 Disable `eth0` in `/etc/network/interfaces.d/50-cloud-init.cfg`
 
 ### On master and all nodes
+
 Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```
 # Kubernetes cluster
-10.0.0.1 mater
+10.0.0.1 master
 10.0.0.2 node-1
 10.0.0.3 node-2
 10.0.0.4 node-3
@@ -69,7 +70,7 @@ sudo systemctl stop dhcpcd.service
 Edit `/etc/dhcp/dhcpd.conf`
 
 ```
-option domain-name "cluster.home";
+option domain-name "cluster.local";
 option domain-name-servers 8.8.8.8, 8.8.4.4;
 
 default-lease-time 600;
@@ -112,7 +113,7 @@ You want the master node to be the gateway for the rest of the cluster, and do t
 Create the file `/etc/init.d/enable_nat`
 
 ```bash
-#! /bin/sh
+#!/bin/sh
 
 ### BEGIN INIT INFO
 # Provides:          routing
@@ -162,12 +163,16 @@ Edit `/etc/sysctl.conf` to enable IP routing: uncomment the `net.ipv4.ip_forward
 
 ```bash
 sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+sudo mkdir /media/usb
+sudo chown -R pirate:pirate /media/usb
+#sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
 ```
 
 Edit `/etc/fstab`
 
 ```
-UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw,uid=pirate,gid=pirate 0 0
+#UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw,uid=pirate,gid=pirate 0 0
+UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw 0 0
 ```
 
 Edit `/etc/exports`
@@ -186,7 +191,7 @@ sudo reboot
 
 ```bash
 sudo apt update
-sudo apt upgrade -y 
+sudo apt upgrade -y
 sudo apt install -y rfkill nfs-common
 sudo apt autoremove -y
 sudo update-rc.d nfs-common enable
@@ -195,56 +200,53 @@ sudo update-rc.d nfs-common enable
 ### On master and all nodes
 
 ```bash
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y docker-ce kubelet kubeadm kubectl kubernetes-cni
+sudo apt install -y docker-ce=18.06.3~ce~3-0~raspbian kubelet kubeadm kubectl kubernetes-cni --allow-downgrades
+sudo apt-mark hold docker-ce
 ```
 
 ### On master
+
 ```bash
+sudo kubeadm config images pull
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
-#sudo mkdir /media/usb
-sudo chown -R pirate:pirate /media/usb
-#sudo mount /dev/sda1 /media/usb -o uid=pirate,gid=pirate
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
 ```
 
 ### On nodes
 
 ```bash
+sudo kubeadm config images pull
 sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
 ```
-
 
 #### To remove everything
 ```bash
 sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremove -y --purge
-docker stop $(docker ps | awk '{print $1}')
-docker rm $(docker ps -a | awk '{print $1}')
-docker rmi $(docker images | awk '{print $3}')
+docker stop $(docker ps | grep -v '^CONTAINER' | awk '{print $1}')
+docker rm $(docker ps -a | grep -v '^CONTAINER' | awk '{print $1}')
+docker rmi $(docker images | grep -v '^REPOSITORY' | awk '{print $3}')
+docker volume prune
 sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 rm -rf ~/.kube/
-
+sudo reboot
 ```
-
-
 
 ##### NOTES - TO FINISH
 
 ##### /etc/kubernetes/manifests/kube-controller-manager.yaml
-
 ```
     - --node-monitor-period=2s
     - --node-monitor-grace-period=16s
-    # - --pod-eviction-timeout=5s
-    # - --feature-gates=TaintBasedEvictions=false
+    - --pod-eviction-timeout=5s
+    - --feature-gates=TaintBasedEvictions=false
 ```
 
 ##### /var/lib/kubelet/config.yaml

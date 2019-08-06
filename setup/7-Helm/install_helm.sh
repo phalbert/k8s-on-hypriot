@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export HELM_VERSION=v2.13.1
+export HELM_VERSION=v2.14.2
 export HELM_INSTALL_DIR=/usr/local/bin
 wget https://kubernetes-helm.storage.googleapis.com/helm-$HELM_VERSION-linux-arm.tar.gz
 tar xvzf helm-$HELM_VERSION-linux-arm.tar.gz

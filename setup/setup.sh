@@ -45,6 +45,7 @@ kubectl -n kube-system apply -f 7-Helm/
 kubectl -n kube-system patch deployment tiller-deploy --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Loki & Promtail"
+./8-Logging/promtail-apply.sh
 kubectl -n infra apply -f 8-Logging/
 
 e_header "Installing Node Exporter"
