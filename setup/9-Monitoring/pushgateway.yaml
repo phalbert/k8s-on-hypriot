@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-pushgateway
+  namespace: infra
+  labels:
+    app: prometheus-pushgateway
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-pushgateway
+  namespace: infra
+  labels:
+    app: prometheus-pushgateway
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9091
+      targetPort: 9091
+      protocol: TCP
+      name: http
+  selector:
+    app: prometheus-pushgateway
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: prometheus-pushgateway
+  namespace: infra
+  labels:
+    app: prometheus-pushgateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-pushgateway
+  template:
+    metadata:
+      labels:
+        app: prometheus-pushgateway
+    spec:
+      serviceAccountName: prometheus-pushgateway
+      containers:
+        - name: pushgateway
+          image: carlosedp/pushgateway:v0.8.0-arm
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: metrics
+              containerPort: 9091
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /#/status
+              port: 9091
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /#/status
+              port: 9091
+            initialDelaySeconds: 10
+            timeoutSeconds: 10
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: prometheus-pushgateway
+  namespace: infra
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/appName: "Push Gateway"
+    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
+spec:
+  rules:
+    - host: pushgateway.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: prometheus-pushgateway
+              servicePort: 9091
