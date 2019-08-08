@@ -39,6 +39,8 @@ spec:
     metadata:
       labels:
         app: prometheus-pushgateway
+        blinktShow: "true"
+        blinktColor: "00ff00"
     spec:
       serviceAccountName: prometheus-pushgateway
       containers:

@@ -42,11 +42,11 @@ spec:
         blinktImage: pods
       containers:
         - name: blinkt-k8s-controller-pods
-          image: elafargue/blinkt-k8s-controller-pods:v1
+          image: rebelinblue/blinkt-k8s-controller-pods:v1
           args:
             - -brightness=0.25
             - -resync_period=10s
-            - -namespace=test
+            - -namespace=infra
           env:
             - name: NODE_NAME
               valueFrom:
@@ -81,7 +81,7 @@ spec:
         blinktImage: nodes
       containers:
         - name: blinkt-k8s-controller-nodes
-          image: elafargue/blinkt-k8s-controller-nodes:v1
+          image: rebelinblue/blinkt-k8s-controller-nodes:v1
           args:
             - -brightness=0.25
             - -resync_period=10s
@@ -94,20 +94,22 @@ spec:
             path: /sys
 ---
 
-# kubectl label node node-1 blinktShow=true
-# kubectl label node node-2 blinktShow=true
-# kubectl label node node-3 blinktShow=true
 # kubectl label node master blinktShow=true
 # kubectl label node master blinktImage=nodes
+# kubectl label node node-1 blinktShow=true
 # kubectl label node node-1 blinktImage=pods
+# kubectl label node node-2 blinktShow=true
 # kubectl label node node-2 blinktImage=pods
+# kubectl label node node-3 blinktShow=true
 # kubectl label node node-3 blinktImage=pods
-# blinktColor: "cpu" / blinktColor: "FF0000"
-# kubectl label node node-1 blinktShow-
-# kubectl label node node-2 blinktShow-
-# kubectl label node node-3 blinktShow-
+
 # kubectl label node master blinktShow-
 # kubectl label node master blinktImage-
+# kubectl label node node-1 blinktShow-
 # kubectl label node node-1 blinktImage-
+# kubectl label node node-2 blinktShow-
 # kubectl label node node-2 blinktImage-
+# kubectl label node node-3 blinktShow-
 # kubectl label node node-3 blinktImage-
+
+# blinktColor: "cpu" / blinktColor: "FF0000"
