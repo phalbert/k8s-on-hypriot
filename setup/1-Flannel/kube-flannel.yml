@@ -134,6 +134,8 @@ spec:
       labels:
         tier: node
         k8s-app: flannel
+        blinktShow: "true"
+        blinktColor: "00ff00"
     spec:
       hostNetwork: true
       nodeSelector:

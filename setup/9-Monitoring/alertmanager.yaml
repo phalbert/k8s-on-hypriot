@@ -103,7 +103,7 @@ spec:
       labels:
         k8s-app: alertmanager
         blinktShow: "true"
-        blinktColor: "00ffff"
+        blinktColor: "00ff00"
     spec:
       containers:
         - name: alertmanager

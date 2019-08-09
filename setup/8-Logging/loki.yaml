@@ -146,6 +146,8 @@ spec:
     metadata:
       labels:
         k8s-app: loki
+        blinktShow: "true"
+        blinktColor: "00ff00"
     spec:
       serviceAccountName: loki
       containers:

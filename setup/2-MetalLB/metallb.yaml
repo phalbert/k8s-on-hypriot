@@ -197,6 +197,8 @@ spec:
       labels:
         k8s-app: metallb
         component:  metallb-controller
+        blinktShow: "true"
+        blinktColor: "00ff00"
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "7472"

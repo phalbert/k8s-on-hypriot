@@ -18,6 +18,8 @@ spec:
     metadata:
       labels:
         app: forecastle
+        blinktShow: "true"
+        blinktColor: "00ff00"
     spec:
       containers:
       - name: forecastle
