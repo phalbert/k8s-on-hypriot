@@ -213,7 +213,7 @@ metadata:
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/group: "Miscellaneous"
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png"
 spec:
   rules:

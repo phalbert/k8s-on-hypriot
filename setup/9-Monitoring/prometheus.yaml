@@ -116,7 +116,7 @@ metadata:
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/group: "Prometheus"
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
 spec:
   rules:
