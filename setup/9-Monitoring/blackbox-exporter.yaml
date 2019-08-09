@@ -38,6 +38,31 @@ spec:
     app: blackbox-exporter
 ---
 apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blackbox-exporter
+  namespace: infra
+  labels:
+    name: blackbox-exporter
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
+    forecastle.stakater.com/expose: "true"
+    forecastle.stakater.com/appName: "Blackbox Exporter"
+    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
+spec:
+  rules:
+    - host: blackbox.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: blackbox-exporter
+              servicePort: 9115
+---
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: blackbox-exporter
