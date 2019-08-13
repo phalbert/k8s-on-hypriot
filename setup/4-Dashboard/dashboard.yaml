@@ -133,7 +133,7 @@ spec:
       serviceAccountName: kubernetes-dashboard
       nodeSelector:
         beta.kubernetes.io/arch: arm
-        node-role.kubernetes.io/master: ""
+        node-role.kubernetes.io/master: "true"
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master

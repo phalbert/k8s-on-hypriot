@@ -200,58 +200,21 @@ sudo update-rc.d nfs-common enable
 ### On master and all nodes
 
 ```bash
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y docker-ce=18.06.3~ce~3-0~raspbian kubelet kubeadm kubectl kubernetes-cni --allow-downgrades
-sudo apt-mark hold docker-ce
+sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
+sudo reboot
+sudo rm -rf /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
+sudo reboot
 ```
 
 ### On master
 
 ```bash
-sudo kubeadm config images pull
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=10.0.0.1
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--no-deploy traefik" sh -
+sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
-### On nodes
+### On nodes (replace XXX with the output of the previous command)
 
 ```bash
-sudo kubeadm config images pull
-sudo kubeadm join 10.0.0.1:6443 --token <token> --discovery-token-ca-cert-hash sha256:1c06faa186e7f85...
+curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=K10c8c24c39d6ab7d4b2417d297ba560a1c38ad222bf150207a341e5095beaa527b::node:1cf2c47357c258568c760d86aff06e62 sh -
 ```
-
-#### To remove everything
-```bash
-sudo apt-get -y remove --purge kubeadm kubectl kubelet && sudo apt-get autoremove -y --purge
-docker stop $(docker ps | grep -v '^CONTAINER' | awk '{print $1}')
-docker rm $(docker ps -a | grep -v '^CONTAINER' | awk '{print $1}')
-docker rmi $(docker images | grep -v '^REPOSITORY' | awk '{print $3}')
-docker volume prune
-sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
-sudo reboot
-sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
-rm -rf ~/.kube/
-sudo reboot
-```
-
-##### NOTES - TO FINISH
-
-##### /etc/kubernetes/manifests/kube-controller-manager.yaml
-```
-    - --node-monitor-period=2s
-    - --node-monitor-grace-period=16s
-    - --pod-eviction-timeout=5s
-    - --feature-gates=TaintBasedEvictions=false
-```
-
-##### /var/lib/kubelet/config.yaml
-```
---node-status-update-frequency=4s
-```
-
-https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/ TaintBasedEvictions
