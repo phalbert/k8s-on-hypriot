@@ -236,6 +236,7 @@ sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt
 sudo reboot
 sudo rm -rf /var/lib/etcd /var/lib/kubelet /etc/kubernetes /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 rm -rf ~/.kube/
+sudo rm -rf /var/log/{containers,pods}
 sudo reboot
 ```
 
