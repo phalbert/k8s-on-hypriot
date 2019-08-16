@@ -204,6 +204,7 @@ sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt
 sudo reboot
 sudo rm -rf /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
 sudo reboot
+sudo rm -rf /var/log/{containers,pods}
 ```
 
 ### On master
@@ -216,5 +217,5 @@ sudo cat /var/lib/rancher/k3s/server/node-token
 ### On nodes (replace XXX with the output of the previous command)
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=K10c8c24c39d6ab7d4b2417d297ba560a1c38ad222bf150207a341e5095beaa527b::node:1cf2c47357c258568c760d86aff06e62 sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=... sh -
 ```
