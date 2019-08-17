@@ -129,8 +129,8 @@ spec:
               mountPath: /etc/promtail
             - name: run
               mountPath: /run/promtail
-            - name: docker
-              mountPath: /var/lib/docker/containers
+            - name: containers
+              mountPath: /var/log/containers
               readOnly: true
             - name: pods
               mountPath: /var/log/pods
@@ -174,9 +174,9 @@ spec:
         - name: run
           hostPath:
             path: /run/promtail
-        - name: docker
+        - name: containers
           hostPath:
-            path: /var/lib/docker/containers
+            path: /var/log/containers
         - name: pods
           hostPath:
             path: /var/log/pods
@@ -190,11 +190,11 @@ metadata:
     k8s-app: promtail
   annotations:
     prometheus.io/scrape: "true"
-    prometheus.io/port: "3100"
+    prometheus.io/port: "3101"
 spec:
   type: ClusterIP
   ports:
-    - port: 3100
+    - port: 3101
       protocol: TCP
       name: http-metrics
       targetPort: http-metrics
@@ -223,4 +223,4 @@ spec:
           - path: /
             backend:
               serviceName: promtail
-              servicePort: 3100
+              servicePort: 3101
