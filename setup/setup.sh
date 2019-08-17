@@ -18,7 +18,7 @@ kubectl label node node-1 blinktImage=pods
 kubectl label node node-2 blinktImage=pods
 kubectl label node node-3 blinktImage=pods
 
-kubectl -n infra apply -f dashboards-auth.yaml
+kubectl -n infra apply -f infra.yaml
 
 #e_header "Installing Flannel"
 #kubectl -n infra apply -f 1-Flannel/

@@ -71,8 +71,6 @@ metadata:
   namespace: infra
   annotations:
     kubernetes.io/ingress.class: traefik
-    ingress.kubernetes.io/auth-type: basic
-    ingress.kubernetes.io/auth-secret: dashboards-auth
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Prometheus"
     forecastle.stakater.com/appName: "Push Gateway"
