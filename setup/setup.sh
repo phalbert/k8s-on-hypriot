@@ -51,8 +51,8 @@ kubectl -n infra apply -f 8-Logging/
 e_header "Installing Node Exporter"
 kubectl -n kube-system apply -f 9-Monitoring/node-exporter.yaml
 
-e_header "Installing Blackbox Exporter"
-kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
+#e_header "Installing Blackbox Exporter"
+#kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
 
 e_header "Installing Prometheus & Alert Manager"
 kubectl -n kube-system apply -f 9-Monitoring/services.yaml
