@@ -24,8 +24,9 @@ kubectl -n infra apply -f infra.yaml
 #e_header "Installing Flannel"
 #kubectl -n infra apply -f 1-Flannel/
 
-e_header "Installing MetalLB"
-kubectl -n infra apply -f 2-MetalLB/
+# K3S includes a loadbalancer
+#e_header "Installing MetalLB"
+#kubectl -n infra apply -f 2-MetalLB/
 
 # Traefik is included with k3s but I prefer my setup
 e_header "Installing Traefik"
