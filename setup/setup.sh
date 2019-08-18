@@ -20,12 +20,14 @@ kubectl label node node-3 blinktImage=pods
 
 kubectl -n infra apply -f infra.yaml
 
+# Flannel is included with k3s
 #e_header "Installing Flannel"
 #kubectl -n infra apply -f 1-Flannel/
 
-#e_header "Installing MetalLB"
-#kubectl -n infra apply -f 2-MetalLB/
+e_header "Installing MetalLB"
+kubectl -n infra apply -f 2-MetalLB/
 
+# Traefik is included with k3s but I prefer my setup
 e_header "Installing Traefik"
 kubectl -n infra apply -f 3-Traefik/
 
@@ -51,8 +53,8 @@ kubectl -n infra apply -f 8-Logging/
 e_header "Installing Node Exporter"
 kubectl -n kube-system apply -f 9-Monitoring/node-exporter.yaml
 
-#e_header "Installing Blackbox Exporter"
-#kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
+e_header "Installing Blackbox Exporter"
+kubectl -n infra apply -f 9-Monitoring/blackbox-exporter.yaml
 
 e_header "Installing Prometheus & Alert Manager"
 kubectl -n kube-system apply -f 9-Monitoring/services.yaml
