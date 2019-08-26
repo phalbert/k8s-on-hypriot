@@ -66,6 +66,8 @@ data:
     ansicolor
     prometheus
     simple-theme
+    next-executions
+    timestamper
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
