@@ -1168,7 +1168,8 @@
   "schemaVersion": 19,
   "style": "dark",
   "tags": [
-    "jenkins"
+    "jenkins",
+    "prometheus"
   ],
   "templating": {
     "list": [
