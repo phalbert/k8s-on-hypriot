@@ -5,12 +5,15 @@ metadata:
   name: jenkins
   namespace: devops
 ---
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: jenkins
   namespace: devops
 rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get","list","patch","update","watch"]
 - apiGroups: [""]
   resources: ["pods"]
   verbs: ["create","delete","get","list","patch","update","watch"]
@@ -24,18 +27,19 @@ rules:
   resources: ["secrets"]
   verbs: ["get"]
 ---
-apiVersion: rbac.authorization.k8s.io/v1beta1
-kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
 metadata:
   name: jenkins
   namespace: devops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
+  kind: ClusterRole
   name: jenkins
 subjects:
 - kind: ServiceAccount
   name: jenkins
+  namespace: devops
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
