@@ -103,6 +103,7 @@ data:
       matchNames:
         - infra
         - kube-system
+        - devops
     title: Launch Pad
 ---
 apiVersion: extensions/v1beta1

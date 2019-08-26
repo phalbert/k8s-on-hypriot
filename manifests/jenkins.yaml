@@ -17,29 +17,12 @@ metadata:
   namespace: devops
 data:
   plugins.txt: |
-    ansicolor
-    cloudbees-folder
     kubernetes
-    github
-    github-branch-source
-    environment-dashboard
-    workflow-multibranch
-    rebuild
-    mask-passwords
-    parameterized-trigger
-    show-build-parameters
-    extensible-choice-parameter
-    credentials-binding
-    validating-string-parameter
     timestamper
     greenballs
-    jobConfigHistory
-    workflow-aggregator
-    role-strategy
-    build-user-vars
-    shelve-project
-    flexible-publish
+    ansicolor
     prometheus
+    simple-theme
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -144,7 +127,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Tools"
+    forecastle.stakater.com/group: "Miscellaneous"
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png"
     forecastle.stakater.com/appName: Jenkins
 spec:
