@@ -33,7 +33,7 @@ spec:
           configMap:
             name: traefik-ingress-configmap
       containers:
-        - image: traefik
+        - image: traefik:maroilles
           name: traefik-ingress-controller
           imagePullPolicy: Always
           resources:
