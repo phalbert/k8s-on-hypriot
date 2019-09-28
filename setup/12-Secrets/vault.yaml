@@ -3,50 +3,144 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vault-config
+  namespace: vault
   labels:
     app: vault
 data:
   vault.hcl: |-
     storage "consul" {
         address = "127.0.0.1:8500"
-        path    = "vault/"
+        path = "vault/"
+        scheme = "http"
+        service = "vault"
+        service_tags = "vault,production"
+        session_ttl = "60s"
         disable_registration = "true"
     }
-
     listener "tcp" {
-        address         = "0.0.0.0:8200"
-        tls_disable     = 1
-        #tls_cert_file = "/config/server.crt"
-        #tls_key_file = "/config/server.key"
+        address = "0.0.0.0:8200"
+        tls_disable = 1
     }
-
-    #telemetry {
-    #  statsite_address = "127.0.0.1:8125"
-    #  disable_hostname = true
-    #}
-
     api_addr = "http://0.0.0.0:8200"
     cluster_address = "http://0.0.0.0:8201"
     disable_mlock = true
     ui = true
     max_lease_ttl = "10h"
     default_lease_ttl = "10h"
-    # raw_storage_endpoint = true
     cluster_name = "pi-vault"
-
+  consul.json: |-
+    {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-unseal-script
+  namespace: vault
+  labels:
+    app: vault
+data:
+  unseal.sh: |-
+    #!/bin/bash
+    # Enable job control
+    set -m
+    # Define optional variables
+    export TIMEOUT=5
+    export VAULT_HOST=${VAULT_HOST:-"127.0.0.1"}
+    export VAULT_TCP_PORT=${VAULT_TCP_PORT:-"8200"}
+    export VAULT_SCHEME=${VAULT_SCHEME:-"http"}
+    export VAULT_ADDR="${VAULT_SCHEME}://${VAULT_HOST}:${VAULT_TCP_PORT}"
+    export VAULT_SKIP_VERIFY="true"
+    export CONSUL_HOST=${CONSUL_HOST:-"127.0.0.1"}
+    export CONSUL_TCP_PORT=${CONSUL_TCP_PORT:-"8500"}
+    function unseal() {
+        # Unseal Vault instance
+        for key in "${keys[@]}"
+        do
+            key=$(echo $key | awk -F= '{ print $2 }')
+            echo "[ INFO ] Unsealing using key ${key}"
+            VAULT_ADDR="${VAULT_SCHEME}://${VAULT_HOST}:${VAULT_TCP_PORT}" vault operator unseal ${key} >/dev/null
+            if [[ $(vault status | grep 'Sealed' | awk '{ print $2 }') == "false" ]]; then
+                echo "[ INFO ] Vault is unsealed"
+            else
+                echo "[ WARNING ] Vault is sealed"
+            fi
+        done
+    }
+    echo "[ INFO ] Wait for Consul Client on ${CONSUL_HOST}:${CONSUL_TCP_PORT}"
+    sleep ${TIMEOUT}
+    until ncat -z ${CONSUL_HOST} ${CONSUL_TCP_PORT}
+    do
+        echo "Consul endpoint is unreachable. Sleeping for ${TIMEOUT} seconds."
+        sleep ${TIMEOUT}
+    done
+    echo -e "[ OK ] Consul is reachable"
+    echo "[ INFO ] Start Vault server in background"
+    vault server \
+        -config=/vault/config/vault.hcl >/dev/null &
+    if [ $? -ne 0 ]; then
+      echo -e "[ ERROR ] Failed to start Vault server: $?"
+      exit $?
+    fi
+    echo "[ INFO ] Wait for Vault on ${VAULT_HOST}:${VAULT_TCP_PORT}"
+    sleep ${TIMEOUT}
+    until ncat -z ${VAULT_HOST} ${VAULT_TCP_PORT}
+    do
+        echo "Vault process is unreachable. Sleeping for ${TIMEOUT} seconds."
+        sleep ${TIMEOUT}
+    done
+    echo -e "[ OK ] Vault is running"
+    # Get amount of keys needed to unseal Vault
+    KEYS_TRESHOLD=$(vault status | grep 'Threshold' | awk '{ print $2 }')
+    # echo ${KEYS_TRESHOLD}
+    # Get an array of unseal keys from environment variables
+    tmp=$(env | grep 'VAULT_UNSEAL_KEY_')
+    tmp2=$(echo $tmp)
+    IFS=' ' read -r -a keys <<< "$tmp2"
+    # echo "${keys[@]}"
+    # Get number of keys provided
+    KEYS_PROVIDED=$(echo "${#keys[@]}")
+    # echo "${KEYS_PROVIDED}"
+    # Verify if there is necessary amount of keys provided
+    if [ "${KEYS_TRESHOLD}" -gt "${KEYS_PROVIDED}" ]
+    then
+        echo -e "[ WARNING ] Number of keys provided [${KEYS_PROVIDED}] is less than needed [${KEYS_TRESHOLD}]"
+    else
+        # Check if Vault is initialized
+        if [[ $(vault status | grep 'Initialized' | awk '{ print $2 }') == "false" ]]; then
+            # Vault is not initialized
+            echo "[ WARNING ] Vault has not been initialized. Please initialize Vault before unsealing"
+        else
+            # Vault is initialized
+            echo "[ INFO ] Vault is initialized. Try to unseal..."
+            unseal
+        fi
+    fi
+    # Bring the Vault background process to foreground
+    fg
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vault-unseal-keys
+type: Opaque
+data:
+  VAULT_UNSEAL_KEY_1: SERBSnBmWDR0dHc2SHcwaFM3bTVzZWNCL3QvaUZZek5nVW80Vi9FcjA3bHUK
+  VAULT_UNSEAL_KEY_2: dmhXWXlFWWRiQmxCOWYrYnRwckEreHNFTFpNUWY1TUhXM1VUblhUdmQ3VGIK
+  VAULT_UNSEAL_KEY_3: VmhVOUtScE8zbmVDZExtZVgrQnBLdG52TTVoUVhYUEk4cVgyOFJINDU1L2kK
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: vault
+  namespace: vault
   labels:
     app: vault
-
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: vault
+  namespace: vault
   labels:
     app: vault
   annotations:
@@ -56,43 +150,27 @@ spec:
   selector:
     app: vault
   ports:
-  - name: api
-    protocol: TCP
-    port: 8200
-    targetPort: 8200
-  - name: cluster
-    protocol: TCP
-    port: 8201
-    targetPort: 8201
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: vault-ui
-  labels:
-    app: vault
-spec:
-  type: ClusterIP
-  selector:
-    app: vault
-  ports:
     - name: api
+      protocol: TCP
       port: 8200
-
+      targetPort: 8200
+    - name: cluster
+      protocol: TCP
+      port: 8201
+      targetPort: 8201
 ---
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: vault
+  namespace: vault
   labels:
     app: vault
 spec:
-  serviceName: vault
+  serviceName: "vault"
   replicas: 2
-  # strategy:
-  #   type: RollingUpdate
-  #   rollingUpdate:
-  #     maxUnavailable: 1
+  updateStrategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: vault
@@ -106,130 +184,178 @@ spec:
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
-                matchExpressions:
-                - key: app
-                  operator: In
-                  values:
-                  - vault
+                matchLabels:
+                  app: vault
               topologyKey: kubernetes.io/hostname
       terminationGracePeriodSeconds: 10
       containers:
-      - name: vault
-        image: vault:1.1.2
-        imagePullPolicy: IfNotPresent
-        command: ["vault", "server", "-dev", "-dev-listen-address", "[::]:8200"]
-        #command: ["vault", "server", "-config", "/vault/config/vault.hcl"]
-        ports:
-          - name: api
-            containerPort: 8200
-          - name: cluster
-            containerPort: 8201
-        resources: {}
-        env:
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: VAULT_ADDR
-            value: "http://$(POD_IP):8200"
-          - name: VAULT_CLUSTER_ADDR
-            value: "http://$(POD_IP):8201"
-          - name: VAULT_LOG_LEVEL
-            value: "debug"
-#        livenessProbe:
-#          httpGet:
-#            path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
-#            port: 8200
-#            scheme: HTTP
-#          initialDelaySeconds: 35
-#          periodSeconds: 10
-#        readinessProbe:
-#          httpGet:
-#            path: /v1/sys/health?sealedcode=204&standbycode=204&uninitcode=204&
-#            port: 8200
-#            scheme: HTTP
-#          initialDelaySeconds: 35
-#          periodSeconds: 10
-        securityContext:
-          readOnlyRootFilesystem: true
-          capabilities:
-            add:
-            - IPC_LOCK
-        volumeMounts:
-          - name: vault-config-file
-            mountPath: /vault/config/vault.hcl
-            subPath: vault.hcl
-          - name: vault-root
-            mountPath: /root/
-      - name: vault-consul-agent
-        image: consul:1.5.2
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          readOnlyRootFilesystem: true
-        env:
-          - name: POD_NAMESPACE
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.namespace
-          - name: CONSUL_GOSSIP_ENCRYPTION_KEY
-            value: ""
-          - name: CONSUL_AGENT_TOKEN
-            value: ""
-          - name: CONSUL_DATACENTER_NAME
-            value: "dc1"
-          - name: CONSUL_DOMAIN
-            value: "cluster.local"
-        command:
-          - "consul"
-        args:
-          - "agent"
-          - "-datacenter=$(CONSUL_DATACENTER_NAME)"
-          - "-retry-join=$(CONSUL_SERVICE_HOST)"
-          - "-client=0.0.0.0"
-          - "-bind=0.0.0.0"
-          - "-data-dir=/var/lib/consul"
-          - "-domain=$(CONSUL_DOMAIN)"
-          - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
-          - "-disable-host-node-id"
-        resources:
-          {}
-
-        volumeMounts:
-          - name: consul-data
-            mountPath: /var/lib/consul
-      serviceAccountName: vault
+        - name: vault
+          image: rebelinblue/vault:1.2.3
+          imagePullPolicy: Always
+          command: ["/bin/bash", "/opt/vault/unseal.sh"]
+          ports:
+            - name: api
+              containerPort: 8200
+              protocol: "TCP"
+            - name: cluster
+              containerPort: 8201
+              protocol: "TCP"
+          env:
+            - name: ENVIRONMENT
+              value: production
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: VAULT_ADDR
+              value: "http://$(POD_IP):8200"
+            - name: VAULT_CLUSTER_ADDR
+              value: "http://$(POD_IP):8201"
+            - name: VAULT_LOG_LEVEL
+              value: "debug"
+            - name: VAULT_UNSEAL_KEY_1
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: VAULT_UNSEAL_KEY_1
+            - name: VAULT_UNSEAL_KEY_2
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: VAULT_UNSEAL_KEY_2
+            - name: VAULT_UNSEAL_KEY_3
+              valueFrom:
+                secretKeyRef:
+                  name: vault-unseal-keys
+                  key: VAULT_UNSEAL_KEY_3
+          livenessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
+              port: 8200
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
+              port: 8200
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          securityContext:
+            readOnlyRootFilesystem: true
+            capabilities:
+              add:
+                - IPC_LOCK
+          volumeMounts:
+            - name: vault-config-file
+              mountPath: /vault/config/vault.hcl
+              subPath: vault.hcl
+            - name: vault-unseal-script
+              mountPath: /opt/vault/unseal.sh
+              subPath: unseal.sh
+            - name: vault-root
+              mountPath: /root/
+            - name: vault-temp
+              mountPath: /tmp/
+        - name: consul-client
+          image: consul:1.6.1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            readOnlyRootFilesystem: true
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONSUL_GOSSIP_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: consul-gossip-key
+                  key: gossip-key
+            - name: CONSUL_DATACENTER_NAME
+              value: "dc1"
+            - name: CONSUL_DOMAIN
+              value: "cluster.local"
+          command:
+            - "consul"
+          args:
+            - "agent"
+            - "-node=$(POD_NAME)"
+            - "-datacenter=$(CONSUL_DATACENTER_NAME)"
+            - "-client=0.0.0.0"
+            - "-bind=0.0.0.0"
+            - "-data-dir=/var/lib/consul"
+            - "-config-dir=/consul/config"
+            - "-domain=$(CONSUL_DOMAIN)"
+            - "-retry-join=$(CONSUL_SERVICE_HOST)"
+            - "-disable-host-node-id"
+            - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
+          resources:
+            limits:
+              cpu: "300m"
+              memory: 256Mi
+            requests:
+              cpu: "150m"
+              memory: 128Mi
+          volumeMounts:
+            - name: consul-data
+              mountPath: /var/lib/consul
+            - name: vault-config-file
+              mountPath: /consul/config/consul.json
+              subPath: consul.json
+      serviceAccountName: "vault"
       volumes:
         - name: vault-config-file
           configMap:
             name: vault-config
+        - name: vault-unseal-script
+          configMap:
+            name: vault-unseal-script
         - name: vault-root
+          emptyDir: {}
+        - name: vault-temp
           emptyDir: {}
         - name: consul-data
           emptyDir: {}
-
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: vault-ui
+  namespace: vault
   labels:
     app: vault
   annotations:
-    kubernetes.io/ingress.class: "traefik"
+    kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/appName: "Vault"
-    forecastle.stakater.com/group: "Tools"
-    # forecastle.stakater.com/icon: "https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png"
+    forecastle.stakater.com/group: "Secrets"
+    forecastle.stakater.com/icon: "https://s3.amazonaws.com/hashicorp-marketing-web-assets/brand/Vault_VerticalLogo_FullColor.B1xPC0pSax.svg"
+    forecastle.stakater.com/appName: Vault
 spec:
   rules:
     - host: vault.cluster.local
       http:
         paths:
-          - path: /
-            backend:
-              serviceName: vault-ui
+          - backend:
+              serviceName: vault
               servicePort: 8200
+            path: /
