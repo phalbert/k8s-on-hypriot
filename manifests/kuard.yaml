@@ -50,7 +50,7 @@ metadata:
 type: Opaque
 data:
   role_id: MDZhZDYwOGUtZjRlMC00Yjk3LWJjMjEtNmJmYTIxNzdiMDI4Cg==
-  secret_id: NjRjMTY4NWYtOWQzYi1iNDUyLTQ0M2MtZjM4MDFjMTMxYmYxCg==
+  secret_id: MTU1MDBjNDQtMTJiYy03ZTZjLTE1MmMtNTc2YmE1OTZkM2Y4Cg==
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -97,7 +97,7 @@ spec:
           args:
             - if [ -r /env/secrets ]; then source /env/secrets; fi; /kuard $(EXTRA_PARAM)
           command:
-            - /bin/bash
+            - /bin/sh
             - -c
           ports:
             - containerPort: 8080
