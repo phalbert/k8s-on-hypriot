@@ -49,8 +49,8 @@ metadata:
     app: kuard
 type: Opaque
 data:
-  secret_id: ODQ2ZjIzODktZGYwNy0wNzAzLWUzMWUtZTMwNzBhNDYwOGU1Cg==
   role_id: MDZhZDYwOGUtZjRlMC00Yjk3LWJjMjEtNmJmYTIxNzdiMDI4Cg==
+  secret_id: NjRjMTY4NWYtOWQzYi1iNDUyLTQ0M2MtZjM4MDFjMTMxYmYxCg==
 ---
 apiVersion: apps/v1
 kind: Deployment

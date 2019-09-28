@@ -39,21 +39,17 @@ if [[ $1 = "confd" ]]; then
     echo $(sed -n 's/.*="\/\(.*\)\/.*/\1/ip;T' secrets.lst | uniq | sed -e 's/^/"/' | sed -e 's/$/"/' | sed -e 's/$/,/' | sed ':a;N;$!ba;s/\n/ /g') | sed -e 's/,$//' | sed -e 's/^/    /' >> /etc/confd/conf.d/secrets.toml
     echo -e "]" >> /etc/confd/conf.d/secrets.toml
 
-
     JSON_STRING=$(jq -c -n --arg role_id $VAULT_ROLE_ID --arg secret_id $VAULT_SECRET_ID "{ role_id: \$role_id, secret_id: \$secret_id }")
 
     # Obtain the Vault client token
-    VAULT_TOKEN=$(curl \
+    RES=$(curl \
         --silent \
         --data "${JSON_STRING}" \
-        --request POST "${VAULT_SCHEME}://${VAULT_HOST_ADDR}:${VAULT_TCP_PORT}/v1/auth/approle/login" | \
-        jq -r .auth.client_token)
+        --request POST "${VAULT_SCHEME}://${VAULT_HOST_ADDR}:${VAULT_TCP_PORT}/v1/auth/approle/login")
 
-echo "${JSON_STRING}"
-        curl \
-        --silent \
-        --data "${JSON_STRING}" \
-        --request POST "${VAULT_SCHEME}://${VAULT_HOST_ADDR}:${VAULT_TCP_PORT}/v1/auth/approle/login"
+    echo $RES
+
+    VAULT_TOKEN=$(echo $RES | jq -r .auth.client_token)
 
     # Verify the token received
     if [ "$?" -eq 0 ] && [ "${VAULT_TOKEN}" != "null" ]; then
