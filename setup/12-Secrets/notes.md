@@ -15,11 +15,9 @@ vault write auth/approle/role/kuard \
 
      vault read auth/approle/role/kuard/role-id
 
+vault audit enable file file_path=stdout
 
      vault write -force auth/approle/role/kuard/secret-id
-
-
-
 
 curl \
     -H "X-Vault-Token: $VAULT_TOKEN" \
@@ -32,3 +30,12 @@ curl \
     -H "X-Vault-Token: $VAULT_TOKEN" \
     -X GET \
     $VAULT_ADDR/v1/apps/data/hello
+    
+    
+    
+    set -xg JSON (jq -c -n --arg role_id 'd28e32a5-ce31-0013-b585-5fce406e2ca1' --arg secret_id '572f449f-4d52-11be-4436-5b2dc1a0dfc8' "{ role_id: \$role_id, secret_id: \$secret_id }")
+
+curl \
+          --silent \
+          --data $JSON \
+  --request POST "http://localhost:8200/v1/auth/approle/login"
