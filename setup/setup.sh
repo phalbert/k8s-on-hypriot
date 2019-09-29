@@ -74,8 +74,8 @@ kubectl -n infra apply -f 10-Blinkt/
 e_header "Installing Forecastle"
 kubectl -n infra apply -f 11-Others/forecastle.yaml
 
-e_header "Installing Reloader"
-kubectl -n infra apply -f 11-Others/reloader.yaml
+#e_header "Installing Reloader"
+#kubectl -n infra apply -f 11-Others/reloader.yaml
 
 e_header "Installing Kubeview"
 kubectl -n infra apply -f 11-Others/kubeview.yaml

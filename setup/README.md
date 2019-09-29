@@ -69,6 +69,9 @@ sudo apt install -y isc-dhcp-server nfs-server rfkill
 sudo apt autoremove -y
 sudo systemctl disable dhcpcd.service
 sudo systemctl stop dhcpcd.service
+
+sudo systemctl enable isc-dhcp-server.service
+sudo systemctl start isc-dhcp-server.service
 ```
 
 Edit `/etc/dhcp/dhcpd.conf`
