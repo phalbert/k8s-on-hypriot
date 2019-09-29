@@ -46,6 +46,10 @@ Disable `eth0` in `/etc/network/interfaces.d/50-cloud-init.cfg`
 
 ### On master and all nodes
 
+Edit `/etc/locale.gen` and uncomment the line `# en_GB.UTF-8 UTF-8`
+
+Run `sudo locale-gen en_GB.UTF-8`
+
 Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```
@@ -100,7 +104,7 @@ host node-3 {
 }
 ```
 
-##### On master and all nodes /etc/dhcpcd.conf
+##### On master and all nodes `/etc/dhcpcd.conf`
 
 ```
 denyinterfaces cni*,docker*,wlan*,flannel*,veth*
@@ -171,7 +175,6 @@ sudo chown -R pirate:pirate /media/usb
 Edit `/etc/fstab`
 
 ```
-#UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw,uid=pirate,gid=pirate 0 0
 UUID=.... /media/usb ext4 auto,nofail,noatime,users,rw 0 0
 ```
 
