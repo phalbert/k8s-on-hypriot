@@ -348,7 +348,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Secrets"
-    forecastle.stakater.com/icon: "https://s3.amazonaws.com/hashicorp-marketing-web-assets/brand/Vault_VerticalLogo_FullColor.B1xPC0pSax.svg"
+    forecastle.stakater.com/icon: "https://user-images.githubusercontent.com/2453622/54834310-282a6200-4c7d-11e9-8c33-f42be81553a1.png"
     forecastle.stakater.com/appName: Vault
 spec:
   rules:
