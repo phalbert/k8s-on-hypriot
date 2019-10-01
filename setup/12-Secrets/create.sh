@@ -57,10 +57,11 @@ else
 fi
 
 cat >${VAULT_POLICY_FILE}<<EOF
-path "/apps/${KUBERNETES_NAMESPACE}/${KUBERNETES_APPLICATION}/*" {
+path "apps/${KUBERNETES_NAMESPACE}/${KUBERNETES_APPLICATION}/*" {
    capabilities = ["read"]
 }
-path "/apps/${KUBERNETES_NAMESPACE}/shared/*" {
+
+path "apps/${KUBERNETES_NAMESPACE}/shared/*" {
    capabilities = ["read"]
 }
 EOF

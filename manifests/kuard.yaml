@@ -63,7 +63,7 @@ spec:
   template:
     metadata:
       annotations:
-        SECRET_FOO: /apps/test/kuard/FOO
+        SECRET_FOO: /apps/test/kuard/misc/FOO
       labels:
         app: kuard
         blinktShow: "true"
