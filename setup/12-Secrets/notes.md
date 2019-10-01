@@ -24,6 +24,7 @@ curl -H "X-Vault-Token: $VAULT_TOKEN" -X GET $VAULT_ADDR/v1/apps/data/hello
     
 vault write auth/approle/role/kuard secret_id_ttl="" token_num_uses=0 token_ttl="" token_max_ttl="" secret_id_num_uses=0 policies="kuard"
 vault write auth/userpass/users/stephen password="???" policies="admin"
+vault audit enable file file_path=stdout
 
 admin.hcl
 path "*" {
