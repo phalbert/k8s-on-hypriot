@@ -30,3 +30,12 @@ admin.hcl
 path "*" {
   capabilities = [ "create", "read", "update", "delete", "list", "sudo" ]
 }
+
+metrics.hcl
+path "sys/metrics*"
+{
+  capabilities = ["read", "list"]
+}
+
+vault token create -policy=metrics -display-name=prometheus -no-default-policy
+curl -H "X-Vault-Token: $VAULT_TOKEN" -X GET "$VAULT_ADDR/v1/sys/metrics?format=prometheus"
