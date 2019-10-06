@@ -36,7 +36,7 @@ scrape_configs:
     metrics_path: "/v1/sys/metrics"
     params:
       format: ['prometheus']
-    bearer_token: s.WzEjYfyRBvdXZ6GoW7nBnW9h
+    bearer_token: s.brVZ623SwKfiYg1WjVWqDcS6
 
   - job_name: prometheus
     kubernetes_sd_configs:

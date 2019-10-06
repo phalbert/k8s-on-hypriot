@@ -13,31 +13,29 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: consul-server-config
+  name: consul-config
   namespace: vault
   labels:
     app: consul
 data:
-  server.json: |-
-    {
-      "primary_datacenter": "dc1",
-      "skip_leave_on_interrupt": true,
-      "leave_on_terminate" : false,
-      "rejoin_after_leave": true,
-      "log_level": "INFO",
-      "addresses": {
-        "https": "0.0.0.0"
-      },
-      "ports": {
-        "http": 8500,
-        "server": 9300,
-        "https": -1
-      },
-      "performance": {
-        "raft_multiplier": 1
-      },
-      "disable_remote_exec": true
+  consul.hcl: |-
+    addresses = {
+      https = "0.0.0.0"
     }
+    ports = {
+      http = 8500,
+      server = 9300,
+      https = -1
+    }
+    performance = {
+      raft_multiplier = 1
+    }
+    primary_datacenter = "dc1"
+    skip_leave_on_interrupt = true,
+    leave_on_terminate = false
+    rejoin_after_leave = true
+    log_level = "INFO"
+    disable_remote_exec = true
 ---
 apiVersion: v1
 kind: Service
@@ -196,7 +194,7 @@ spec:
             - "-datacenter=$(CONSUL_DATACENTER_NAME)"
             - "-data-dir=/var/lib/consul"
             - "-config-dir=/consul/config"
-            - "-config-file=/etc/consul/config/server.json"
+            - "-config-file=/etc/consul/config/consul.hcl"
             - "-log-level=INFO"
             - "-client=0.0.0.0"
             - "-bind=0.0.0.0"
@@ -207,14 +205,14 @@ spec:
             - "-retry-join=$(CONSUL_STATEFULSET_NAME)-1.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
             - "-retry-join=$(CONSUL_STATEFULSET_NAME)-2.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
             - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
-          livenessProbe:
-            exec:
-              command:
-                - consul
-                - members
-                - -http-addr=http://127.0.0.1:8500
-            initialDelaySeconds: 60
-            timeoutSeconds: 5
+#          livenessProbe:
+#            exec:
+#              command:
+#                - consul
+#                - members
+#                - -http-addr=http://127.0.0.1:8500
+#            initialDelaySeconds: 60
+#            timeoutSeconds: 5
           lifecycle:
             preStop:
               exec:
@@ -232,10 +230,10 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: consul-server-config
+            name: consul-config
             items:
-              - key: server.json
-                path: server.json
+              - key: consul.hcl
+                path: consul.hcl
   volumeClaimTemplates:
     - metadata:
         name: datadir
