@@ -205,14 +205,14 @@ spec:
             - "-retry-join=$(CONSUL_STATEFULSET_NAME)-1.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
             - "-retry-join=$(CONSUL_STATEFULSET_NAME)-2.$(CONSUL_STATEFULSET_NAME).$(POD_NAMESPACE).svc.$(CONSUL_DOMAIN)"
             - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
-#          livenessProbe:
-#            exec:
-#              command:
-#                - consul
-#                - members
-#                - -http-addr=http://127.0.0.1:8500
-#            initialDelaySeconds: 60
-#            timeoutSeconds: 5
+          livenessProbe:
+            exec:
+              command:
+                - consul
+                - members
+                - -http-addr=http://127.0.0.1:8500
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
           lifecycle:
             preStop:
               exec:
