@@ -84,7 +84,7 @@ spec:
           image: gcr.io/kuar-demo/kuard-arm:purple
           imagePullPolicy: Always
           args:
-            - if [ -r /env/secrets ]; then source /env/secrets; fi; /kuard $(EXTRA_PARAM)
+            - if [ -r /env/secrets ]; then source /env/secrets && rm -f /env/secrets; fi; /kuard $(EXTRA_PARAM)
           command:
             - /bin/sh
             - -c
@@ -138,12 +138,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: role_id
-                  name: test-kuard-approle
+                  name: kuard-approle
             - name: VAULT_SECRET_ID
               valueFrom:
                 secretKeyRef:
                   key: secret_id
-                  name: test-kuard-approle
+                  name: kuard-approle
           volumeMounts:
             - mountPath: /env
               name: env
