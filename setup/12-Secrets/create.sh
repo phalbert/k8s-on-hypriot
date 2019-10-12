@@ -106,10 +106,11 @@ else
 apiVersion: v1
 kind: Secret
 metadata:
-   name: ${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}-approle
+   name: ${KUBERNETES_APPLICATION}-approle
    namespace: ${KUBERNETES_NAMESPACE}
    labels:
        app: ${KUBERNETES_APPLICATION}
+       role: approle
 type: Opaque
 data:
    role_id: $(echo -n "${ROLE_ID}" | base64)
@@ -117,8 +118,8 @@ data:
 
    kubectl -n ${KUBERNETES_NAMESPACE} apply -f /tmp/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}.yaml >/dev/null
 
-   if [[ "$(kubectl -n ${KUBERNETES_NAMESPACE} get secrets | grep ${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}-approle | awk '{ print $1 }')" == "${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}-approle" ]]; then
-       echo -e "[ INFO ] Secret created: ${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}-approle"
+   if [[ "$(kubectl -n ${KUBERNETES_NAMESPACE} get secrets | grep ${KUBERNETES_APPLICATION}-approle | awk '{ print $1 }')" == "${KUBERNETES_APPLICATION}-approle" ]]; then
+       echo -e "[ INFO ] Secret created: ${KUBERNETES_APPLICATION}-approle in ${KUBERNETES_NAMESPACE} namespace"
        rm -f /tmp/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}.yaml
    else
        echo -e "[ WARNING ] Secret has not been created. One can create is manually: kubectl -n ${KUBERNETES_NAMESPACE} apply -f /tmp/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}.yaml"
