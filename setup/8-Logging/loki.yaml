@@ -152,7 +152,7 @@ spec:
       serviceAccountName: loki
       containers:
         - name: loki
-          image: rebelinblue/loki:latest
+          image: grafana/loki:v0.4.0-arm
           imagePullPolicy: Always
           args:
             - -config.file=/etc/loki/loki.yaml

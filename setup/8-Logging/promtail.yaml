@@ -118,7 +118,7 @@ spec:
       serviceAccountName: promtail
       containers:
         - name: promtail
-          image: rebelinblue/promtail:latest
+          image: grafana/promtail:v0.4.0-arm
           imagePullPolicy: Always
           args:
             - -config.file=/etc/promtail/promtail.yaml

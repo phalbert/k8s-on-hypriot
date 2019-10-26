@@ -216,12 +216,12 @@ sudo rm -rf /var/log/{containers,pods}
 ### On master
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--no-deploy traefik" sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 INSTALL_K3S_EXEC="--no-deploy traefik" sh -
 sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
 ### On nodes (replace XXX with the output of the previous command)
 
 ```bash
-curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=... sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=... sh -
 ```

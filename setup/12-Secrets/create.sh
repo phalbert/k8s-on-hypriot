@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # Usage:
-# vaultutil.sh env_name app_name
+# create.sh env_name app_name
 
 # Examples:
-# ./vaultutil.sh prod testapp
+# ./create.sh prod testapp
 
 set -e
 
 # Variables
-#VAULT_HOST=
-#VAULT_PORT="443"
-#VAULT_TOKEN=""
-#VAULT_ADDR="${VAULT_HOST}:${VAULT_PORT}"
+#export VAULT_HOST=
+#export VAULT_PORT="443"
+#export VAULT_TOKEN=""
+#export VAULT_ADDR="${VAULT_HOST}:${VAULT_PORT}"
 
 if [[ -z $1 ]]; then
    echo "Namespace must be provided explicitly";

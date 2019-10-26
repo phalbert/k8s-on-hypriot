@@ -5,10 +5,9 @@ set -e
 #kubectl -n vault port-forward vault-0 8200:8200
 
 # Variables
-#VAULT_TOKEN=""
-#VAULT_ADDR=""
-#VAULT_TOKEN=$(curl --slient  --data '{ "role_id": "68cee7b8-b8bb-ec1e-20b9-88d87a510833", "secret_id": "d33377fe-41b6-f54e-1063-b440301256b8" }' --request POST "${VAULT_ADDR}/v1/auth/approle/login")
-
+#export VAULT_TOKEN=""
+#export VAULT_ADDR="http://localhost:8200"
+#export VAULT_TOKEN=$(curl --slient  --data '{ "role_id": "68cee7b8-b8bb-ec1e-20b9-88d87a510833", "secret_id": "d33377fe-41b6-f54e-1063-b440301256b8" }' --request POST "${VAULT_ADDR}/v1/auth/approle/login")
 
 #if [[ -z $1 ]]; then
 #   echo "Password must be provided explicitly";

@@ -81,7 +81,7 @@ spec:
     spec:
       containers:
         - name: prometheus-blackbox-exporter
-          image: lwolf/blackbox-exporter:v0.14.0-armv6
+          image: lwolf/blackbox-exporter:v0.15.1-armv6
           imagePullPolicy: IfNotPresent
           args:
             - --config.file=/etc/config/blackbox.yaml

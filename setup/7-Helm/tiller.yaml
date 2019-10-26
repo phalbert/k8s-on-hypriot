@@ -21,7 +21,7 @@ spec:
       serviceAccountName: tiller
       containers:
         - name: tiller
-          image: jessestuart/tiller:v2.14.2
+          image: jessestuart/tiller:v2.15.0
           imagePullPolicy: IfNotPresent
           env:
             - name: TILLER_NAMESPACE
