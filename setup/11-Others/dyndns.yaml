@@ -1,0 +1,43 @@
+#---
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: dyndns
+#  namespace: infra
+#type: Opaque
+#data:
+#  token: <REDACTED>
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dyndns
+  namespace: infra
+  labels:
+    app: dyndns
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: dyndns
+  template:
+    metadata:
+      labels:
+        app: dyndns
+    spec:
+      containers:
+        - name: dyndns
+          image: rebelinblue/dyndns:0.0.1
+          env:
+            - name: FREQUENCY
+              value: "15"
+            - name: HOST
+              value: ~
+            - name: DOMAIN
+              value: cluster.rebelinblue.com
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: dyndns
+                  key: token
