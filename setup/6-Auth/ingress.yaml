@@ -1,0 +1,18 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-forward-auth
+  namespace: infra
+  labels:
+    app: traefik-forward-auth
+spec:
+  rules:
+    - host: auth.cluster.rebelinblue.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: traefik-forward-auth
+              servicePort: 4181
+    

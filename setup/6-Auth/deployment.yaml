@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: traefik-forward-auth
+  namespace: infra
+  labels:
+    app: traefik-forward-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik-forward-auth
+  template:
+    metadata:
+      labels:
+        app: traefik-forward-auth
+    spec:
+      containers:
+      - name: traefik-forward-auth
+        image: lbischof/traefik-forward-auth
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: WHITELIST
+            value: stephen.ball@gmail.com
+          - name: CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: traefik-forward-auth
+                key: client-id
+          - name: CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: traefik-forward-auth
+                key: client-secret
+          - name: SECRET
+            valueFrom:
+              secretKeyRef:
+                name: traefik-forward-auth
+                key: cookie-secret
+          - name: INSECURE_COOKIE
+            value: "true"
+          - name: DOMAIN
+            value: cluster.rebelinblue.com
+          - name: AUTH_HOST
+            value: auth.cluster.rebelinblue.com
+        ports:
+          - containerPort: 4181
+            name: http
+            protocol: TCP
