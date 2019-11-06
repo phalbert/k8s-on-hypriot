@@ -28,6 +28,14 @@ kubectl -n infra apply -f infra.yaml
 #e_header "Installing MetalLB"
 #kubectl -n infra apply -f 2-MetalLB/
 
+e_header "Installing NFS Storage"
+kubectl -n infra apply -f 1-NFS_Storage/
+kubectl -n infra patch storageclass nfs-hdd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
+
+e_header "Installing Consul"
+kubectl -n infra apply -f 2-Consul/
+
 # Traefik is included with k3s but I prefer my setup
 e_header "Installing Traefik"
 kubectl -n infra apply -f 3-Traefik/
@@ -37,11 +45,6 @@ kubectl -n kube-system apply -f 4-Dashboard/
 
 e_header "Installing Metrics Server"
 kubectl -n kube-system apply -f 5-Metrics-server/
-
-e_header "Installing NFS Storage"
-kubectl -n infra apply -f 6-NFS_Storage/
-kubectl -n infra patch storageclass nfs-hdd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
-kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spec": {"template": {"spec": {"nodeSelector": {"beta.kubernetes.io/arch": "arm"}}}}}'
 
 e_header "Installing Helm"
 kubectl -n kube-system apply -f 7-Helm/

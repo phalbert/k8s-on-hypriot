@@ -112,15 +112,11 @@ kind: Ingress
 metadata:
   name: forecastle
   namespace: infra
+  annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
-    - host: launchpad.cluster.local
-      http:
-        paths:
-          - path: /
-            backend:
-              serviceName: forecastle
-              servicePort: 80
     - host: launchpad.cluster.rebelinblue.com
       http:
         paths:

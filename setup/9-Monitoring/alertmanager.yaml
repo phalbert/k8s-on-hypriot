@@ -112,7 +112,7 @@ spec:
           args:
             - --config.file=/etc/alertmanager/config.yml
             - --storage.path=/alertmanager
-            - --web.external-url=http://alertmanager.cluster.local
+            - --web.external-url=http://alertmanager.cluster.rebelinblue.com
           ports:
             - name: alertmanager
               containerPort: 9093
@@ -170,6 +170,8 @@ metadata:
   labels:
     name: alertmanager
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/appName: "Alert Manager"
@@ -177,7 +179,7 @@ metadata:
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
 spec:
   rules:
-    - host: alertmanager.cluster.local
+    - host: alertmanager.cluster.rebelinblue.com
       http:
         paths:
           - path: /

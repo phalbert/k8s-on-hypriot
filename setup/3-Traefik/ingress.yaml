@@ -5,6 +5,8 @@ metadata:
   name: traefik-ingress-controller-dashboard-ingress
   namespace: infra
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Dashboards"
@@ -15,7 +17,7 @@ metadata:
     # traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
   rules:
-    - host: traefik.cluster.local
+    - host: traefik.cluster.rebelinblue.com
       http:
         paths:
         - path: /

@@ -164,7 +164,6 @@ metadata:
   namespace: kube-system
   annotations:
     kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/frontend-entry-points: http,https
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
     forecastle.stakater.com/expose: "true"
@@ -173,7 +172,7 @@ metadata:
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/kubernetes.png"
 spec:
   rules:
-    - host: dashboard.cluster.local
+    - host: dashboard.cluster.rebelinblue.com
       http:
         paths:
           - backend:

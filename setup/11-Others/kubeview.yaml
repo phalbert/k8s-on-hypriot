@@ -87,6 +87,8 @@ metadata:
   name: kubeview
   namespace: infra
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Miscellaneous"
@@ -94,7 +96,7 @@ metadata:
     forecastle.stakater.com/appName: KubeView
 spec:
   rules:
-    - host: kubeview.cluster.local
+    - host: kubeview.cluster.rebelinblue.com
       http:
         paths:
           - path: /

@@ -208,7 +208,7 @@ sudo update-rc.d nfs-common enable
 ```bash
 sudo apt-get -y remove --purge containerd.io docker-ce docker-ce-cli && sudo apt-get autoremove -y --purge
 sudo reboot
-sudo rm -rf /etc/cni /var/lib/docker /var/lib/containerd /etc/containerd /etc/docker /var/lib/cni
+sudo rm -rf /var/lib/{docker,containerd} /etc/{cni,containerd,docker} /var/lib/cni
 sudo reboot
 sudo rm -rf /var/log/{containers,pods}
 ```

@@ -6,19 +6,40 @@ metadata:
   namespace: infra
 data:
   traefik.toml: |
-    defaultEntryPoints = ["http","https"]
+    defaultEntryPoints = ["http", "https"]
+
+    [acme]
+      email = "letsencrypt@stephen.rebelinblue.com"
+      entryPoint = "https"
+      acmeLogging = true
+      storage = "traefik-external-certificates/acme/account"
+      OnHostRule = true
+
+      [acme.httpChallenge]
+        entryPoint = "http"
+
+      #[acme.dnsChallenge]
+      #  provider = "linodev4"
+
+      #[[acme.domains]]
+      #  main = "*.cluster.rebelinblue.com"
+
+    [consul]
+      endpoint = "consul.infra.svc:8500"
+      watch = true
+      prefix = "traefik"
 
     [entryPoints]
-
       [entryPoints.http]
-      address = ":80"
+        address = ":80"
 
       [entryPoints.https]
-      address = ":443"
+        address = ":443"
+
         [entryPoints.https.tls]
-          [[entryPoints.https.tls.certificates]]
-          CertFile = "/ssl/tls.crt"
-          KeyFile = "/ssl/tls.key"
+        #  [[entryPoints.https.tls.certificates]]
+        #  CertFile = "/ssl/tls.crt"
+        #  KeyFile = "/ssl/tls.key"
 
       [entryPoints.traefik]
         address = ":8080"
@@ -28,10 +49,10 @@ data:
         publishedService = "infra/traefik-ingress-controller-http-service"
 
     [ping]
-    entryPoint = "http"
+      entryPoint = "http"
 
     [api]
-    entryPoint = "traefik"
+      entryPoint = "traefik"
 
     [metrics]
       [metrics.prometheus]

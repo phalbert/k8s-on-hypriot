@@ -64,7 +64,7 @@ spec:
             - --storage.tsdb.no-lockfile
             - --web.enable-lifecycle
             - --web.enable-admin-api
-            - --web.external-url=http://prometheus.cluster.local
+            - --web.external-url=http://prometheus.cluster.rebelinblue.com
           ports:
             - name: prometheus
               containerPort: 9090
@@ -112,13 +112,15 @@ metadata:
   name: prometheus
   namespace: infra
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Prometheus"
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
 spec:
   rules:
-    - host: prometheus.cluster.local
+    - host: prometheus.cluster.rebelinblue.com
       http:
         paths:
           - path: /

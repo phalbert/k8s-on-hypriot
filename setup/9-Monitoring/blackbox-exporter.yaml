@@ -45,6 +45,8 @@ metadata:
   labels:
     name: blackbox-exporter
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/appName: "Blackbox Exporter"
@@ -52,7 +54,7 @@ metadata:
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
 spec:
   rules:
-    - host: blackbox.cluster.local
+    - host: blackbox.cluster.rebelinblue.com
       http:
         paths:
           - path: /

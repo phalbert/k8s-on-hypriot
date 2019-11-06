@@ -258,13 +258,15 @@ metadata:
   labels:
     k8s-app: grafana
   annotations:
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Dashboards"
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/grafana.png"
 spec:
   rules:
-    - host: grafana.cluster.local
+    - host: grafana.cluster.rebelinblue.com
       http:
         paths:
           - path: /

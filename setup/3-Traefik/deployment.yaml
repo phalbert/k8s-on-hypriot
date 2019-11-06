@@ -26,15 +26,21 @@ spec:
       serviceAccountName: traefik-ingress-serviceaccount
       terminationGracePeriodSeconds: 35
       volumes:
-        - name: traefik-ui-tls-cert
-          secret:
-            secretName: traefik-ui-tls-cert
+        #- name: traefik-ui-tls-cert
+        #  secret:
+        #    secretName: traefik-ui-tls-cert
         - name: traefik-ingress-configmap
           configMap:
             name: traefik-ingress-configmap
       containers:
         - image: traefik:maroilles
           name: traefik-ingress-controller
+          env:
+            - name: LINODE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: linode-dynamic-dns
+                  key: token
           imagePullPolicy: Always
           resources:
             limits:
@@ -59,8 +65,8 @@ spec:
               scheme: HTTP
             periodSeconds: 5
           volumeMounts:
-            - mountPath: "/ssl"
-              name: "traefik-ui-tls-cert"
+            #- mountPath: "/ssl"
+            #  name: "traefik-ui-tls-cert"
             - mountPath: "/config"
               name: "traefik-ingress-configmap"
           ports:

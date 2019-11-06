@@ -2,7 +2,7 @@
 #apiVersion: v1
 #kind: Secret
 #metadata:
-#  name: dyndns
+#  name: linode-dynamic-dns
 #  namespace: infra
 #type: Opaque
 #data:
@@ -11,20 +11,20 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: dyndns
+  name: linode-dynamic-dns
   namespace: infra
   labels:
-    app: dyndns
+    app: linode-dynamic-dns
 spec:
   replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: dyndns
+      app: linode-dynamic-dns
   template:
     metadata:
       labels:
-        app: dyndns
+        app: linode-dynamic-dns
     spec:
       containers:
         - name: dyndns
@@ -39,5 +39,5 @@ spec:
             - name: TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: dyndns
+                  name: linode-dynamic-dns
                   key: token
