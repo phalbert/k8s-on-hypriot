@@ -170,6 +170,8 @@ metadata:
   labels:
     name: alertmanager
   annotations:
+    ingress.kubernetes.io/auth-type: forward
+    ingress.kubernetes.io/auth-url: "http://traefik-forward-auth.infra.svc:4181"
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
     kubernetes.io/ingress.class: traefik
