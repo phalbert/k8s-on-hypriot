@@ -40,7 +40,7 @@ if [[ $1 = "confd" ]]; then
     fi
 
     echo -e "[ INFO ] Parse secrets list into a confd template"
-    sed -e 's/="/="{{getv "/' secrets.lst | sed -e 's/"$/"}}"/g' | sed -e 's/^/export /' > /etc/confd/templates/secrets.tmpl
+    sed -e 's/="/='\''{{getv "/' /secrets.lst | sed -e 's/"$/"}}"/g' | sed -e 's/^/export /' | sed -e 's/}}"/}}'\''/g' > /etc/confd/templates/secrets.tmpl
 
     echo -e "[ INFO ] Generate a confd TOML file"
     echo -e "[template]\nsrc = \"secrets.tmpl\"\ndest = \"/env/secrets\"\nkeys = [" > /etc/confd/conf.d/secrets.toml
