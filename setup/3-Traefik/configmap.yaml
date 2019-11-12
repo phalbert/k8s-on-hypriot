@@ -8,21 +8,21 @@ data:
   traefik.toml: |
     defaultEntryPoints = ["http", "https"]
 
-    [acme]
-      email = "letsencrypt@stephen.rebelinblue.com"
-      entryPoint = "https"
-      acmeLogging = true
-      storage = "traefik-external-certificates/acme/account"
-      OnHostRule = true
-
-      [acme.httpChallenge]
-        entryPoint = "http"
-
-      #[acme.dnsChallenge]
-      #  provider = "linodev4"
-
-      #[[acme.domains]]
-      #  main = "*.cluster.rebelinblue.com"
+    #[acme]
+    #  email = "letsencrypt@stephen.rebelinblue.com"
+    #  entryPoint = "https"
+    #  acmeLogging = true
+    #  storage = "traefik-external-certificates/acme/account"
+    #  OnHostRule = true
+    #
+    #  [acme.httpChallenge]
+    #    entryPoint = "http"
+    #
+    #  #[acme.dnsChallenge]
+    #  #  provider = "linodev4"
+    #
+    #  #[[acme.domains]]
+    #  #  main = "*.cluster.rebelinblue.com"
 
     [consul]
       endpoint = "consul.infra.svc:8500"
