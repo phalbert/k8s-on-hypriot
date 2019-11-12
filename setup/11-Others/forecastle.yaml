@@ -113,6 +113,7 @@ metadata:
   name: forecastle
   namespace: infra
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
 spec:
@@ -124,3 +125,7 @@ spec:
             backend:
               serviceName: forecastle
               servicePort: 80
+  tls:
+    - hosts:
+        - launchpad.cluster.rebelinblue.com
+      secretName: forecastle-tls

@@ -258,6 +258,7 @@ metadata:
   labels:
     k8s-app: grafana
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
@@ -275,6 +276,10 @@ spec:
             backend:
               serviceName: grafana
               servicePort: 80
+  tls:
+    - hosts:
+        - grafana.cluster.rebelinblue.com
+      secretName: grafana-tls
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

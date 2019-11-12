@@ -209,6 +209,7 @@ metadata:
   labels:
     k8s-app: promtail
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
@@ -226,3 +227,7 @@ spec:
             backend:
               serviceName: promtail
               servicePort: 3101
+  tls:
+    - hosts:
+        - promtail.cluster.rebelinblue.com
+      secretName: promtail-tls

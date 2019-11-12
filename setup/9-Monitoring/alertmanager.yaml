@@ -170,6 +170,7 @@ metadata:
   labels:
     name: alertmanager
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
@@ -188,4 +189,8 @@ spec:
             backend:
               serviceName: alertmanager
               servicePort: 9093
+  tls:
+    - hosts:
+        - alertmanager.cluster.rebelinblue.com
+      secretName: alertmanager-tls
 ---

@@ -112,6 +112,7 @@ metadata:
   name: prometheus
   namespace: infra
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
@@ -129,3 +130,7 @@ spec:
             backend:
               serviceName: prometheus
               servicePort: 8080
+  tls:
+    - hosts:
+        - prometheus.cluster.rebelinblue.com
+      secretName: prometheus-tls
