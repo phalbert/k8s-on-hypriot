@@ -35,12 +35,6 @@ spec:
       containers:
         - image: traefik:maroilles
           name: traefik-ingress-controller
-          env:
-            - name: LINODE_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: linode-dynamic-dns
-                  key: token
           imagePullPolicy: Always
           resources:
             limits:

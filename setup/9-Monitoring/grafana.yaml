@@ -1,9 +1,8 @@
----
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
   annotations:
@@ -52,7 +51,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 data:
@@ -103,7 +102,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 ---
@@ -111,7 +110,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: grafana-clusterrole
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 rules: []
@@ -120,13 +119,13 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: grafana-clusterrolebinding
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 subjects:
   - kind: ServiceAccount
     name: grafana
-    namespace: infra
+    namespace: monitoring
 roleRef:
   kind: ClusterRole
   name: grafana-clusterrole
@@ -136,7 +135,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 rules:
@@ -149,7 +148,7 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 roleRef:
@@ -159,13 +158,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: grafana
-    namespace: infra
+    namespace: monitoring
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
   annotations:
@@ -184,7 +183,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 spec:
@@ -254,7 +253,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: grafana
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
   annotations:
@@ -285,7 +284,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: grafana-claim
-  namespace: infra
+  namespace: monitoring
   labels:
     k8s-app: grafana
 spec:

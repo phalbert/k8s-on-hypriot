@@ -6,6 +6,7 @@ metadata:
   namespace: infra
 data:
   traefik.toml: |
+    logLevel = "INFO"
     defaultEntryPoints = ["http", "https"]
 
     [entryPoints]

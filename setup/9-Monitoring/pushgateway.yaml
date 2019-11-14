@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: prometheus-pushgateway
-  namespace: infra
+  namespace: monitoring
   labels:
     app: prometheus-pushgateway
 ---
@@ -10,7 +10,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus-pushgateway
-  namespace: infra
+  namespace: monitoring
   labels:
     app: prometheus-pushgateway
 spec:
@@ -27,7 +27,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: prometheus-pushgateway
-  namespace: infra
+  namespace: monitoring
   labels:
     app: prometheus-pushgateway
 spec:
@@ -68,7 +68,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: prometheus-pushgateway
-  namespace: infra
+  namespace: monitoring
   annotations:
     kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"

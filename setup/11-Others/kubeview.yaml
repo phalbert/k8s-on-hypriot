@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kubeview
-  namespace: infra
+  namespace: apps
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -35,13 +35,13 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: kubeview
-    namespace: infra
+    namespace: apps
 ---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: kubeview
-  namespace: infra
+  namespace: apps
   labels:
     app: kubeview
 spec:
@@ -72,7 +72,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: kubeview
-  namespace: infra
+  namespace: apps
 spec:
   ports:
     - protocol: TCP
@@ -85,7 +85,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: kubeview
-  namespace: infra
+  namespace: apps
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic

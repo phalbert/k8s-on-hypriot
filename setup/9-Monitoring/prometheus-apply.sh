@@ -1,6 +1,6 @@
 #!/bin/sh
 
-kubectl -n infra delete configmap prometheus-config
-kubectl -n infra create configmap prometheus-config --from-file=prometheus/
-kubectl -n infra apply -f prometheus.yaml
-kubectl -n infra delete pod -lapp=prometheus-server
+kubectl -n monitoring delete configmap prometheus-config
+kubectl -n monitoring create configmap prometheus-config --from-file=prometheus/
+kubectl -n monitoring apply -f prometheus.yaml
+kubectl -n monitoring delete pod -lapp=prometheus-server

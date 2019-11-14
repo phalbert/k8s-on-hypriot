@@ -1,9 +1,8 @@
----
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: blackbox-exporter
-  namespace: infra
+  namespace: kube-system
   labels:
     app: blackbox-exporter
 data:
@@ -29,7 +28,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: blackbox-exporter
-  namespace: infra
+  namespace: kube-system
   labels:
     app: blackbox-exporter
   annotations:
@@ -47,7 +46,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: blackbox-exporter
-  namespace: infra
+  namespace: kube-system
   labels:
     name: blackbox-exporter
   annotations:
@@ -79,7 +78,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: blackbox-exporter
-  namespace: infra
+  namespace: kube-system
   labels:
     app: blackbox-exporter
 spec:

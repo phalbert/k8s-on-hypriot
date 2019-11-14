@@ -1,16 +1,5 @@
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: consul-gossip-key
-  namespace: vault
-  labels:
-    app: consul
-type: Opaque
-data:
-  gossip-key: c1BsdW1QL1cyOUh6U2xjdlBxME1uR3d4YWtRbTRHR29acHZaajJXeDl6cz0K
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vault-config
@@ -173,16 +162,6 @@ spec:
                 secretKeyRef:
                   name: vault-unseal-keys
                   key: VAULT_UNSEAL_KEY_3
-            - name: VAULT_UNSEAL_KEY_4
-              valueFrom:
-                secretKeyRef:
-                  name: vault-unseal-keys
-                  key: VAULT_UNSEAL_KEY_4
-            - name: VAULT_UNSEAL_KEY_5
-              valueFrom:
-                secretKeyRef:
-                  name: vault-unseal-keys
-                  key: VAULT_UNSEAL_KEY_5
           livenessProbe:
             httpGet:
               path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
@@ -243,8 +222,6 @@ spec:
               value: "dc1"
             - name: CONSUL_DOMAIN
               value: "cluster.local"
-            - name: CONSUL_HOST
-              value: "consul.infra.svc"
           command:
             - "consul"
           args:
@@ -256,7 +233,7 @@ spec:
             - "-data-dir=/var/lib/consul"
             - "-config-dir=/consul/config"
             - "-domain=$(CONSUL_DOMAIN)"
-            - "-retry-join=$(CONSUL_HOST)"
+            - "-retry-join=$(CONSUL_SERVICE_HOST)"
             - "-disable-host-node-id"
             - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
           resources:

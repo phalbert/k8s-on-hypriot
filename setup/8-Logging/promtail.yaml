@@ -2,7 +2,7 @@ apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 spec:
@@ -31,7 +31,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 ---
@@ -55,13 +55,13 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: promtail-clusterrolebinding
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 subjects:
   - kind: ServiceAccount
     name: promtail
-    namespace: infra
+    namespace: logging
 roleRef:
   kind: ClusterRole
   name: promtail-clusterrole
@@ -71,7 +71,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 rules:
@@ -84,7 +84,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 roleRef:
@@ -99,7 +99,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
 spec:
@@ -185,7 +185,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
   annotations:
@@ -205,7 +205,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: promtail
-  namespace: infra
+  namespace: logging
   labels:
     k8s-app: promtail
   annotations:
