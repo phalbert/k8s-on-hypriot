@@ -105,6 +105,7 @@ data:
         - monitoring
         - kubernetes-dashboard
         - apps
+        - infra
         - kube-system
         - devops
         - vault

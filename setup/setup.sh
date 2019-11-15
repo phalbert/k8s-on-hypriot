@@ -35,7 +35,7 @@ kubectl -n infra patch deployment nfs-client-provisioner -n infra --patch '{"spe
 e_header "Installing ExternalDNS"
 kubectl -n infra apply -f 2-ExternalDNS/
 
-# Traefik is included with k3s but I prefer my setup
+# Traefik is included with k3s but it is version 1.7
 e_header "Installing Traefik"
 kubectl -n infra apply -f 3-Traefik/
 

@@ -2,20 +2,19 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: traefik-ingress-controller
   namespace: infra
+  name: traefik
   labels:
-    k8s-app: traefik-ingress-controller
+    app: traefik
 spec:
   replicas: 1
   selector:
     matchLabels:
-      k8s-app: traefik-ingress-controller
+      app: traefik
   template:
     metadata:
       labels:
-        k8s-app: traefik-ingress-controller
-        name: traefik-ingress-controller
+        app: traefik
     spec:
       nodeSelector:
         beta.kubernetes.io/arch: arm
@@ -23,18 +22,15 @@ spec:
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
-      serviceAccountName: traefik-ingress-serviceaccount
+      serviceAccountName: traefik-ingress-controller
       terminationGracePeriodSeconds: 35
       volumes:
-        #- name: traefik-ui-tls-cert
-        #  secret:
-        #    secretName: traefik-ui-tls-cert
         - name: traefik-ingress-configmap
           configMap:
             name: traefik-ingress-configmap
       containers:
-        - image: traefik:maroilles
-          name: traefik-ingress-controller
+        - name: traefik
+          image: traefik:v2.0
           imagePullPolicy: Always
           resources:
             limits:
@@ -43,26 +39,23 @@ spec:
             requests:
               cpu: 25m
               memory: 128Mi
-          livenessProbe:
-            failureThreshold: 2
-            httpGet:
-              path: /ping
-              port: 80
-              scheme: HTTP
-            initialDelaySeconds: 10
-            periodSeconds: 5
-          readinessProbe:
-            failureThreshold: 2
-            httpGet:
-              path: /ping
-              port: 80
-              scheme: HTTP
-            periodSeconds: 5
-          volumeMounts:
-            #- mountPath: "/ssl"
-            #  name: "traefik-ui-tls-cert"
-            - mountPath: "/config"
-              name: "traefik-ingress-configmap"
+#          livenessProbe:
+#            failureThreshold: 2
+#            httpGet:
+#              path: /ping
+#              port: 80
+#              scheme: HTTP
+#            initialDelaySeconds: 10
+#            periodSeconds: 5
+#          readinessProbe:
+#            failureThreshold: 2
+#            httpGet:
+#              path: /ping
+#              port: 80
+#              scheme: HTTP
+#            periodSeconds: 5
+          args:
+            - --configfile=/config/traefik.toml
           ports:
             - name: http
               containerPort: 80
@@ -73,6 +66,6 @@ spec:
             - name: dashboard
               containerPort: 8080
               hostPort: 8080
-          args:
-          - --logLevel=INFO
-          - --configfile=/config/traefik.toml
+          volumeMounts:
+            - mountPath: "/config"
+              name: traefik-ingress-configmap
