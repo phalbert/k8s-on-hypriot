@@ -103,6 +103,7 @@ data:
       matchNames:
         - logging
         - monitoring
+        - kubernetes-dashboard
         - apps
         - kube-system
         - devops
