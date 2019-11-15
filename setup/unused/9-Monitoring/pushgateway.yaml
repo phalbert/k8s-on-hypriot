@@ -77,7 +77,7 @@ metadata:
     forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
 spec:
   rules:
-    - host: pushgateway.cluster.rebelinblue.com
+    - host: pushgateway.cluster.local
       http:
         paths:
           - path: /

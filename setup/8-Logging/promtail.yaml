@@ -209,6 +209,7 @@ metadata:
   labels:
     k8s-app: promtail
   annotations:
+    kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-type: basic
     ingress.kubernetes.io/auth-secret: dashboards-auth
