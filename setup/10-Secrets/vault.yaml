@@ -39,6 +39,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: vault-unseal-keys
+  namespace: vault
 type: Opaque
 data:
   VAULT_UNSEAL_KEY_1: Zk9LSU1yTnNzSVhKdWZLZFoxQUg2aW5PaCtsZXdFYjkxbGJ3TjlVaExtSVkK
