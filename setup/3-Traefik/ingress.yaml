@@ -11,11 +11,6 @@ metadata:
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
-    kubernetes.io/ingress.class: traefik
-    forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Dashboards"
-    forecastle.stakater.com/icon: "https://pbs.twimg.com/media/CcZdW37UcAA9DZz?format=png&name=4096x4096"
-    forecastle.stakater.com/appName: traefik
 spec:
   rules:
     - host: traefik.cluster.rebelinblue.com

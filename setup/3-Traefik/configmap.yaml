@@ -23,6 +23,8 @@ data:
     [providers]
       providersThrottleDuration = "2s"
 
+      [providers.kubernetesCRD]
+
       [providers.kubernetesIngress]
         throttleDuration = "0s"
 

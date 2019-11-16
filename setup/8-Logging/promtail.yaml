@@ -215,10 +215,6 @@ metadata:
     ingress.kubernetes.io/auth-secret: dashboards-auth
     traefik.ingress.kubernetes.io/redirect-entry-point: https
     traefik.ingress.kubernetes.io/redirect-permanent: "true"
-    kubernetes.io/ingress.class: traefik
-    forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Miscellaneous"
-    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png"
 spec:
   rules:
     - host: promtail.cluster.rebelinblue.com

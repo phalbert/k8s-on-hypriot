@@ -1,0 +1,15 @@
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  name: Prometheus
+  group: Prometheus
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
+  networkRestricted: true
+  properties:
+    Version: 2.13.1
+  urlFrom:
+    ingressRef:
+      name: prometheus
