@@ -1,8 +1,8 @@
 apiVersion: forecastle.stakater.com/v1alpha1
 kind: ForecastleApp
 metadata:
-  name: kubeview
-  namespace: apps
+  name: dashboard
+  namespace: kubernetes-dashboard
 spec:
   name: Kubernetes Dashboard
   group: Dashboards
