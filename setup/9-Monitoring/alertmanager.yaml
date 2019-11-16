@@ -127,14 +127,6 @@ spec:
               mountPath: /etc/alertmanager
             - name: alertmanager
               mountPath: /alertmanager
-        - name: alertmanager-reload
-          image: carlosedp/configmap-reload:v0.2.2-arm
-          args:
-            - --volume-dir=/etc/alertmanager
-            - --webhook-url=http://127.0.0.1:9093/-/reload
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/alertmanager
       volumes:
         - name: config-volume
           configMap:

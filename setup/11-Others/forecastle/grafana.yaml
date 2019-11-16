@@ -9,7 +9,7 @@ spec:
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/grafana.png
   networkRestricted: true
   properties:
-    Version: 6.3.6
+    Version: 6.4.4
   urlFrom:
     ingressRef:
       name: grafana

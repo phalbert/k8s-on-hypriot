@@ -9,7 +9,7 @@ spec:
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
   networkRestricted: true
   properties:
-    Version: 2.13.1
+    Version: 2.14.0
   urlFrom:
     ingressRef:
       name: prometheus

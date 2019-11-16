@@ -96,7 +96,7 @@ spec:
     spec:
       containers:
         - name: prometheus-blackbox-exporter
-          image: lwolf/blackbox-exporter:v0.15.1-armv6
+          image: lwolf/blackbox-exporter:v0.16.0-armv6
           imagePullPolicy: IfNotPresent
           args:
             - --config.file=/etc/config/blackbox.yaml
@@ -128,16 +128,6 @@ spec:
           volumeMounts:
             - mountPath: /etc/config
               name: config
-        - name: configmap-reload
-          image: carlosedp/configmap-reload:v0.2.2-arm
-          imagePullPolicy: IfNotPresent
-          args:
-            - --volume-dir=/etc/config
-            - --webhook-url=http://localhost:9115/-/reload
-          volumeMounts:
-            - mountPath: /etc/config
-              name: config
-              readOnly: true
       volumes:
         - configMap:
             defaultMode: 420
