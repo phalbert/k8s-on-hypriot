@@ -2,7 +2,7 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: traefik-ingress-controller-http-service
+  name: traefik-ingress-controller
   namespace: infra
 spec:
   selector:
@@ -14,16 +14,6 @@ spec:
     - protocol: TCP
       port: 443
       name: https
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: traefik-ingress-controller-dashboard-service
-  namespace: infra
-spec:
-  selector:
-    k8s-app: traefik-ingress-controller
-  ports:
     - protocol: TCP
       port: 8080
       name: dashboard

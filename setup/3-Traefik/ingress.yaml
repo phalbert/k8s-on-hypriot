@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: traefik-ingress-controller-dashboard-ingress
+  name: traefik-ingress-controller
   namespace: infra
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -15,7 +15,7 @@ spec:
         paths:
         - path: /
           backend:
-            serviceName: traefik-ingress-controller-dashboard-service
+            serviceName: traefik-ingress-controller
             servicePort: 8080
   tls:
     - hosts:
