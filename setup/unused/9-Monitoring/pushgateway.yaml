@@ -70,7 +70,6 @@ metadata:
   name: prometheus-pushgateway
   namespace: monitoring
   annotations:
-    kubernetes.io/ingress.class: traefik
     forecastle.stakater.com/expose: "true"
     forecastle.stakater.com/group: "Prometheus"
     forecastle.stakater.com/appName: "Push Gateway"

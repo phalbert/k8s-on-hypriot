@@ -54,8 +54,6 @@ spec:
 #    cert-manager.io/cluster-issuer: letsencrypt-prod
 #    ingress.kubernetes.io/auth-type: basic
 #    ingress.kubernetes.io/auth-secret: dashboards-auth
-#    traefik.ingress.kubernetes.io/redirect-entry-point: https
-#    traefik.ingress.kubernetes.io/redirect-permanent: "true"
 #    kubernetes.io/ingress.class: traefik
 #    forecastle.stakater.com/expose: "true"
 #    forecastle.stakater.com/appName: "Blackbox Exporter"
