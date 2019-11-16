@@ -7,8 +7,8 @@ metadata:
 data:
   traefik.toml: |
     [global]
-      checkNewVersion = true
-      sendAnonymousUsage = true
+      checkNewVersion = false
+      sendAnonymousUsage = false
 
     [entryPoints]
       [entryPoints.http]
