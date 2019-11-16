@@ -265,3 +265,12 @@ scrape_configs:
       - __meta_kubernetes_pod_annotation_kubernetes_io_config_mirror
       - __meta_kubernetes_pod_container_name
       target_label: __path__
+
+  - match:
+    selector: '{name="eventrouter"}'
+    stages:
+      - json:
+          expressions:
+            namespace: event.metadata.namespace
+      - labels:
+        namespace: ""
