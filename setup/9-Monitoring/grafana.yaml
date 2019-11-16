@@ -87,13 +87,13 @@ data:
     datasources:
       - name: Loki
         type: loki
-        url: http://loki:3100
+        url: http://loki.logging.svc:3100
         access: proxy
         editable: false
         isDefault: true
       - name: Prometheus
         type: prometheus
-        url: http://prometheus:8080
+        url: http://prometheus.monitoring.svc:8080
         access: proxy
         editable: false
         isDefault: false
