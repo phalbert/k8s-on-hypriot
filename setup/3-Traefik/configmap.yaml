@@ -6,9 +6,8 @@ metadata:
   namespace: infra
 data:
   traefik.toml: |
-    [global]
-      checkNewVersion = false
-      sendAnonymousUsage = false
+    logLevel = "INFO"
+    defaultEntryPoints = ["http", "https"]
 
     [entryPoints]
       [entryPoints.http]
@@ -17,31 +16,23 @@ data:
       [entryPoints.https]
         address = ":443"
 
+        [entryPoints.https.tls]
+
       [entryPoints.traefik]
         address = ":8080"
 
-    [providers]
-      providersThrottleDuration = "2s"
-
-      [providers.kubernetesCRD]
-
-      [providers.kubernetesIngress]
-        throttleDuration = "0s"
-
-        [providers.kubernetesIngress.ingressEndpoint]
-          publishedService = "infra/traefik"
-
-    [api]
-      insecure = true
-      dashboard = true
-
-    [metrics]
-      [metrics.prometheus]
-        buckets = [0.1, 0.3, 1.2, 5.0]
-        entryPoint = "traefik"
+    [kubernetes]
+      [kubernetes.ingressEndpoint]
+        publishedService = "infra/traefik-ingress-controller-http-service"
 
     [ping]
       entryPoint = "http"
 
-    [log]
-      level = "INFO"
+    [api]
+      entryPoint = "traefik"
+
+    [metrics]
+      [metrics.prometheus]
+        entryPoint = "traefik"
+        buckets = [0.1,0.3,1.2,5.0]
+

@@ -9,7 +9,7 @@ spec:
   icon: https://pbs.twimg.com/media/CcZdW37UcAA9DZz?format=png&name=4096x4096
   networkRestricted: true
   properties:
-    Version: 2.0.5
+    Version: 1.7.19
   urlFrom:
     ingressRef:
       name: traefik-ingress-controller-dashboard-ingress
