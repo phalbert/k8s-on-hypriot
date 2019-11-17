@@ -49,7 +49,11 @@ kubectl apply -f 6-CertManager/
 
 e_header "Installing Loki & Promtail"
 kubectl -n logging create configmap promtail --from-file=7-Logging/promtail/
-kubectl -n logging apply -f 7-Logging/
+kubectl -n logging apply -f 7-Logging/loki.yaml
+kubectl -n logging apply -f 7-Logging/promtail.yaml
+
+e_header "Installing Event Router"
+kubectl -n kube-system apply -f 7-Logging/eventrouter.yaml
 
 e_header "Installing Node Exporter"
 kubectl -n kube-system apply -f 8-Monitoring/node-exporter.yaml
@@ -73,12 +77,21 @@ kubectl -n vault apply -f 9-Secrets/consul.yaml
 
 e_header "Installing Forecastle"
 kubectl -n apps apply -f 10-Others/forecastle.yaml
+kubectl apply -f 10-Others/forecastle/
 
 e_header "Installing Kubeview"
 kubectl -n apps apply -f 10-Others/kubeview.yaml
 
 e_header "Installing Linode Dynamic DNS update"
 kubectl -n infra apply -f 10-Others/dyndns.yaml
+
+e_header "Installing Vault"
+kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_2=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_3=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_4=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_5=?"
+kubectl -n vault apply -f 9-Secrets/vault.yaml
 
 e_header "Getting Dashboard Token"
 kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
