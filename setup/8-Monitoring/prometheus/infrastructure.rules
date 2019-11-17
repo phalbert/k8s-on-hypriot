@@ -5,7 +5,7 @@ groups:
         annotations:
           summary: Alert Manager has disappeared.
         expr: |
-          absent(up{job="alertmanager",namespace="infra"} == 1)
+          absent(up{job="alertmanager",namespace="monitoring"} == 1)
         for: 15m
         labels:
           severity: critical

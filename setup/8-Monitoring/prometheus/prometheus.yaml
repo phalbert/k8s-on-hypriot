@@ -10,7 +10,7 @@ alerting:
     - scheme: http
       path_prefix: /
       static_configs:
-        - targets: ['alertmanager.infra.svc:9093']
+        - targets: ['alertmanager.monitoring.svc:9093']
 
 scrape_configs:
   - job_name: traefik
@@ -30,13 +30,13 @@ scrape_configs:
           - '10.0.0.3:9100'
           - '10.0.0.4:9100'
 
-  - job_name: vault
-    static_configs:
-      - targets: ['vault.vault.svc:8200']
-    metrics_path: "/v1/sys/metrics"
-    params:
-      format: ['prometheus']
-    bearer_token: s.brVZ623SwKfiYg1WjVWqDcS6
+  # - job_name: vault
+  #   static_configs:
+  #     - targets: ['vault.vault.svc:8200']
+  #   metrics_path: "/v1/sys/metrics"
+  #   params:
+  #     format: ['prometheus']
+  #   bearer_token: s.brVZ623SwKfiYg1WjVWqDcS6
 
   - job_name: prometheus
     kubernetes_sd_configs:
@@ -65,7 +65,7 @@ scrape_configs:
       - role: endpoints
         namespaces:
           names:
-            - infra
+            - monitoring
     relabel_configs:
       - action: keep
         source_labels: [__meta_kubernetes_service_label_name]
