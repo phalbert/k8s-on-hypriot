@@ -14,7 +14,7 @@ spec:
         blinktShow: "true"
         blinktColor: "00ff00"
     spec:
-      serviceAccount: nfs-client-provisioner
+      serviceAccountName: nfs-client-provisioner
       containers:
         - name: nfs-client-provisioner
           image: quay.io/external_storage/nfs-client-provisioner-arm:latest
