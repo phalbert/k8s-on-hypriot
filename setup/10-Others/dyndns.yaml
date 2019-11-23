@@ -20,6 +20,13 @@ spec:
       containers:
         - name: dyndns
           image: rebelinblue/dyndns:0.0.1
+          resources:
+            limits:
+              cpu: 10m
+              memory: 20Mi
+            requests:
+              cpu: 10m
+              memory: 20Mi
           env:
             - name: FREQUENCY
               value: "15"

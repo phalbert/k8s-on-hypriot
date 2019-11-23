@@ -41,37 +41,32 @@ spec:
       targetPort: 9115
   selector:
     app: blackbox-exporter
-#---
-#apiVersion: extensions/v1beta1
-#kind: Ingress
-#metadata:
-#  name: blackbox-exporter
-#  namespace: monitoring
-#  labels:
-#    name: blackbox-exporter
-#  annotations:
-#    kubernetes.io/tls-acme: "true"
-#    cert-manager.io/cluster-issuer: letsencrypt-prod
-#    ingress.kubernetes.io/auth-type: basic
-#    ingress.kubernetes.io/auth-secret: dashboards-auth
-#    kubernetes.io/ingress.class: traefik
-#    forecastle.stakater.com/expose: "true"
-#    forecastle.stakater.com/appName: "Blackbox Exporter"
-#    forecastle.stakater.com/group: "Prometheus"
-#    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png"
-#spec:
-#  rules:
-#    - host: blackbox.cluster.rebelinblue.com
-#      http:
-#        paths:
-#          - path: /
-#            backend:
-#              serviceName: blackbox-exporter
-#              servicePort: 9115
-#  tls:
-#    - hosts:
-#        - blackbox.cluster.rebelinblue.com
-#      secretName: blackbox-exporter-tls
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blackbox-exporter
+  namespace: monitoring
+  labels:
+    name: blackbox-exporter
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
+spec:
+  rules:
+    - host: blackbox.cluster.rebelinblue.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: blackbox-exporter
+              servicePort: 9115
+  tls:
+    - hosts:
+        - blackbox.cluster.rebelinblue.com
+      secretName: blackbox-exporter-tls
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
