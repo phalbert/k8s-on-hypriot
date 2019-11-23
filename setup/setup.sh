@@ -97,3 +97,6 @@ kubectl -n infra apply -f 10-Others/dyndns.yaml
 
 e_header "Getting Dashboard Token"
 kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+# kubectl get --export -o yaml --all-namespaces issuer,clusterissuer,certificates,orders,challenges,certificaterequests > cert-manager-backup.yaml
+# kubectl get --field-selector type="kubernetes.io/tls" --export -o yaml --all-namespaces secrets >> cert-manager-backup.yaml
