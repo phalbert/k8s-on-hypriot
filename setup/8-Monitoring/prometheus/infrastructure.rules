@@ -78,7 +78,7 @@ groups:
       #  annotations:
       #    summary: Prometheus has disappeared.
       #  expr: |
-      #    absent(up{job="prometheus", namespace="infra"} == 1)
+      #    absent(up{job="prometheus", namespace="monitoring"} == 1)
       #  for: 15m
       #  labels:
       #    severity: critical
