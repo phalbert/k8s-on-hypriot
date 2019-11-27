@@ -74,16 +74,16 @@ kubectl -n monitoring apply -f 8-Monitoring/prometheus.yaml
 e_header "Installing Grafana"
 kubectl -n monitoring apply -f 8-Monitoring/grafana.yaml
 
-#e_header "Installing Consul"
-#kubectl -n vault apply -f 9-Secrets/consul.yaml
-#
-#e_header "Installing Vault"
-#kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=?" \
-#                                                         --from-literal="VAULT_UNSEAL_KEY_2=?" \
-#                                                         --from-literal="VAULT_UNSEAL_KEY_3=?" \
-#                                                         --from-literal="VAULT_UNSEAL_KEY_4=?" \
-#                                                         --from-literal="VAULT_UNSEAL_KEY_5=?"
-#kubectl -n vault apply -f 9-Secrets/vault.yaml
+e_header "Installing Consul"
+kubectl -n vault apply -f 9-Secrets/consul.yaml
+
+e_header "Installing Vault"
+kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_2=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_3=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_4=?" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_5=?"
+kubectl -n vault apply -f 9-Secrets/vault.yaml
 
 e_header "Installing Forecastle"
 kubectl -n apps apply -f 10-Others/forecastle.yaml
