@@ -6,7 +6,7 @@ Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f
 
 ## Pre-reqs:
 
-* This was done using a cluster of 4 RPi 3 B+
+* This was done using a cluster of 4 * RPi 4 4GB
 * All Pi's are connected via a local ethernet switch on a 10.0.0.0/24 LAN
 * The master node connects to the outside world on WiFi, and provides NAT for the the rest of the cluster.
 
@@ -17,7 +17,7 @@ curl -O https://raw.githubusercontent.com/hypriot/flash/2.2.0/flash
 chmod +x flash
 sudo mv flash /usr/local/bin/flash
 
-flash -u nodes/master-user-data https://github.com/hypriot/image-builder-rpi/releases/download/v1.10.0/hypriotos-rpi-v1.10.0.img.zip
+flash https://github.com/hypriot/image-builder-rpi/releases/download/v1.11.4/hypriotos-rpi-v1.11.4.img.zip
 ```
 
 Repeat for "node1" to "node3" using the ```nodeX-user-data``` file for each node.
@@ -46,10 +46,6 @@ Disable `eth0` in `/etc/network/interfaces.d/50-cloud-init.cfg`
 
 ### On master and all nodes
 
-Edit `/etc/locale.gen` and uncomment the line `# en_GB.UTF-8 UTF-8`
-
-Run `sudo locale-gen en_GB.UTF-8`
-
 Edit `/etc/cloud/templates/hosts.debian.tmpl`
 
 ```
@@ -65,10 +61,10 @@ Edit `/etc/cloud/templates/hosts.debian.tmpl`
 ```bash
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y isc-dhcp-server nfs-server rfkill
+sudo apt install -y isc-dhcp-server nfs-kernel-server rfkill
 sudo apt autoremove -y
 sudo systemctl disable dhcpcd.service
-sudo systemctl stop dhcpcd.service
+sudo systemctl stop dhcpcd.service # May disconnect when you run this, power off and then back on
 
 sudo systemctl enable isc-dhcp-server.service
 sudo systemctl start isc-dhcp-server.service
@@ -92,17 +88,20 @@ subnet 10.0.0.0 netmask 255.255.255.0 {
 }
 
 host node-1 {
-	hardware ethernet b8:27:eb:a7:c2:22;
+	hardware ethernet dc:a6:32:67:77:06;
+	#hardware ethernet b8:27:eb:a7:c2:22;
 	fixed-address 10.0.0.2;
 }
 
 host node-2 {
-	hardware ethernet b8:27:eb:af:e4:89;
+	hardware ethernet dc:a6:32:67:76:b8;
+	#hardware ethernet b8:27:eb:af:e4:89;
 	fixed-address 10.0.0.3;
 }
 
 host node-3 {
-	hardware ethernet b8:27:eb:8b:05:83;
+	hardware ethernet dc:a6:32:67:77:3e;
+	#hardware ethernet b8:27:eb:8b:05:83;
 	fixed-address 10.0.0.4;
 }
 ```
@@ -189,6 +188,8 @@ Edit `/etc/exports`
 
 ```bash
 sudo exportfs -a
+#sudo rm /lib/systemd/system/nfs-common.service
+#sudo systemctl daemon-reload``
 sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 sudo reboot
 ```
@@ -200,6 +201,8 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install -y rfkill nfs-common
 sudo apt autoremove -y
+#sudo rm /lib/systemd/system/nfs-common.service
+#sudo systemctl daemon-reload
 sudo update-rc.d nfs-common enable
 ```
 
