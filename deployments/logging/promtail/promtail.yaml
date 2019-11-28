@@ -95,6 +95,16 @@ subjects:
   - kind: ServiceAccount
     name: promtail
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: promtail
+  namespace: logging
+  labels:
+    k8s-app: promtail
+data:
+  promtail.yaml: {}
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
