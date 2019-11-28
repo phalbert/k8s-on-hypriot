@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source ".env"
+REPO_ROOT=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT/setup/.env"
 
 kubectl -n infra create secret generic linode-dynamic-dns --from-literal="token=$LINODE_TOKEN"
 

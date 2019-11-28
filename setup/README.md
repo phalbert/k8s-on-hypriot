@@ -14,9 +14,54 @@ Repeat for "node1" to "node3" using the ```nodeX-user-data``` file for each node
 
 ## Master node config
 
+
+### Copy your SSH key to master and the nodes
+
+```bash
+mkdir ~/.ssh
+touch ~/.ssh/authorized_keys
+
+# Copy the keys to the file
+```
+
 ### Generate the master's SSH key
 
-Login to the master node, and run `ssh-keygen` to initialize your SSH key.
+Login to the master node, and run `ssh-keygen` to initialize your SSH key; then copy the key to each node
+
+### Disable password authentication
+
+```bash
+sudo sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
+sudo sed -i 's/^UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
+```
+
+## On local machine
+
+Edit `~/.ssh/config`
+
+```
+Host master
+    Hostname master.local # Or the IP address
+    User pirate
+
+Host node-1
+    Hostname 10.0.0.2
+    ForwardAgent yes
+    User pirate
+    ProxyCommand ssh -A master -W %h:%p
+
+Host node-2
+    Hostname 10.0.0.3
+    ForwardAgent yes
+    User pirate
+    ProxyCommand ssh -A master -W %h:%p
+
+Host node-3
+    Hostname 10.0.0.4
+    ForwardAgent yes
+    User pirate
+    ProxyCommand ssh -A master -W %h:%p
+```
 
 ### Set a static IP address on master
 
@@ -193,7 +238,7 @@ Edit `/etc/exports`
 ```bash
 sudo exportfs -a
 #sudo rm /lib/systemd/system/nfs-common.service
-#sudo systemctl daemon-reload``
+#sudo systemctl daemon-reload
 sudo update-rc.d rpcbind enable && sudo update-rc.d nfs-common enable
 sudo reboot
 ```

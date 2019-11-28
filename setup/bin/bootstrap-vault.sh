@@ -4,7 +4,8 @@ set -e
 
 #kubectl -n vault port-forward vault-0 8200:8200
 
-source ".env"
+REPO_ROOT=$(git rev-parse --show-toplevel)
+source "$REPO_ROOT/setup/.env"
 
 # Variables
 VAULT_TOKEN=$VAULT_ROOT_TOKEN
