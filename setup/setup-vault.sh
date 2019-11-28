@@ -8,14 +8,6 @@ set -e
 #export VAULT_TOKEN=""
 #export VAULT_ADDR="http://localhost:8200"
 #export PASSWORD=""
-#export VAULT_TOKEN=$(curl --slient  --data '{ "role_id": "68cee7b8-b8bb-ec1e-20b9-88d87a510833", "secret_id": "d33377fe-41b6-f54e-1063-b440301256b8" }' --request POST "${VAULT_ADDR}/v1/auth/approle/login")
-
-#if [[ -z $1 ]]; then
-#   echo "Password must be provided explicitly";
-#   exit 1;
-#else
-#   PASSWORD=$1;
-#fi
 
 vault audit enable file file_path=stdout
 vault secrets enable -path=apps kv
@@ -48,8 +40,6 @@ echo -e "[ INFO ] New policy created/updated: $(vault policy list | grep ${VAULT
 
 vault write auth/userpass/users/stephen password="$PASSWORD" policies="admin"
 vault token create -policy=metrics -display-name=prometheus -no-default-policy
-
-#curl -H "X-Vault-Token: $VAULT_TOKEN" -X GET "$VAULT_ADDR/v1/sys/metrics?format=prometheus"
 
 rm -f $VAULT_ADMIN_POLICY_FILE >/dev/null
 rm -f $VAULT_METRICS_POLICY_FILE >/dev/null
