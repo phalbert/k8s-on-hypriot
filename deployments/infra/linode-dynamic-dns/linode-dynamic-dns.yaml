@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: dyndns
-          image: rebelinblue/dyndns:0.0.1
+          image: rebelinblue/linode-dynamic-dns:0.6.2
           resources:
             limits:
               cpu: 10m
