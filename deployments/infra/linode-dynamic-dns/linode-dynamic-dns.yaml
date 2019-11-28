@@ -1,6 +1,6 @@
 ---
-apiVersion: extensions/v1beta1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: linode-dynamic-dns
   namespace: infra
