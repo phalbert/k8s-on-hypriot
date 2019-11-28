@@ -2,6 +2,9 @@
 
 set -e
 
+
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
 message() {
     export CLI_MAGENTA=$(tput -Txterm-256color setaf 5)
     export CLI_BOLD=$(tput -Txterm-256color bold)
@@ -18,7 +21,7 @@ kubectl label node node-3 node-role.kubernetes.io/worker=worker
 message "Installing Flux"
 kubectl create namespace flux
 helm repo add fluxcd https://charts.fluxcd.io
-helm upgrade --install flux --values ../deployments/flux/flux-values.yaml --namespace flux fluxcd/flux
+helm upgrade --install flux --values $REPO_ROOT/deployments/flux/flux-values.yaml --namespace flux fluxcd/flux
 
 FLUX_READY=1
 while [ ${FLUX_READY} != 0 ]; do
