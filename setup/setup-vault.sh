@@ -6,8 +6,9 @@ set -e
 
 # Variables
 #export VAULT_TOKEN=""
-#export VAULT_ADDR="http://localhost:8200"
 #export PASSWORD=""
+
+export VAULT_ADDR="http://localhost:8200"
 
 vault audit enable file file_path=stdout
 vault secrets enable -path=apps kv

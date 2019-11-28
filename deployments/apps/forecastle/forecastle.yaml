@@ -6,8 +6,6 @@ metadata:
   namespace: apps
   labels:
     app: forecastle
-  annotations:
-    configmap.reloader.stakater.com/reload: forecastle
 spec:
   replicas: 1
   revisionHistoryLimit: 2

@@ -11,6 +11,7 @@ kubectl -n monitoring create secret generic dashboards-auth --from-literal="auth
 kubectl -n apps create secret generic dashboards-auth --from-literal="auth=$AUTHSTRING"
 kubectl -n vault create secret generic dashboards-auth --from-literal="auth=$AUTHSTRING"
 
+kubectl -n vault delete secret vault-unseal-keys || true
 kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=$VAULT_UNSEAL_KEY_1" \
                                                          --from-literal="VAULT_UNSEAL_KEY_2=$VAULT_UNSEAL_KEY_2" \
                                                          --from-literal="VAULT_UNSEAL_KEY_3=$VAULT_UNSEAL_KEY_3" \

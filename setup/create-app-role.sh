@@ -6,13 +6,14 @@
 # Examples:
 # ./create.sh prod testapp
 
+#kubectl -n vault port-forward vault-0 8200:8200
+
 set -e
 
 # Variables
-#export VAULT_HOST=
-#export VAULT_PORT="443"
-#export VAULT_TOKEN=""
-#export VAULT_ADDR="${VAULT_HOST}:${VAULT_PORT}"
+export VAULT_TOKEN=""
+export VAULT_ADDR="http://localhost:8200"
+
 
 if [[ -z $1 ]]; then
    echo "Namespace must be provided explicitly";
@@ -125,3 +126,5 @@ data:
        echo -e "[ WARNING ] Secret has not been created. One can create is manually: kubectl -n ${KUBERNETES_NAMESPACE} apply -f /tmp/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}.yaml"
    fi
 fi
+
+vault write apps/${KUBERNETES_NAMESPACE}/${KUBERNETES_APPLICATION}/example FOO="bar"
