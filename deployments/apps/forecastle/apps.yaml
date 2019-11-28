@@ -169,7 +169,7 @@ spec:
   name: Jenkins
   group: Delivery
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png
-  networkRestricted: true
+  networkRestricted: false
   properties:
     Version: 2.206
   urlFrom:

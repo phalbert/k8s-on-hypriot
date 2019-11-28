@@ -60,6 +60,8 @@ metadata:
   namespace: apps
 data:
   plugins.txt: |
+    
+  plugins2.txt: |
     kubernetes
     timestamper
     greenballs
@@ -171,8 +173,9 @@ kind: Ingress
 metadata:
   name: jenkins
   namespace: apps
-  annotations:
-    kubernetes.io/ingress.class: traefik
+#  annotations:
+#    kubernetes.io/tls-acme: "true"
+#    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
     - host: jenkins.cluster.local
@@ -182,3 +185,7 @@ spec:
             backend:
               serviceName: jenkins
               servicePort: 8080
+#  tls:
+#    - hosts:
+#        - launchpad.cluster.rebelinblue.com
+#      secretName: forecastle-tls
