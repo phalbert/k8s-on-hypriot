@@ -18,7 +18,7 @@ kubectl label node node-3 node-role.kubernetes.io/worker=worker
 message "Installing Flux"
 kubectl create namespace flux
 helm repo add fluxcd https://charts.fluxcd.io
-helm upgrade --install flux --values ./flux-values.yaml --namespace flux fluxcd/flux
+helm upgrade --install flux --values ../deployments/flux/flux-values.yaml --namespace flux fluxcd/flux
 
 FLUX_READY=1
 while [ ${FLUX_READY} != 0 ]; do
