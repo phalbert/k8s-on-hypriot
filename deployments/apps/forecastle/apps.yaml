@@ -1,0 +1,162 @@
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  name: Alert Manager
+  group: Prometheus
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
+  networkRestricted: true
+  properties:
+    Version: 0.19.0
+  urlFrom:
+    ingressRef:
+      name: alertmanager
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: blackbox-exporter
+  namespace: monitoring
+spec:
+  name: Blackbox Exporter
+  group: Prometheus
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
+  networkRestricted: true
+  properties:
+    Version: 0.16.0
+  urlFrom:
+    ingressRef:
+      name: blackbox-exporter
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: consul
+  namespace: vault
+spec:
+  name: Consul
+  group: Miscellaneous
+  icon: https://www.consul.io/assets/images/og-image-6ef0ad8b.png
+  networkRestricted: true
+  properties:
+    Version: 1.6.1
+  urlFrom:
+    ingressRef:
+      name: consul-ui
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: dashboard
+  namespace: kubernetes-dashboard
+spec:
+  name: Kubernetes Dashboard
+  group: Dashboards
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/kubernetes.png
+  networkRestricted: true
+  properties:
+    Version: 2.0.0-beta6
+  url: http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+#  urlFrom:
+#    ingressRef:
+#      name: kubeview
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  name: Grafana
+  group: Dashboards
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/grafana.png
+  networkRestricted: true
+  properties:
+    Version: 6.4.4
+  urlFrom:
+    ingressRef:
+      name: grafana
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: kubeview
+  namespace: apps
+spec:
+  name: KubeView
+  group: Miscellaneous
+  icon: https://raw.githubusercontent.com/benc-uk/kubeview/master/web/client/src/assets/logo.png
+  networkRestricted: true
+  properties:
+    Version: 0.1.8
+  urlFrom:
+    ingressRef:
+      name: kubeview
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  name: Prometheus
+  group: Prometheus
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
+  networkRestricted: true
+  properties:
+    Version: 2.14.0
+  urlFrom:
+    ingressRef:
+      name: prometheus
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: promtail
+  namespace: logging
+spec:
+  name: Promtail
+  group: Miscellaneous
+  icon: https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png
+  networkRestricted: true
+  properties:
+    Version: 0.4.0
+  urlFrom:
+    ingressRef:
+      name: promtail
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: traefik
+  namespace: infra
+spec:
+  name: Traefik
+  group: Dashboards
+  icon: https://pbs.twimg.com/media/CcZdW37UcAA9DZz?format=png&name=4096x4096
+  networkRestricted: true
+  properties:
+    Version: 1.7.19
+  urlFrom:
+    ingressRef:
+      name: traefik-ingress-controller
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  name: Vault
+  group: Secrets
+  icon: https://cdn.freebiesupply.com/logos/large/2x/vault-enterprise-logo-png-transparent.png
+  networkRestricted: false
+  properties:
+    Version: 1.2.3
+  urlFrom:
+    ingressRef:
+      name: vault-ui
+---
