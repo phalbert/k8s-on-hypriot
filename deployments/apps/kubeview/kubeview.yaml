@@ -57,7 +57,7 @@ spec:
       serviceAccountName: kubeview
       containers:
         - name: kubeview-containers
-          image: rebelinblue/kubeview:latest
+          image: rebelinblue/kubeview:v0.1.9
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
