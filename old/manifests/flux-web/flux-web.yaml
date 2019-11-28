@@ -1,0 +1,146 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: flux-web-rbac-clusterrole
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: flux-web-rbac-binding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: flux
+roleRef:
+  kind: ClusterRole
+  name: flux-web-rbac-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flux-web
+  namespace: flux
+  labels:
+    app: flux-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flux-web
+  template:
+    metadata:
+      labels:
+        app: flux-web
+    spec:
+      containers:
+        - name: flux-web-frontend
+          image: rebelinblue/flux-web-frontend:0.1
+          imagePullPolicy: Always
+          env:
+          - name: APP_PORT
+            value: '8080'
+          - name: NODE_ENV
+            value: production
+          - name: READ_ONLY
+            value: "true"
+          - name: "API_EXTERNAL_URL"
+            value: "//flux-web.cluster.local/api/v1"
+          - name: "WS_URL"
+            value: "ws://flux-web.cluster.local/ws/v1"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+        - name: flux-web-backend
+          image: rebelinblue/flux-web-backend:0.1
+          imagePullPolicy: Always
+          env:
+           - name: READ_ONLY
+             value: "true"
+           - name: "FLUX_URL"
+             value: "http://flux:3030"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flux-web-backend
+  namespace: flux
+  labels:
+    app: flux-web
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: flux-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flux-web-frontend
+  namespace: flux
+  labels:
+    app: flux-web
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: flux-web
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: flux-web
+  namespace: flux
+  labels:
+    app: flux-web
+spec:
+  rules:
+    - host: flux-web.cluster.local
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: flux-web-frontend
+              servicePort: http
+          - path: /api
+            backend:
+              serviceName: flux-web-backend
+              servicePort: http
+          - path: /ws
+            backend:
+              serviceName: flux-web-backend
+              servicePort: http

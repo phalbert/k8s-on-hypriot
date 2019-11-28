@@ -5,8 +5,8 @@ git:
   branch: master
   path: deployments
 image:
-  repository: onedr0p/flux
-  tag: latest-arm32
+  repository: rebelinblue/flux
+  tag: 1.15.0
   pullPolicy: Always
 registry:
   rps: 1
