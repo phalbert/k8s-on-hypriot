@@ -16,8 +16,6 @@ spec:
     metadata:
       labels:
         app: reloader
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       containers:
         - name: reloader

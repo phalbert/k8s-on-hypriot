@@ -66,8 +66,6 @@ spec:
         SECRET_FOO: /apps/test/kuard/misc/FOO
       labels:
         app: kuard
-        blinktShow: "true"
-        blinktColor: "00ffff"
     spec:
       tolerations: # See https://github.com/kubernetes/kubernetes/issues/74651
         - key: "node.kubernetes.io/unreachable"

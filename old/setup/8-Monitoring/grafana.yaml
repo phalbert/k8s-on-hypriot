@@ -197,8 +197,6 @@ spec:
     metadata:
       labels:
         k8s-app: grafana
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       serviceAccountName: grafana
       securityContext:

@@ -112,8 +112,6 @@ spec:
     metadata:
       labels:
         k8s-app: promtail
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       serviceAccountName: promtail
       containers:

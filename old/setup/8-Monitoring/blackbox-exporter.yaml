@@ -84,8 +84,6 @@ spec:
     metadata:
       labels:
         app: blackbox-exporter
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       containers:
         - name: prometheus-blackbox-exporter

@@ -53,8 +53,6 @@ spec:
     metadata:
       labels:
         app: kubeview
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       serviceAccountName: kubeview
       containers:

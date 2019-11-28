@@ -40,8 +40,6 @@ spec:
     metadata:
       labels:
         app: prometheus-server
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       serviceAccountName: monitoring
       initContainers:
