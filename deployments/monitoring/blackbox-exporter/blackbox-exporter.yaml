@@ -68,7 +68,7 @@ spec:
         - blackbox.cluster.rebelinblue.com
       secretName: blackbox-exporter-tls
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blackbox-exporter
