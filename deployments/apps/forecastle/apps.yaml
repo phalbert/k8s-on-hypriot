@@ -160,3 +160,18 @@ spec:
     ingressRef:
       name: vault-ui
 ---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: jenkins
+  namespace: apps
+spec:
+  name: Jenkins
+  group: Delivery
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png
+  networkRestricted: true
+  properties:
+    Version: 2.206
+  urlFrom:
+    ingressRef:
+      name: jenkins
