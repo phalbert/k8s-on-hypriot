@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Usage:
 # create.sh env_name app_name
 
@@ -8,12 +10,10 @@
 
 #kubectl -n vault port-forward vault-0 8200:8200
 
-set -e
+source ".env"
 
 # Variables
-export VAULT_TOKEN=""
-export VAULT_ADDR="http://localhost:8200"
-
+VAULT_TOKEN=$VAULT_ROOT_TOKEN
 
 if [[ -z $1 ]]; then
    echo "Namespace must be provided explicitly";
@@ -28,9 +28,6 @@ if [[ -z $2 ]];
 else
    KUBERNETES_APPLICATION=$2;
 fi
-
-#export VAULT_TOKEN
-#export VAULT_ADDR
 
 # Check connection to Vault
 # vault status >/dev/null
@@ -49,6 +46,7 @@ fi
 #
 VAULT_POLICY_NAME="${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}"
 VAULT_POLICY_FILE="/tmp/${VAULT_POLICY_NAME}.hcl"
+
 
 # Check if a policy already exists
 if [[ "$(vault policy list | grep ${VAULT_POLICY_NAME})" != "${VAULT_POLICY_NAME}" ]]; then

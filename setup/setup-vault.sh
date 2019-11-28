@@ -4,11 +4,12 @@ set -e
 
 #kubectl -n vault port-forward vault-0 8200:8200
 
-# Variables
-#export VAULT_TOKEN=""
-#export PASSWORD=""
+source ".env"
 
-export VAULT_ADDR="http://localhost:8200"
+# Variables
+VAULT_TOKEN=$VAULT_ROOT_TOKEN
+ADMIN_USERNAME=$VAULT_ADMIN_PASSWORD
+ADMIN_PASSWORD=$VAULT_ADMIN_USERNAME
 
 vault audit enable file file_path=stdout
 vault secrets enable -path=apps kv
