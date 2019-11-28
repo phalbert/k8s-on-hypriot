@@ -73,8 +73,6 @@ spec:
     metadata:
       labels:
         app: nfs-client-provisioner
-        blinktShow: "true"
-        blinktColor: "00ff00"
     spec:
       serviceAccountName: nfs-client-provisioner
       containers:

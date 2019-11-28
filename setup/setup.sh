@@ -11,6 +11,9 @@ message() {
 }
 
 kubectl taint nodes master node-role.kubernetes.io/master="":NoSchedule
+kubectl label node node-1 node-role.kubernetes.io/worker=worker
+kubectl label node node-2 node-role.kubernetes.io/worker=worker
+kubectl label node node-3 node-role.kubernetes.io/worker=worker
 
 message "Installing Flux"
 kubectl create namespace flux
@@ -27,4 +30,4 @@ done
 
 kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '"' -f2
 
-helm upgrade --install helm-operator --values ./flux-helm-operator-values.yaml --namespace flux fluxcd/helm-operator
+# helm upgrade --install helm-operator --values ./flux-helm-operator-values.yaml --namespace flux fluxcd/helm-operator
