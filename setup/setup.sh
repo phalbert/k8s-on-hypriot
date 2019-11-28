@@ -29,5 +29,3 @@ while [ ${FLUX_READY} != 0 ]; do
 done
 
 kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '"' -f2
-
-# helm upgrade --install helm-operator --values ./flux-helm-operator-values.yaml --namespace flux fluxcd/helm-operator

@@ -1,5 +1,5 @@
-apiVersion: extensions/v1beta1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
   name: whoami
   namespace: test
@@ -57,6 +57,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: whoami
+  namespace: test
   labels:
     app: whoami
 spec:
