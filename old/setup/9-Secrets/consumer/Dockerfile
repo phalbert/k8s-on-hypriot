@@ -13,7 +13,7 @@ RUN git clone https://github.com/kelseyhightower/confd.git /go/src/github.com/ke
 
 FROM arm32v6/alpine:3.9
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 
 COPY --from=build /app/bin/confd /usr/bin/confd
 

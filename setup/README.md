@@ -13,7 +13,7 @@ Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f
 ## Flash Hypriot to a fresh SD card.
 
 ```bash
-curl -O https://raw.githubusercontent.com/hypriot/flash/2.2.0/flash
+curl -O https://raw.githubusercontent.com/hypriot/flash/2.3.0/flash
 chmod +x flash
 sudo mv flash /usr/local/bin/flash
 
@@ -233,12 +233,12 @@ sudo rm -rf /var/log/{containers,pods}
 ### On master
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 INSTALL_K3S_EXEC="--no-deploy traefik" sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.0.0 INSTALL_K3S_EXEC="--no-deploy local-storage --no-deploy metrics-server --no-deploy traefik" sh -
 sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
 ### On nodes (replace XXX with the output of the previous command)
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v0.9.1 K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=... sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.0.0 K3S_URL=https://10.0.0.1:6443 K3S_TOKEN=... sh -
 ```
