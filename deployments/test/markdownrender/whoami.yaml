@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: whoami
+  namespace: test
   labels:
     app: whoami
 spec:
@@ -27,6 +28,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: whoami
+  namespace: test
   labels:
     app: whoami
 spec:
@@ -42,6 +44,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: whoami
+  namespace: test
   labels:
     app: whoami
 spec:
