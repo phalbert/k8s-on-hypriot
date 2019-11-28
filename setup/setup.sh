@@ -30,5 +30,4 @@ done
 
 kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '"' -f2
 
-
 #kubectl -n infra patch storageclass nfs-hdd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'

@@ -3,13 +3,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: jenkins
-  namespace: devops
+  namespace: apps
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: jenkins
-  namespace: devops
+  namespace: apps
 rules:
 - apiGroups: [""]
   resources: ["nodes"]
@@ -31,7 +31,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: jenkins
-  namespace: devops
+  namespace: apps
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -39,13 +39,13 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: jenkins
-  namespace: devops
+  namespace: apps
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: jenkins
-  namespace: devops
+  namespace: apps
 spec:
   accessModes:
     - ReadWriteMany
@@ -57,7 +57,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: jenkins-config
-  namespace: devops
+  namespace: apps
 data:
   plugins.txt: |
     kubernetes
@@ -77,7 +77,7 @@ metadata:
   labels:
     run: jenkins
   name: jenkins
-  namespace: devops
+  namespace: apps
 spec:
   replicas: 1
   selector:
@@ -89,7 +89,7 @@ spec:
         run: jenkins
     spec:
       containers:
-        - image: dahrkael/jenkins-armv7:latest
+        - image: jenkins4eval/jenkins:2.206-slim
           env:
             - name: JAVA_OPTS
               value: "-Djenkins.install.runSetupWizard=false -Dorg.jenkinsci.remoting.engine.JNLP3-connect.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol2.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol1.disabled=true"
@@ -149,7 +149,7 @@ metadata:
   labels:
     run: jenkins
   name: jenkins
-  namespace: devops
+  namespace: apps
   annotations:
     prometheus.io/scrape: "true"
     prometheus.io/path: /prometheus/
@@ -171,13 +171,13 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: jenkins
-  namespace: devops
+  namespace: apps
   annotations:
     kubernetes.io/ingress.class: traefik
-    forecastle.stakater.com/expose: "true"
-    forecastle.stakater.com/group: "Miscellaneous"
-    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png"
-    forecastle.stakater.com/appName: Jenkins
+#    forecastle.stakater.com/expose: "true"
+#    forecastle.stakater.com/group: "Miscellaneous"
+#    forecastle.stakater.com/icon: "https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png"
+#    forecastle.stakater.com/appName: Jenkins
 spec:
   rules:
     - host: jenkins.cluster.local

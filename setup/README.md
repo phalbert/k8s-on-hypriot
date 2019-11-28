@@ -1,15 +1,5 @@
 # Kubernetes on Hypriot
 
-These are instructions for standing up a Kubernetes cluster with Raspberry Pi.
-
-Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f
-
-## Pre-reqs:
-
-* This was done using a cluster of 4 * RPi 4 4GB
-* All Pi's are connected via a local ethernet switch on a 10.0.0.0/24 LAN
-* The master node connects to the outside world on WiFi, and provides NAT for the the rest of the cluster.
-
 ## Flash Hypriot to a fresh SD card.
 
 ```bash
@@ -17,7 +7,7 @@ curl -O https://raw.githubusercontent.com/hypriot/flash/2.3.0/flash
 chmod +x flash
 sudo mv flash /usr/local/bin/flash
 
-flash https://github.com/hypriot/image-builder-rpi/releases/download/v1.11.4/hypriotos-rpi-v1.11.4.img.zip
+flash -u nodes/nodeX-user-data https://github.com/hypriot/image-builder-rpi/releases/download/v1.11.4/hypriotos-rpi-v1.11.4.img.zip
 ```
 
 Repeat for "node1" to "node3" using the ```nodeX-user-data``` file for each node.
