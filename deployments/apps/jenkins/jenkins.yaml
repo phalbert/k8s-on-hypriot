@@ -118,7 +118,7 @@ spec:
               name: ref-volume
       initContainers:
         - name: install-plugins
-          image: dahrkael/jenkins-armv7
+          image: jenkins4eval/jenkins:2.206-slim
           command:
             - /bin/sh
             - -c
