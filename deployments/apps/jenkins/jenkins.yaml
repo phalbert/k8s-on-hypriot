@@ -129,19 +129,19 @@ kind: Ingress
 metadata:
   name: jenkins
   namespace: apps
-#  annotations:
-#    kubernetes.io/tls-acme: "true"
-#    cert-manager.io/cluster-issuer: letsencrypt-prod
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-    - host: jenkins.cluster.local
+    - host: jenkins.cluster.rebelinblue.com
       http:
         paths:
           - path: /
             backend:
               serviceName: jenkins
               servicePort: 8080
-#  tls:
-#    - hosts:
-#        - launchpad.cluster.rebelinblue.com
-#      secretName: forecastle-tls
+  tls:
+    - hosts:
+        - jenkins.cluster.rebelinblue.com
+      secretName: jenkins-tls
