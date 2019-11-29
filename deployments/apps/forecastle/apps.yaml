@@ -171,7 +171,8 @@ spec:
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/jenkins.png
   networkRestricted: false
   properties:
-    Version: 2.206
+    Version: "2.206"
   urlFrom:
     ingressRef:
       name: jenkins
+---

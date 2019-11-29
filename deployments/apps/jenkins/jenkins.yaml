@@ -53,25 +53,6 @@ spec:
     requests:
       storage: 10Gi
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: jenkins-config
-  namespace: apps
-data:
-  plugins.txt: |
-    
-  plugins2.txt: |
-    kubernetes
-    timestamper
-    greenballs
-    ansicolor
-    prometheus
-    simple-theme
-    next-executions
-    timestamper
-    ssh
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -90,10 +71,7 @@ spec:
         run: jenkins
     spec:
       containers:
-        - image: jenkins4eval/jenkins:2.206-slim
-          env:
-            - name: JAVA_OPTS
-              value: "-Djenkins.install.runSetupWizard=false -Dorg.jenkinsci.remoting.engine.JNLP3-connect.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol2.disabled=true -Dorg.jenkinsci.remoting.engine.JnlpProtocol1.disabled=true"
+        - image: rebelinblue/jenkins:2.206
           imagePullPolicy: Always
           name: jenkins
           ports:
@@ -116,33 +94,11 @@ spec:
           volumeMounts:
             - mountPath: /var/jenkins_home
               name: jenkinshome
-            - mountPath: /usr/share/jenkins/ref
-              name: ref-volume
-      initContainers:
-        - name: install-plugins
-          image: jenkins4eval/jenkins:2.206-slim
-          command:
-            - /bin/sh
-            - -c
-            - /usr/local/bin/install-plugins.sh < /config/plugins.txt
-          volumeMounts:
-            - mountPath: /var/jenkins_home
-              name: jenkinshome
-            - mountPath: /config
-              name: config
-            - mountPath: /usr/share/jenkins/ref
-              name: ref-volume
-      serviceAccount: jenkins
       serviceAccountName: jenkins
       volumes:
-        - name: ref-volume
-          emptyDir: {}
         - name: jenkinshome
           persistentVolumeClaim:
             claimName: jenkins
-        - name: config
-          configMap:
-            name: jenkins-config
 ---
 apiVersion: v1
 kind: Service
