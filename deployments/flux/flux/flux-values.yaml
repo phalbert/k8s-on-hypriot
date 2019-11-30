@@ -13,6 +13,8 @@ registry:
   burst: 1
 memcached:
   enabled: true
+additionalArgs:
+  - --connect=ws://fluxcloud
 prometheus:
   enabled: true
 syncGarbageCollection:
