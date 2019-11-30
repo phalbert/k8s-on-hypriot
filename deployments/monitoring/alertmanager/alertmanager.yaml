@@ -7,7 +7,7 @@ data:
   config.yml: |-
     global:
       resolve_timeout: 5m
-      slack_api_url: 'https://hooks.slack.com/services/TOKEN'
+      slack_api_url: 'SLACK_URL'
 
     templates:
       - '/etc/alertmanager-templates/*.tmpl'
@@ -103,6 +103,25 @@ spec:
       labels:
         k8s-app: alertmanager
     spec:
+      initContainers:
+        - name: init
+          image: arm32v6/alpine:3.10
+          args:
+            - sed "s#SLACK_URL#$SLACK_URL#g" /tmp/config/config.yml > /etc/alertmanager/config.yml
+          command:
+            - /bin/sh
+            - -c
+          env:
+            - name: SLACK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: alertmanager
+                  key: slack_url
+          volumeMounts:
+            - name: config-volume
+              mountPath: /tmp/config
+            - name: config
+              mountPath: /etc/alertmanager
       containers:
         - name: alertmanager
           image: prom/alertmanager:v0.19.0
@@ -121,7 +140,7 @@ spec:
                   apiVersion: v1
                   fieldPath: status.podIP
           volumeMounts:
-            - name: config-volume
+            - name: config
               mountPath: /etc/alertmanager
             - name: alertmanager
               mountPath: /alertmanager
@@ -129,6 +148,8 @@ spec:
         - name: config-volume
           configMap:
             name: alertmanager
+        - name: config
+          emptyDir: {}
         - name: alertmanager
           persistentVolumeClaim:
             claimName: alertmanager-claim
