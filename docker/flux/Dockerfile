@@ -2,7 +2,6 @@
 # Compile
 #
 
-# hadolint ignore=DL3006
 FROM golang:1.12-alpine as build
 
 ENV GO111MODULE=on \
