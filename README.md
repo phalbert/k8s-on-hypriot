@@ -1,6 +1,6 @@
 # Kubernetes on Hypriot
 
-Build a [Kubernetes](https://kubernetes.io/) ([k3s](https://github.com/rancher/k3s)) cluster with RPis and utilize [GitOps](https://www.weave.works/technologies/gitops/) for managing cluster state.
+Build a [Kubernetes](https://kubernetes.io/) ([k3s](https://github.com/rancher/k3s) cluster with RPis and utilize [GitOps](https://www.weave.works/technologies/gitops/) for managing cluster state.
 
 Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f and https://github.com/onedr0p/homelab-gitops
 
@@ -18,21 +18,33 @@ Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f and
 ├── ./deployments
 │   # Initial setup of the cluster
 ├── ./setup
-│   │   # Flash the SDCard with HypriotOS
+│   │   # Scripts for setting things up
+│   ├── ./bin
+│   │   # Config for Hypriot when flashing the SD card
 │   └─ ./nodes
-│   # Builds for ARM devices
+│   # Docker builds for ARM devices
 └── ./docker
 ```
 
 ## Network topology
 
+| IP           | Function              | Mac               |
+| ------------ | --------------------- | ----------------- |
+| 192.168.1.1  | Router                |                   |
+| 192.168.1.18 | Master wifi interface |                   |
+| 10.0.0.0/24  | k3s cluster CIDR      |                   |
+| 10.0.0.1     | k3s master (master)   | dc:a6:32:67:76:f1 |
+| 10.0.0.2     | k3s worker (node-1)   | dc:a6:32:67:77:06 |
+| 10.0.0.3     | k3s worker (node-2)   | dc:a6:32:67:76:b8 |
+| 10.0.0.4     | k3s worker (node-3)   | dc:a6:32:67:77:3e |
 
-|IP|Function|
-|---|---|
-|192.168.1.1|Router|
-|192.168.1.18|Master Network IP|
-|10.0.0.0/24|K3S cluster CIDR|
-|10.0.0.1|k3s master (master)|
-|10.0.0.2|k3s worker (node-1)|
-|10.0.0.3|k3s worker (node-2)|
-|10.0.0.4|k3s worker (node-3)|
+## Hardware list
+
+* 4 x [Raspberry Pi 4 Model B 4GB](https://thepihut.com/products/raspberry-pi-4-model-b?variant=20064052740158)
+* [Anker USB Charger PowerPort 5 ](https://www.amazon.co.uk/gp/product/B00VTI8K9K)
+* 4 x [SanDisk Ultra 16 GB microSDHC Memory Card](https://www.amazon.co.uk/gp/product/B073K14CVB)
+* [TP-Link TL-SF1005D Desktop Ethernet Switch](https://www.amazon.co.uk/gp/product/B0766D8HZ3)
+* [BERLS USB 2.0 to DC Power Cord: 5.5 x 2.1mm Barrel Jack Connector](https://www.amazon.co.uk/gp/product/B07GRMJZ3M)
+* [MaGeek 1ft Micro USB 2.0 A Male to Micro B Cables](https://www.amazon.co.uk/gp/product/B00WMAQKS2)
+* 4 x [Raspberry Pi USB-C adapter](https://thepihut.com/products/usb-b-to-usb-c-adapter?variant=20064105988158)
+* [Jun_Electronic 4 Layers Stackable Case](https://www.amazon.co.uk/dp/product/B07BGWNWWR)

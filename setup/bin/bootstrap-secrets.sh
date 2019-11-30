@@ -18,3 +18,5 @@ kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_U
                                                          --from-literal="VAULT_UNSEAL_KEY_3=$VAULT_UNSEAL_KEY_3" \
                                                          --from-literal="VAULT_UNSEAL_KEY_4=$VAULT_UNSEAL_KEY_4" \
                                                          --from-literal="VAULT_UNSEAL_KEY_5=$VAULT_UNSEAL_KEY_5"
+
+kubectl -n flux create secret generic fluxcloud --from-literal="slack_url=$SLACK_URL"
