@@ -9,7 +9,7 @@ metadata:
 data:
   config.ini: |
     [GENERAL]
-    Delay = 7200
+    Delay = 300
 
     [INFLUXDB]
     Address = influxdb.monitoring.svc
