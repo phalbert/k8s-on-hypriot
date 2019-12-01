@@ -176,7 +176,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nfluxdb
+      app: influxdb
   serviceName: influxdb
   template:
     metadata:
