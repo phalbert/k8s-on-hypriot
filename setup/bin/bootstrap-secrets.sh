@@ -21,3 +21,7 @@ kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_U
 
 kubectl -n flux create secret generic fluxcloud --from-literal="slack_url=$SLACK_URL"
 kubectl -n monitoring create secret generic alertmanager --from-literal="slack_url=$SLACK_URL"
+
+
+kubectl -n infra create secret generic minio --from-literal="accesskey=$S3_ACCESS_KEY" \
+                                             --from-literal="secretkey=$S3_SECRET_KEY"

@@ -32,8 +32,6 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    #ingress.kubernetes.io/auth-type: basic
-    #ingress.kubernetes.io/auth-secret: dashboards-auth
 spec:
   rules:
     - host: s3.cluster.rebelinblue.com
@@ -47,19 +45,6 @@ spec:
     - hosts:
         - s3.cluster.rebelinblue.com
       secretName: minio-tls
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: minio
-  namespace: infra
-  labels:
-    app: minio
-type: Opaque
-data:
-  accesskey: "QUtJQUlPU0ZPRE5ON0VYQU1QTEU="
-  secretkey: "d0phbHJYVXRuRkVNSS9LN01ERU5HL2JQeFJmaUNZRVhBTVBMRUtFWQ=="
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
