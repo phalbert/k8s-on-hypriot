@@ -1,6 +1,6 @@
 # Kubernetes on Hypriot
 
-Build a [Kubernetes](https://kubernetes.io/) ([k3s](https://github.com/rancher/k3s) cluster with RPis and utilize [GitOps](https://www.weave.works/technologies/gitops/) for managing cluster state.
+Build a [Kubernetes](https://kubernetes.io/) ([k3s](https://github.com/rancher/k3s)) cluster with RPis and utilize [GitOps](https://www.weave.works/technologies/gitops/) for managing cluster state.
 
 Thanks to https://gist.github.com/elafargue/a822458ab1fe7849eff0a47bb512546f and https://github.com/onedr0p/homelab-gitops
 
