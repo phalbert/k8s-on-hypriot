@@ -180,7 +180,7 @@ apiVersion: forecastle.stakater.com/v1alpha1
 kind: ForecastleApp
 metadata:
   name: minio
-  namespace: apps
+  namespace: infra
 spec:
   name: Minio
   group: Storage
