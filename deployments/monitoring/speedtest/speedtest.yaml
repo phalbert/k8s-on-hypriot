@@ -44,7 +44,7 @@ spec:
     spec:
       containers:
         - name: speedtest
-          image: atribe/speedtest-for-influxdb-and-grafana:latest
+          image: rebelinblue/speedtest-for-influxdb-and-grafana:latest
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: speedtest
