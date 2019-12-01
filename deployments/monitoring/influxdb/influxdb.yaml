@@ -185,7 +185,7 @@ spec:
     spec:
       containers:
         - name: influxdb
-          image: influxdb:1.7.6-alpine
+          image: arm32v7/influxdb:1.7.9
           imagePullPolicy: IfNotPresent
           resources:
             requests:
