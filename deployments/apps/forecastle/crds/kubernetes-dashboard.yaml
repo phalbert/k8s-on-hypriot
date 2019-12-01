@@ -5,7 +5,7 @@ metadata:
   namespace: kubernetes-dashboard
 spec:
   name: Kubernetes Dashboard
-  group: Dashboards
+  group: Infrastructure
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/kubernetes.png
   networkRestricted: true
   properties:

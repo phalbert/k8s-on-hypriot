@@ -5,7 +5,7 @@ metadata:
   namespace: logging
 spec:
   name: Promtail
-  group: Miscellaneous
+  group: Logging
   icon: https://raw.githubusercontent.com/grafana/loki/master/docs/logo.png
   networkRestricted: true
   properties:

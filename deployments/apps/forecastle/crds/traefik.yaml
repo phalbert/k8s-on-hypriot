@@ -5,7 +5,7 @@ metadata:
   namespace: infra
 spec:
   name: Traefik
-  group: Dashboards
+  group: Infrastructure
   icon: https://pbs.twimg.com/media/CcZdW37UcAA9DZz?format=png&name=4096x4096
   networkRestricted: true
   properties:

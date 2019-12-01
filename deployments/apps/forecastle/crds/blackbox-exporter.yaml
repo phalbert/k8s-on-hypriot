@@ -5,7 +5,7 @@ metadata:
   namespace: monitoring
 spec:
   name: Blackbox Exporter
-  group: Prometheus
+  group: Monitoring
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
   networkRestricted: true
   properties:

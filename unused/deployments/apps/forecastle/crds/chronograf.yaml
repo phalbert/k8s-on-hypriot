@@ -5,7 +5,7 @@ metadata:
   namespace: monitoring
 spec:
   name: Chronograf
-  group: Dashboards
+  group: Monitoring
   icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/influxdb-relay/img/influxdb-relay-stack-220x234.png
   networkRestricted: false
   properties:

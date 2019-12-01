@@ -5,7 +5,7 @@ metadata:
   namespace: monitoring
 spec:
   name: Grafana
-  group: Dashboards
+  group: Monitoring
   icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/grafana.png
   networkRestricted: true
   properties:
