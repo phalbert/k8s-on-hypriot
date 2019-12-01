@@ -1,6 +1,15 @@
 groups:
   - name: Pods
     rules:
+      - alert: Init Containers Failed
+        expr: kube_pod_init_container_status_last_terminated_reason{reason!="Completed"} == 1
+        annotations:
+          summary: '{{ $labels.container }} init failed'
+          description: '{{ $labels.container }} has not completed init containers with the reason {{ $labels.reason }}'
+        for: 10m
+        labels:
+          severity: critical
+
       - alert: Pod Crash Looping
         annotations:
           summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
