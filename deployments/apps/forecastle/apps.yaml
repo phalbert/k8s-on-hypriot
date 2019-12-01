@@ -7,7 +7,7 @@ metadata:
 spec:
   name: Alert Manager
   group: Prometheus
-  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/prometheus.png
+  icon: https://raw.githubusercontent.com/stakater/ForecastleIcons/master/alert-manager.png
   networkRestricted: true
   properties:
     Version: 0.19.0
@@ -175,4 +175,20 @@ spec:
   urlFrom:
     ingressRef:
       name: jenkins
+---
+apiVersion: forecastle.stakater.com/v1alpha1
+kind: ForecastleApp
+metadata:
+  name: chronograf
+  namespace: monitoring
+spec:
+  name: Chronograf
+  group: Dashboards
+  icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/influxdb-relay/img/influxdb-relay-stack-220x234.png
+  networkRestricted: false
+  properties:
+    Version: 1.7.14
+  urlFrom:
+    ingressRef:
+      name: chronograf
 ---

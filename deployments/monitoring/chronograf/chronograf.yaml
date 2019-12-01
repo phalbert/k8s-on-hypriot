@@ -1,4 +1,24 @@
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: monitoring
+  name: chronograf
+  labels:
+    app: chronograf
+data:
+  monitor.src: |-
+  {
+    "id": "5000",
+    "name": "internal",
+    "url": "http://influxdb.monitoring.svc:8086",
+    "type": "influx",
+    "insecureSkipVerify": false,
+    "default": true,
+    "telegraf": "cloud",
+    "organization": "influx"
+  }
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,6 +56,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/chronograf
+            - name: config
+              mountPath: /usr/share/chronograf/resources
           resources:
             limits:
               cpu: 2
@@ -44,6 +66,9 @@ spec:
               cpu: 0.1
               memory: 256Mi
       volumes:
+        - name: config
+          configMap:
+            name: chronograf
         - name: data
           persistentVolumeClaim:
             claimName: chronograf
@@ -85,12 +110,21 @@ metadata:
   namespace: monitoring
   labels:
     app: chronograf
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: dashboards-auth
 spec:
   rules:
-    - host: chronograf.cluster.local
+    - host: chronograf.cluster.rebelinblue.com
       http:
         paths:
           - path: /
             backend:
               serviceName: chronograf
               servicePort: 80
+  tls:
+    - hosts:
+        - chronograf.cluster.rebelinblue.com
+      secretName: chronograf-tls
