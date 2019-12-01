@@ -42,6 +42,9 @@ spec:
       labels:
         app: speedtest
     spec:
+      nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/master: "true"
       containers:
         - name: speedtest
           image: rebelinblue/speedtest-for-influxdb-and-grafana:latest
