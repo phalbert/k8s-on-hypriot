@@ -8,16 +8,16 @@ metadata:
     app: chronograf
 data:
   monitor.src: |-
-  {
-    "id": "5000",
-    "name": "internal",
-    "url": "http://influxdb.monitoring.svc:8086",
-    "type": "influx",
-    "insecureSkipVerify": false,
-    "default": true,
-    "telegraf": "cloud",
-    "organization": "influx"
-  }
+    {
+      "id": "5000",
+      "name": "internal",
+      "url": "http://influxdb.monitoring.svc:8086",
+      "type": "influx",
+      "insecureSkipVerify": false,
+      "default": true,
+      "telegraf": "cloud",
+      "organization": "influx"
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
