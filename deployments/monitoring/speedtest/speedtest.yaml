@@ -45,6 +45,9 @@ spec:
       nodeSelector:
         beta.kubernetes.io/arch: arm
         node-role.kubernetes.io/master: "true"
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       containers:
         - name: speedtest
           image: rebelinblue/speedtest-for-influxdb-and-grafana:latest
