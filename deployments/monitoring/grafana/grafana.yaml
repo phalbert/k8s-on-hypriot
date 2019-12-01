@@ -79,8 +79,8 @@ data:
     disable_signout_menu = true
     [auth.anonymous]
     enabled = true
-    ;org_role = Admin
-    org_role = Editor
+    org_role = Admin
+    ;org_role = Editor
     [auth.basic]
     enabled = false
   datasources.yaml: |
@@ -95,6 +95,13 @@ data:
       - name: Prometheus
         type: prometheus
         url: http://prometheus.monitoring.svc:8080
+        access: proxy
+        editable: false
+        isDefault: false
+      - name: Speedtests
+        type: influxdb
+        database: speedtests
+        url: http://influxdb.monitoring.svc:8086
         access: proxy
         editable: false
         isDefault: false
