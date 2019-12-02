@@ -12,10 +12,13 @@ message() {
     printf "\n${CLI_BOLD}${CLI_MAGENTA}==========  %s  ==========${CLI_RESET}\n" "$@"
 }
 
-kubectl taint nodes master node-role.kubernetes.io/master="":NoSchedule
-kubectl label node node-1 node-role.kubernetes.io/worker=worker
-kubectl label node node-2 node-role.kubernetes.io/worker=worker
-kubectl label node node-3 node-role.kubernetes.io/worker=worker
+K3S_MASTER="master"
+K3S_WORKERS_RPI="node-1 node-2 node-3"
+
+kubectl taint nodes $K3S_MASTER node-role.kubernetes.io/master="":NoSchedule
+for node in $K3S_WORKERS_RPI; do
+    kubectl label node $node node-role.kubernetes.io/worker=worker
+done
 
 message "Installing Flux"
 kubectl create namespace flux

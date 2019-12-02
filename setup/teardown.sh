@@ -4,6 +4,14 @@ set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+message() {
+    export CLI_MAGENTA=$(tput -Txterm-256color setaf 5)
+    export CLI_BOLD=$(tput -Txterm-256color bold)
+    export CLI_RESET=$(tput -Txterm-256color sgr0)
+
+    printf "\n${CLI_BOLD}${CLI_MAGENTA}==========  %s  ==========${CLI_RESET}\n" "$@"
+}
+
 K3S_MASTER="master"
 K3S_WORKERS_RPI="node-1 node-2 node-3"
 
@@ -16,14 +24,6 @@ while true; do
         * ) echo "Please answer yes or no.";;
     esac
 done
-
-message() {
-    export CLI_MAGENTA=$(tput -Txterm-256color setaf 5)
-    export CLI_BOLD=$(tput -Txterm-256color bold)
-    export CLI_RESET=$(tput -Txterm-256color sgr0)
-
-    printf "\n${CLI_BOLD}${CLI_MAGENTA}==========  %s  ==========${CLI_RESET}\n" "$@"
-}
 
 # Attempt to delete all namespaces and pvcs prior to tearing-down the cluster. The reason for this is to allow the nfs-client provisioner a change to 'archive' the storage directories
 message "Deleting all pods & pvcs"
@@ -40,8 +40,8 @@ kubectl -n kube-system delete deployments --all
 
 # raspberry pi4 worker nodes
 for node in $K3S_WORKERS_RPI; do
-  message "Tearing down node - $node"
-  ssh -o "StrictHostKeyChecking=no" $node "k3s-agent-uninstall.sh"
+    message "Tearing down node - $node"
+    ssh -o "StrictHostKeyChecking=no" $node "k3s-agent-uninstall.sh"
 done
 
 # k3s master node
