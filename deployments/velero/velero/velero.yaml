@@ -16,6 +16,20 @@ spec:
     s3Url: http://minio.infra.svc:9000
     publicUrl: https://minio.cluster.rebelinblue.com
 ---
+apiVersion: velero.io/v1
+kind: VolumeSnapshotLocation
+metadata:
+  name: default
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+spec:
+  provider: aws
+  objectStorage:
+    bucket: velero
+  config:
+    region: minio
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
