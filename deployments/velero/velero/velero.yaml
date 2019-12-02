@@ -39,6 +39,12 @@ spec:
     spec:
       restartPolicy: Always
       serviceAccountName: velero-server
+      initContainers:
+        - name: velero-plugin-for-aws
+          image: rebelinblue/velero-plugin-for-aws:1.0.0
+          volumeMounts:
+            - name: plugins
+              mountPath: /target
       containers:
         - name: velero
           image: rebelinblue/velero:1.2.0
@@ -83,16 +89,17 @@ spec:
         - name: scratch
           emptyDir: {}
 ---
-apiVersion: rbac.authorization.k8s.io/v1
+apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding
 metadata:
   name: velero-server
+  namespace: velero
   labels:
     app.kubernetes.io/name: velero
 subjects:
   - kind: ServiceAccount
-    namespace: apps
     name: velero-server
+    namespace: velero
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -187,7 +194,7 @@ metadata:
     app.kubernetes.io/name: velero
 type: Opaque
 data:
-  cloud: "W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkID0gJE1JTklPX0FDQ0VTU19LRVkKYXdzX3NlY3JldF9hY2Nlc3Nfa2V5ID0gJE1JTklPX1NFQ1JFVF9LRVkK"
+  cloud: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkID0gbFpnQzFJQmpsNnAyVzdoZwphd3Nfc2VjcmV0X2FjY2Vzc19rZXkgPSAzWUdnNWFtMTF5U2xXRkJqWTdNcWJka1d1SnkxTklUWAo=
 ---
 apiVersion: v1
 kind: Service
