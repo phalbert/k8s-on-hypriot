@@ -6,3 +6,11 @@ prometheus
 next-executions
 timestamper
 ssh
+simple-theme
+environment-dashboard
+cloudbees-folder
+github-branch-source
+github
+parameterized-trigger
+rebuild
+build-name-setter
