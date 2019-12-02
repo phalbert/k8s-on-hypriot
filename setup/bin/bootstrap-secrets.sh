@@ -24,3 +24,6 @@ kubectl -n monitoring create secret generic alertmanager --from-literal="slack_u
 
 kubectl -n infra create secret generic minio --from-literal="accesskey=$MINIO_ACCESS_KEY" \
                                              --from-literal="secretkey=$MINIO_SECRET_KEY"
+
+kubectl -n velero create secret generic velero --from-literal="accesskey=$MINIO_ACCESS_KEY" \
+                                               --from-literal="secretkey=$MINIO_SECRET_KEY"

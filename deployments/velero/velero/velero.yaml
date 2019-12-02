@@ -40,6 +40,30 @@ spec:
       restartPolicy: Always
       serviceAccountName: velero-server
       initContainers:
+        - name: init
+          image: arm32v6/alpine:3.10
+          args:
+            - sed "s#MINIO_ACCESS_KEY#$MINIO_ACCESS_KEY#g" /tmp/config/cloud > /credentials/cloud &&
+              sed -i "s#MINIO_SECRET_KEY#$MINIO_SECRET_KEY#g" /credentials/cloud
+          command:
+            - /bin/sh
+            - -c
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: velero
+                  key: accesskey
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: velero
+                  key: secretkey
+          volumeMounts:
+            - name: cloud-credentials
+              mountPath: /tmp/config
+            - name: config
+              mountPath: /credentials
         - name: velero-plugin-for-aws
           image: rebelinblue/velero-plugin-for-aws:1.0.0
           volumeMounts:
@@ -66,7 +90,7 @@ spec:
           volumeMounts:
             - name: plugins
               mountPath: /plugins
-            - name: cloud-credentials
+            - name: config
               mountPath: /credentials
             - name: scratch
               mountPath: /scratch
@@ -82,8 +106,10 @@ spec:
               value: /credentials/cloud
       volumes:
         - name: cloud-credentials
-          secret:
-            secretName: velero
+          configMap:
+            name: velero
+        - name: config
+          emptyDir: {}
         - name: plugins
           emptyDir: {}
         - name: scratch
@@ -186,15 +212,17 @@ spec:
     ttl: 120h
 ---
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
   name: velero
   namespace: velero
   labels:
     app.kubernetes.io/name: velero
-type: Opaque
 data:
-  cloud: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkID0gbFpnQzFJQmpsNnAyVzdoZwphd3Nfc2VjcmV0X2FjY2Vzc19rZXkgPSAzWUdnNWFtMTF5U2xXRkJqWTdNcWJka1d1SnkxTklUWAo=
+  cloud: |
+    [default]
+    aws_access_key_id = MINIO_ACCESS_KEY
+    aws_secret_access_key = MINIO_SECRET_KEY
 ---
 apiVersion: v1
 kind: Service
