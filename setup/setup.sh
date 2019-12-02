@@ -33,5 +33,6 @@ done
 
 kubectl -n flux logs deployment/flux | grep identity.pub | cut -d '"' -f2
 
+
 #kubectl delete crd helmcharts.helm.cattle.io
 #kubectl -n infra patch storageclass nfs-hdd -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
