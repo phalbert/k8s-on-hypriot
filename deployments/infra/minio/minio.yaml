@@ -34,7 +34,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
-    - host: s3.cluster.rebelinblue.com
+    - host: minio.cluster.rebelinblue.com
       http:
         paths:
           - path: /
@@ -43,7 +43,7 @@ spec:
               servicePort: 9000
   tls:
     - hosts:
-        - s3.cluster.rebelinblue.com
+        - minio.cluster.rebelinblue.com
       secretName: minio-tls
 ---
 apiVersion: v1
