@@ -48,7 +48,6 @@ fi
 VAULT_POLICY_NAME="${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}"
 VAULT_POLICY_FILE="/tmp/${VAULT_POLICY_NAME}.hcl"
 
-
 # Check if a policy already exists
 if [[ "$(vault policy list | grep ${VAULT_POLICY_NAME})" != "${VAULT_POLICY_NAME}" ]]; then
    echo -e "[ INFO ] Create a policy ${VAULT_POLICY_NAME}"

@@ -3,17 +3,7 @@
 set -e
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
-
-message() {
-    export CLI_MAGENTA=$(tput -Txterm-256color setaf 5)
-    export CLI_BOLD=$(tput -Txterm-256color bold)
-    export CLI_RESET=$(tput -Txterm-256color sgr0)
-
-    printf "\n${CLI_BOLD}${CLI_MAGENTA}==========  %s  ==========${CLI_RESET}\n" "$@"
-}
-
-K3S_MASTER="master"
-K3S_WORKERS_RPI="node-1 node-2 node-3"
+source "$REPO_ROOT/setup/nodes.env"
 
 echo "This is a destructive action which will delete everything and remove the kubernetes cluster served by $server"
 while true; do
@@ -40,12 +30,12 @@ kubectl -n kube-system delete deployments --all
 
 # raspberry pi4 worker nodes
 for node in $K3S_WORKERS_RPI; do
-    message "Tearing down node - $node"
+    message "Tearing down $node"
     ssh -o "StrictHostKeyChecking=no" $node "k3s-agent-uninstall.sh"
 done
 
 # k3s master node
-message "Tearing down master - $K3S_MASTER"
+message "Tearing down $K3S_MASTER"
 ssh -o "StrictHostKeyChecking=no" $K3S_MASTER "k3s-uninstall.sh"
 
 message "All done - everything is removed!"
