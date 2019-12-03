@@ -10,6 +10,8 @@ export VAULT_TCP_PORT=${VAULT_TCP_PORT:-"8200"}
 export VAULT_SCHEME=${VAULT_SCHEME:-"http"}
 export VAULT_ADDR="${VAULT_SCHEME}://${VAULT_HOST}:${VAULT_TCP_PORT}"
 export VAULT_SKIP_VERIFY="true"
+export CONSUL_HOST=${CONSUL_HOST:-"127.0.0.1"}
+export CONSUL_TCP_PORT=${CONSUL_TCP_PORT:-"8500"}
 
 function unseal() {
     # Unseal Vault instance
@@ -26,6 +28,16 @@ function unseal() {
     done
 }
 
+echo "[ INFO ] Wait for Consul Client on ${CONSUL_HOST}:${CONSUL_TCP_PORT}"
+sleep ${TIMEOUT}
+
+until ncat -z ${CONSUL_HOST} ${CONSUL_TCP_PORT}
+do
+    echo "Consul endpoint is unreachable. Sleeping for ${TIMEOUT} seconds."
+    sleep ${TIMEOUT}
+done
+
+echo -e "[ OK ] Consul is reachable"
 echo "[ INFO ] Start Vault server in background"
 
 vault server -config=/vault/config/vault.hcl >/dev/null &

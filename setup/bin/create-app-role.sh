@@ -8,13 +8,16 @@
 
 set -e
 
-#kubectl -n vault port-forward vault-0 8200:8200
+kubectl -n vault port-forward svc/vault 8200:8200 >/dev/null 2>&1 &
+VAULT_FWD_PID=$!
+sleep 5
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 source "$REPO_ROOT/setup/.env"
 
 # Variables
-VAULT_TOKEN=$VAULT_ROOT_TOKEN
+export VAULT_ADDR=$VAULT_ADDR
+export VAULT_TOKEN=$VAULT_ROOT_TOKEN
 
 if [[ -z $1 ]]; then
    echo "Namespace must be provided explicitly";
@@ -126,3 +129,5 @@ data:
 fi
 
 vault write apps/${KUBERNETES_NAMESPACE}/${KUBERNETES_APPLICATION}/example FOO="bar"
+
+kill $VAULT_FWD_PID

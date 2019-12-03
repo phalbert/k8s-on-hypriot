@@ -8,8 +8,14 @@ metadata:
     app: vault
 data:
   vault.hcl: |-
-    storage "file" {
-        path = "/vault/data"
+    storage "consul" {
+        address = "127.0.0.1:8500"
+        path = "vault/"
+        scheme = "http"
+        service = "vault"
+        service_tags = "vault,production"
+        session_ttl = "60s"
+        disable_registration = "true"
     }
     listener "tcp" {
         address = "0.0.0.0:8200"
@@ -26,6 +32,8 @@ data:
     max_lease_ttl = "10h"
     default_lease_ttl = "10h"
     cluster_name = "pi-vault"
+  consul.json: |-
+    {}
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -59,30 +67,17 @@ spec:
       port: 8201
       targetPort: 8201
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: vault
-  namespace: vault
-  labels:
-    app: vault
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: vault
   namespace: vault
   labels:
     app: vault
 spec:
-  replicas: 1
-  strategy:
+  serviceName: "vault"
+  replicas: 2
+  updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
@@ -155,16 +150,6 @@ spec:
                 secretKeyRef:
                   name: vault-unseal-keys
                   key: VAULT_UNSEAL_KEY_3
-            - name: VAULT_UNSEAL_KEY_4
-              valueFrom:
-                secretKeyRef:
-                  name: vault-unseal-keys
-                  key: VAULT_UNSEAL_KEY_4
-            - name: VAULT_UNSEAL_KEY_5
-              valueFrom:
-                secretKeyRef:
-                  name: vault-unseal-keys
-                  key: VAULT_UNSEAL_KEY_5
           livenessProbe:
             httpGet:
               path: /v1/sys/health?standbyok=true&uninitcode=204&sealedcode=204&
@@ -191,8 +176,6 @@ spec:
               add:
                 - IPC_LOCK
           volumeMounts:
-            - name: storage
-              mountPath: /vault/data/
             - name: vault-config-file
               mountPath: /vault/config/vault.hcl
               subPath: vault.hcl
@@ -200,7 +183,61 @@ spec:
               mountPath: /root/
             - name: vault-temp
               mountPath: /tmp/
-      serviceAccountName: vault
+        - name: consul-client
+          image: consul:1.6.1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            readOnlyRootFilesystem: true
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: CONSUL_GOSSIP_ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: consul-gossip-key
+                  key: gossip-key
+            - name: CONSUL_DATACENTER_NAME
+              value: "dc1"
+            - name: CONSUL_DOMAIN
+              value: "cluster.local"
+          command:
+            - "consul"
+          args:
+            - "agent"
+            - "-node=$(POD_NAME)"
+            - "-datacenter=$(CONSUL_DATACENTER_NAME)"
+            - "-client=0.0.0.0"
+            - "-bind=0.0.0.0"
+            - "-data-dir=/var/lib/consul"
+            - "-config-dir=/consul/config"
+            - "-domain=$(CONSUL_DOMAIN)"
+            - "-retry-join=$(CONSUL_SERVICE_HOST)"
+            - "-disable-host-node-id"
+            - "-encrypt=$(CONSUL_GOSSIP_ENCRYPTION_KEY)"
+          resources:
+            limits:
+              cpu: "300m"
+              memory: 256Mi
+            requests:
+              cpu: "150m"
+              memory: 128Mi
+          volumeMounts:
+            - name: consul-data
+              mountPath: /var/lib/consul
+            - name: vault-config-file
+              mountPath: /consul/config/consul.json
+              subPath: consul.json
+      serviceAccountName: "vault"
       volumes:
         - name: vault-config-file
           configMap:
@@ -209,9 +246,8 @@ spec:
           emptyDir: {}
         - name: vault-temp
           emptyDir: {}
-        - name: storage
-          persistentVolumeClaim:
-            claimName: vault
+        - name: consul-data
+          emptyDir: {}
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -222,7 +258,7 @@ metadata:
     app: vault
   annotations:
     kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-staging # FIXME: Reset this
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   rules:
     - host: vault.cluster.rebelinblue.com
