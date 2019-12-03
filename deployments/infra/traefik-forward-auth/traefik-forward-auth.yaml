@@ -1,16 +1,4 @@
-kind: Secret
-apiVersion: v1
-metadata:
-  name: traefik-forward-auth-secrets
-  namespace: infra
-  labels:
-    name: traefik
-type: Opaque
-data:
-  CLIENT_SECRET: MC1oeUpXVW90S0VjN2xUcnIwUUpvYmc5
-  SECRET: SkxvQUYyM3JabVRyQWJUZg==
 ---
-kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: traefik-forward-auth
@@ -40,7 +28,10 @@ spec:
             - name: OIDC_ISSUER
               value: https://accounts.google.com
             - name: CLIENT_ID
-              value: 790180635443-4kkbqimheq81o2p612t3itrl8bkcvthe.apps.googleusercontent.com
+              valueFrom:
+                secretKeyRef:
+                  name: traefik-forward-auth-secrets
+                  key: CLIENT_ID
             - name: CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
