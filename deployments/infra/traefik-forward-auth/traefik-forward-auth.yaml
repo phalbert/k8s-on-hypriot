@@ -20,7 +20,7 @@ spec:
         - image: rebelinblue/traefik-forward-auth:v2.0.0-rc1
           name: traefik-forward-auth
           args:
-            - -log-level=debug
+            - -log-level=info
           ports:
             - containerPort: 4181
               protocol: TCP
