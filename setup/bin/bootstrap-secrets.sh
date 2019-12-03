@@ -21,6 +21,6 @@ kubectl -n infra create secret generic minio --from-literal="accesskey=$MINIO_AC
 kubectl -n velero create secret generic velero --from-literal="accesskey=$MINIO_ACCESS_KEY" \
                                                --from-literal="secretkey=$MINIO_SECRET_KEY"
 
-kubectl -n infra create secret generic traefik-forward-auth-secrets --from-literal="CLIENT_ID=$CLIENT_ID" \
-                                                                    --from-literal="CLIENT_SECRET=$CLIENT_SECRET" \
-                                                                    --from-literal="SECRET=$SECRET"
+kubectl -n infra create secret generic traefik-forward-auth-secrets --from-literal="CLIENT_ID=$OAUTH_CLIENT_ID" \
+                                                                    --from-literal="CLIENT_SECRET=$OAUTH_CLIENT_SECRET" \
+                                                                    --from-literal="SECRET=$OAUTH_SECRET"
