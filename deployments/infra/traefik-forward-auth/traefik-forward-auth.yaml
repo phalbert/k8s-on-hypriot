@@ -1,0 +1,102 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: traefik-forward-auth-secrets
+  namespace: infra
+  labels:
+    name: traefik
+type: Opaque
+data:
+  CLIENT_SECRET: MC1oeUpXVW90S0VjN2xUcnIwUUpvYmc5
+  SECRET: SkxvQUYyM3JabVRyQWJUZg==
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: traefik-forward-auth
+  namespace: infra
+  labels:
+    app: traefik-forward-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik-forward-auth
+  template:
+    metadata:
+      labels:
+        app: traefik-forward-auth
+    spec:
+      containers:
+        - image: rebelinblue/traefik-forward-auth:v2.0.0-rc1
+          name: traefik-forward-auth
+          args:
+            - -log-level=debug
+            - -whitelist=stephen.ball@gmail.com
+          ports:
+            - containerPort: 4181
+              protocol: TCP
+          env:
+            - name: OIDC_ISSUER
+              value: https://accounts.google.com
+            - name: CLIENT_ID
+              value: 790180635443-4kkbqimheq81o2p612t3itrl8bkcvthe.apps.googleusercontent.com
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: traefik-forward-auth-secrets
+                  key: CLIENT_SECRET
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: traefik-forward-auth-secrets
+                  key: SECRET
+            - name: COOKIE_SECURE
+              value: "false"
+            - name: COOKIE_DOMAINS
+              value: .cluster.rebelinblue.com
+            - name: AUTH_HOST
+              value: auth.cluster.rebelinblue.com
+          livenessProbe:
+            tcpSocket:
+              port: 4181
+            initialDelaySeconds: 20
+            failureThreshold: 3
+            successThreshold: 1
+            periodSeconds: 10
+            timeoutSeconds: 2
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: traefik-forward-auth
+  namespace: infra
+spec:
+  selector:
+    app: traefik-forward-auth
+  ports:
+    - port: 80
+      targetPort: 4181
+      protocol: TCP
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: traefik-forward-auth-ingress
+  namespace: infra
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: auth.cluster.rebelinblue.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: traefik-forward-auth
+              servicePort: 80
+  tls:
+    - hosts:
+        - auth.cluster.rebelinblue.com
+      secretName: auth-tls

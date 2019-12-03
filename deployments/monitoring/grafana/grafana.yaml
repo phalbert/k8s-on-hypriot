@@ -265,8 +265,9 @@ metadata:
   annotations:
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    ingress.kubernetes.io/auth-type: basic
-    ingress.kubernetes.io/auth-secret: dashboards-auth
+    ingress.kubernetes.io/auth-type: forward
+    ingress.kubernetes.io/auth-url: http://traefik-forward-auth.infra.svc
+    ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
 spec:
   rules:
     - host: grafana.cluster.rebelinblue.com
