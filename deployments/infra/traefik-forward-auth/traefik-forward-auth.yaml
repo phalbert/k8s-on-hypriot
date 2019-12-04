@@ -13,35 +13,47 @@ spec:
       app: traefik-forward-auth
   template:
     metadata:
+      annotations:
+        SECRET_CLIENT_ID: /apps/infra/traefik-forward-auth-secrets/CLIENT_ID
+        SECRET_CLIENT_SECRET: /apps/infra/traefik-forward-auth-secrets/CLIENT_SECRET
+        SECRET_SECRET: /apps/infra/traefik-forward-auth-secrets/SECRET
       labels:
         app: traefik-forward-auth
     spec:
+      initContainers:
+        - name: init
+          image: rebelinblue/vault-consumer:0.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VAULT_ROLE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: role_id
+                  name: traefik-forward-auth-approle
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  key: secret_id
+                  name: traefik-forward-auth-approle
+          volumeMounts:
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
       containers:
         - image: rebelinblue/traefik-forward-auth:v2.0.0-rc1
           name: traefik-forward-auth
+          command:
+            - bash
+            - -c
           args:
-            - -log-level=info
+            - source /env/secrets; /traefik-forward-auth -log-level=info
           ports:
             - containerPort: 4181
               protocol: TCP
           env:
             - name: OIDC_ISSUER
               value: https://accounts.google.com
-            - name: CLIENT_ID
-              valueFrom:
-                secretKeyRef:
-                  name: traefik-forward-auth-secrets
-                  key: CLIENT_ID
-            - name: CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: traefik-forward-auth-secrets
-                  key: CLIENT_SECRET
-            - name: SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: traefik-forward-auth-secrets
-                  key: SECRET
             - name: AUTH_HOST
               value: auth.cluster.rebelinblue.com
             - name: COOKIE_DOMAINS
@@ -58,6 +70,20 @@ spec:
             successThreshold: 1
             periodSeconds: 10
             timeoutSeconds: 2
+          volumeMounts:
+            - mountPath: /env
+              name: env
+      volumes:
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
 ---
 kind: Service
 apiVersion: v1
