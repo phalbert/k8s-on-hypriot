@@ -5,6 +5,14 @@ set -e
 REPO_ROOT=$(git rev-parse --show-toplevel)
 source "$REPO_ROOT/setup/nodes.env"
 
+message() {
+    export CLI_MAGENTA=$(tput -Txterm-256color setaf 5)
+    export CLI_BOLD=$(tput -Txterm-256color bold)
+    export CLI_RESET=$(tput -Txterm-256color sgr0)
+
+    printf "\n${CLI_BOLD}${CLI_MAGENTA}==========  %s  ==========${CLI_RESET}\n" "$@"
+}
+
 echo "This is a destructive action which will delete everything and remove the kubernetes cluster served by $server"
 while true; do
     read -p "Are you SURE you want to run this? (y/n) " yn
