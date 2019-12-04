@@ -183,42 +183,35 @@ spec:
       serviceAccountName: velero-server
       securityContext:
         runAsUser: 0
-      volumes:
-        - name: cloud-credentials
-          configMap:
-            name: velero
-        - name: config
-          emptyDir: {}
-        - name: host-pods
-          hostPath:
-            path: /var/lib/kubelet/pods
-        - name: scratch
-          emptyDir: {}
       initContainers:
         - name: init
-          image: arm32v6/alpine:3.10
-          args:
-            - sed "s#MINIO_ACCESS_KEY#$MINIO_ACCESS_KEY#g" /tmp/config/cloud > /credentials/cloud &&
-              sed -i "s#MINIO_SECRET_KEY#$MINIO_SECRET_KEY#g" /credentials/cloud
+          image: rebelinblue/vault-consumer:0.0.1
           command:
             - /bin/sh
             - -c
+          args:
+            - /entrypoint.sh confd &&
+              source /env/secrets &&
+              sed "s#MINIO_ACCESS_KEY#$MINIO_ACCESS_KEY#g" /tmp/config/cloud > /credentials/cloud &&
+              sed -i "s#MINIO_SECRET_KEY#$MINIO_SECRET_KEY#g" /credentials/cloud
           env:
-            - name: MINIO_ACCESS_KEY
+            - name: VAULT_ROLE_ID
               valueFrom:
                 secretKeyRef:
-                  name: velero
-                  key: accesskey
-            - name: MINIO_SECRET_KEY
+                  key: role_id
+                  name: velero-approle
+            - name: VAULT_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: velero
-                  key: secretkey
+                  key: secret_id
+                  name: velero-approle
           volumeMounts:
             - name: cloud-credentials
               mountPath: /tmp/config
             - name: config
               mountPath: /credentials
+            - mountPath: /env
+              name: env
       containers:
         - name: velero
           image: rebelinblue/velero:1.2.0
@@ -257,6 +250,27 @@ spec:
             requests:
               cpu: 15m
               memory: 200Mi
+      volumes:
+        - name: cloud-credentials
+          configMap:
+            name: velero
+        - name: config
+          emptyDir: {}
+        - name: host-pods
+          hostPath:
+            path: /var/lib/kubelet/pods
+        - name: scratch
+          emptyDir: {}
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
 ---
 apiVersion: velero.io/v1
 kind: Schedule
