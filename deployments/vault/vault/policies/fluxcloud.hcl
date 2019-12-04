@@ -1,3 +1,3 @@
-path "apps/slack/*" {
+path "apps/shared/slack" {
   capabilities = ["read"]
 }

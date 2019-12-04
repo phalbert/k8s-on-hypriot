@@ -99,25 +99,37 @@ spec:
       k8s-app: alertmanager
   template:
     metadata:
-      name: alertmanager
+      annotations:
+        SECRET_SLACK_URL: /apps/shared/slack/slack_url
       labels:
         k8s-app: alertmanager
     spec:
       initContainers:
         - name: init
-          image: arm32v6/alpine:3.10
-          args:
-            - sed "s#SLACK_URL#$SLACK_URL#g" /tmp/config/config.yml > /etc/alertmanager/config.yml
+          image: rebelinblue/vault-consumer:0.0.1
           command:
-            - /bin/sh
+            - sh
             - -c
+          args:
+            - /entrypoint.sh confd;
+              source /env/secrets;
+              sed "s#SLACK_URL#$SLACK_URL#g" /tmp/config/config.yml > /etc/alertmanager/config.yml
           env:
-            - name: SLACK_URL
+            - name: VAULT_ROLE_ID
               valueFrom:
                 secretKeyRef:
-                  name: alertmanager
-                  key: slack_url
+                  key: role_id
+                  name: alertmanager-approle
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  key: secret_id
+                  name: alertmanager-approle
           volumeMounts:
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
             - name: config-volume
               mountPath: /tmp/config
             - name: config
@@ -153,6 +165,16 @@ spec:
         - name: alertmanager
           persistentVolumeClaim:
             claimName: alertmanager-claim
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
 ---
 apiVersion: v1
 kind: Service

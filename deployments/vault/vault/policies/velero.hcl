@@ -1,3 +1,3 @@
-path "apps/shared/minio/*" {
+path "apps/shared/minio" {
   capabilities = ["read"]
 }
