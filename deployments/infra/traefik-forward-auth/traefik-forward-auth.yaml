@@ -44,7 +44,7 @@ spec:
         - image: rebelinblue/traefik-forward-auth:v2.0.0-rc1
           name: traefik-forward-auth
           command:
-            - bash
+            - sh
             - -c
           args:
             - source /env/secrets; /traefik-forward-auth -log-level=info
