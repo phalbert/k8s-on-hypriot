@@ -46,8 +46,7 @@ spec:
             - sh
             - -c
           args:
-            - if [ -r /env/secrets ]; then source /env/secrets fi;
-              linode-dynamic-dns -s "$(expr "$FREQUENCY" '*' 60)"
+            - source /env/secrets; linode-dynamic-dns -s "$(expr "$FREQUENCY" '*' 60)"
           resources:
             limits:
               cpu: 10m

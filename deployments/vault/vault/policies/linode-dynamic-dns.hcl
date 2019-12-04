@@ -1,3 +1,3 @@
-path "apps/infra/linode-dynamic-dns/*" {
+path "apps/infra/linode-dynamic-dns" {
   capabilities = ["read"]
 }
