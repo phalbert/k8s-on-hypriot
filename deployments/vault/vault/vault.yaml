@@ -36,6 +36,19 @@ metadata:
     app: vault
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: vault-unseal-keys
+  namespace: vault
+type: Opaque
+data:
+  VAULT_UNSEAL_KEY_1: Zk9LSU1yTnNzSVhKdWZLZFoxQUg2aW5PaCtsZXdFYjkxbGJ3TjlVaExtSVkK
+  VAULT_UNSEAL_KEY_2: SEtSTitEakp3clVhUXpON05ialpDMTBHdFFxb1pvNThXNUl3aXdCVEwrWVEK
+  VAULT_UNSEAL_KEY_3: a3c1R3dMbzk3NTRYRlZ0ek5zZjJBalpic1RMcWhmY2sxei8wR29ZbmZQTHUK
+  VAULT_UNSEAL_KEY_4: amNBSjg3UkZPZWJEYkNKZ2NUY1dvYUNkeGhWYjQybU1LZmR6WUE0Q2Z1QWIK
+  VAULT_UNSEAL_KEY_5: bUxFL1VrQkhYdVBPd3hvSDB6eVlsamNrL0VVMmM0N0hrZU9vbkhXdFI4cWEK
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: vault
@@ -59,30 +72,17 @@ spec:
       port: 8201
       targetPort: 8201
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: vault
-  namespace: vault
-  labels:
-    app: vault
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 20Gi
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: vault
   namespace: vault
   labels:
     app: vault
 spec:
+  serviceName: vault
   replicas: 1
-  strategy:
+  updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
@@ -191,7 +191,7 @@ spec:
               add:
                 - IPC_LOCK
           volumeMounts:
-            - name: storage
+            - name: vault-data
               mountPath: /vault/data/
             - name: vault-config-file
               mountPath: /vault/config/vault.hcl
@@ -209,9 +209,15 @@ spec:
           emptyDir: {}
         - name: vault-temp
           emptyDir: {}
-        - name: storage
-          persistentVolumeClaim:
-            claimName: vault
+  volumeClaimTemplates:
+    - metadata:
+        name: vault-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
