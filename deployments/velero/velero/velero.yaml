@@ -47,6 +47,8 @@ spec:
       labels:
         app.kubernetes.io/name: velero
       annotations:
+        SECRET_MINIO_ACCESS_KEY: /apps/shared/minio/accesskey
+        SECRET_MINIO_SECRET_KEY: /apps/shared/minio/secretkey
         prometheus.io/path: /metrics
         prometheus.io/port: "8085"
         prometheus.io/scrape: "true"
@@ -55,29 +57,35 @@ spec:
       serviceAccountName: velero-server
       initContainers:
         - name: init
-          image: arm32v6/alpine:3.10
-          args:
-            - sed "s#MINIO_ACCESS_KEY#$MINIO_ACCESS_KEY#g" /tmp/config/cloud > /credentials/cloud &&
-              sed -i "s#MINIO_SECRET_KEY#$MINIO_SECRET_KEY#g" /credentials/cloud
+          image: rebelinblue/vault-consumer:0.0.1
           command:
             - /bin/sh
             - -c
+          args:
+            - /entrypoint.sh confd &&
+              source /env/secrets &&
+              sed "s#MINIO_ACCESS_KEY#$MINIO_ACCESS_KEY#g" /tmp/config/cloud > /credentials/cloud &&
+              sed -i "s#MINIO_SECRET_KEY#$MINIO_SECRET_KEY#g" /credentials/cloud
           env:
-            - name: MINIO_ACCESS_KEY
+            - name: VAULT_ROLE_ID
               valueFrom:
                 secretKeyRef:
-                  name: velero
-                  key: accesskey
-            - name: MINIO_SECRET_KEY
+                  key: role_id
+                  name: velero-approle
+            - name: VAULT_SECRET_ID
               valueFrom:
                 secretKeyRef:
-                  name: velero
-                  key: secretkey
+                  key: secret_id
+                  name: velero-approle
           volumeMounts:
             - name: cloud-credentials
               mountPath: /tmp/config
             - name: config
               mountPath: /credentials
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
         - name: velero-plugin-for-aws
           image: rebelinblue/velero-plugin-for-aws:1.0.0
           volumeMounts:
@@ -119,6 +127,16 @@ spec:
             - name: AWS_SHARED_CREDENTIALS_FILE
               value: /credentials/cloud
       volumes:
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
         - name: cloud-credentials
           configMap:
             name: velero
