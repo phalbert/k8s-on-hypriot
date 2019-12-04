@@ -39,12 +39,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: role_id
-                  name: flux-cloud-approle
+                  name: fluxcloud-approle
             - name: VAULT_SECRET_ID
               valueFrom:
                 secretKeyRef:
                   key: secret_id
-                  name: flux-cloud-approle
+                  name: fluxcloud-approle
           volumeMounts:
             - mountPath: /env
               name: env
