@@ -101,14 +101,15 @@ kapprole "minio" "infra"
 kpolicy "velero"
 kapprole "velero" "velero"
 
-vault kv put apps/shared/minio accesskey="$MINIO_ACCESS_KEY" secretkey="$MINIO_SECRET_KEY"
+vault kv put apps/shared/minio accesskey="$MINIO_ACCESS_KEY" \
+                               secretkey="$MINIO_SECRET_KEY"
 
 kpolicy "traefik-forward-auth"
 kapprole "traefik-forward-auth" "infra"
 
-vault kv put apps/infra/traefik-forward-auth-secrets CLIENT_ID="$OAUTH_CLIENT_ID" \
-                                                     CLIENT_SECRET="$OAUTH_CLIENT_SECRET" \
-                                                     SECRET="$OAUTH_SECRET"
+vault kv put apps/infra/traefik-forward-auth CLIENT_ID="$OAUTH_CLIENT_ID" \
+                                             CLIENT_SECRET="$OAUTH_CLIENT_SECRET" \
+                                             SECRET="$OAUTH_SECRET"
 
 "${REPO_ROOT}/setup/bin/create-app-role.sh" test kuard
 

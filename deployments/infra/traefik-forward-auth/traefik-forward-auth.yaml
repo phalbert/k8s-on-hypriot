@@ -14,9 +14,9 @@ spec:
   template:
     metadata:
       annotations:
-        SECRET_CLIENT_ID: /apps/infra/traefik-forward-auth-secrets/CLIENT_ID
-        SECRET_CLIENT_SECRET: /apps/infra/traefik-forward-auth-secrets/CLIENT_SECRET
-        SECRET_SECRET: /apps/infra/traefik-forward-auth-secrets/SECRET
+        SECRET_CLIENT_ID: /apps/infra/traefik-forward-auth/CLIENT_ID
+        SECRET_CLIENT_SECRET: /apps/infra/traefik-forward-auth/CLIENT_SECRET
+        SECRET_SECRET: /apps/infra/traefik-forward-auth/SECRET
       labels:
         app: traefik-forward-auth
     spec:
