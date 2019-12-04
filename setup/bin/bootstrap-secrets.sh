@@ -24,3 +24,10 @@ kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_U
                                                          --from-literal="VAULT_UNSEAL_KEY_3=$VAULT_UNSEAL_KEY_3" \
                                                          --from-literal="VAULT_UNSEAL_KEY_4=$VAULT_UNSEAL_KEY_4" \
                                                          --from-literal="VAULT_UNSEAL_KEY_5=$VAULT_UNSEAL_KEY_5"
+
+#kubectl -n infra create secret generic linode-dynamic-dns
+#kubectl -n flux create secret generic fluxcloud
+#kubectl -n monitoring create secret generic alertmanager
+#kubectl -n infra create secret generic minio
+#kubectl -n velero create secret generic velero
+#kubectl -n infra create secret generic traefik-forward-auth-secrets

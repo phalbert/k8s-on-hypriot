@@ -92,7 +92,7 @@ else
                 token_ttl=1m \
                 token_max_ttl=10m >/dev/null
 
-    echo -e "[ INFO ] New ApRole created: $(vault list auth/approle/role | grep ${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION})"
+    echo -e "[ INFO ] New AppRole created: $(vault list auth/approle/role | grep ${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION})"
 
     # Get roleid
     ROLE_ID=$(vault read auth/approle/role/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}/role-id | xargs | awk '{ print $6 }')
@@ -127,7 +127,5 @@ data:
         echo -e "[ WARNING ] Secret has not been created. One can create is manually: kubectl -n ${KUBERNETES_NAMESPACE} apply -f /tmp/${KUBERNETES_NAMESPACE}-${KUBERNETES_APPLICATION}.yaml"
     fi
 fi
-
-vault write apps/${KUBERNETES_NAMESPACE}/${KUBERNETES_APPLICATION}/example FOO="bar"
 
 kill $VAULT_FWD_PID || true
