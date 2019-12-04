@@ -19,6 +19,13 @@ for node in $K3S_WORKERS_RPI; do
     kubectl label node $node node-role.kubernetes.io/worker=worker
 done
 
+kubectl create namespace vault
+kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=$VAULT_UNSEAL_KEY_1" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_2=$VAULT_UNSEAL_KEY_2" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_3=$VAULT_UNSEAL_KEY_3" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_4=$VAULT_UNSEAL_KEY_4" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_5=$VAULT_UNSEAL_KEY_5"
+
 message "Installing Flux"
 kubectl create namespace flux
 helm repo add fluxcd https://charts.fluxcd.io
