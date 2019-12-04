@@ -36,19 +36,6 @@ metadata:
     app: vault
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: vault-unseal-keys
-  namespace: vault
-type: Opaque
-data:
-  VAULT_UNSEAL_KEY_1: Zk9LSU1yTnNzSVhKdWZLZFoxQUg2aW5PaCtsZXdFYjkxbGJ3TjlVaExtSVkK
-  VAULT_UNSEAL_KEY_2: SEtSTitEakp3clVhUXpON05ialpDMTBHdFFxb1pvNThXNUl3aXdCVEwrWVEK
-  VAULT_UNSEAL_KEY_3: a3c1R3dMbzk3NTRYRlZ0ek5zZjJBalpic1RMcWhmY2sxei8wR29ZbmZQTHUK
-  VAULT_UNSEAL_KEY_4: amNBSjg3UkZPZWJEYkNKZ2NUY1dvYUNkeGhWYjQybU1LZmR6WUE0Q2Z1QWIK
-  VAULT_UNSEAL_KEY_5: bUxFL1VrQkhYdVBPd3hvSDB6eVlsamNrL0VVMmM0N0hrZU9vbkhXdFI4cWEK
----
-apiVersion: v1
 kind: Service
 metadata:
   name: vault

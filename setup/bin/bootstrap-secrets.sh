@@ -17,3 +17,10 @@ kubectl -n velero create secret generic velero --from-literal="accesskey=$MINIO_
 kubectl -n infra create secret generic traefik-forward-auth-secrets --from-literal="CLIENT_ID=$OAUTH_CLIENT_ID" \
                                                                     --from-literal="CLIENT_SECRET=$OAUTH_CLIENT_SECRET" \
                                                                     --from-literal="SECRET=$OAUTH_SECRET"
+
+kubectl -n vault delete secret vault-unseal-keys || true
+kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_UNSEAL_KEY_1=$VAULT_UNSEAL_KEY_1" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_2=$VAULT_UNSEAL_KEY_2" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_3=$VAULT_UNSEAL_KEY_3" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_4=$VAULT_UNSEAL_KEY_4" \
+                                                         --from-literal="VAULT_UNSEAL_KEY_5=$VAULT_UNSEAL_KEY_5"
