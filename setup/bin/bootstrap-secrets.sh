@@ -24,6 +24,5 @@ kubectl -n vault create secret generic vault-unseal-keys --from-literal="VAULT_U
                                                          --from-literal="VAULT_UNSEAL_KEY_5=$VAULT_UNSEAL_KEY_5"
 
 #kubectl -n flux delete secret  fluxcloud
-#kubectl -n monitoring delete  generic alertmanager
 #kubectl -n infra delete secret  minio
 #kubectl -n velero delete secret  velero

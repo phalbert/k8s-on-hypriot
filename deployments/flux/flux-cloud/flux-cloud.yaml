@@ -26,23 +26,42 @@ spec:
     type: Recreate
   template:
     metadata:
+      annotations:
+        SECRET_SLACK_URL: /apps/shared/slack/slack_url
       labels:
         name: fluxcloud
     spec:
-      securityContext:
-        runAsUser: 999
+      initContainers:
+        - name: init
+          image: rebelinblue/vault-consumer:0.0.1
+          env:
+            - name: VAULT_ROLE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: role_id
+                  name: flux-cloud-approle
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  key: secret_id
+                  name: flux-cloud-approle
+          volumeMounts:
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
       containers:
         - name: fluxcloud
           image: rebelinblue/fluxcloud:0.3.9
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3032
+          command:
+            - sh
+            - -c
+          args:
+            - source /env/secrets; /fluxcloud
           env:
-            - name: SLACK_URL
-              valueFrom:
-                secretKeyRef:
-                  name: fluxcloud
-                  key: slack_url
             - name: SLACK_CHANNEL
               value: "#k8s-alerts"
             - name: SLACK_USERNAME
@@ -53,3 +72,19 @@ spec:
               value: "https://github.com/REBELinBLUE/k8s-on-hypriot/"
             - name: LISTEN_ADDRESS
               value: ":3032"
+          volumeMounts:
+            - mountPath: /env
+              name: env
+      securityContext:
+        runAsUser: 999
+      volumes:
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
