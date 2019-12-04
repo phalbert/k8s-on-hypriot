@@ -163,37 +163,48 @@ spec:
       app: minio
   template:
     metadata:
+      annotations:
+        SECRET_MINIO_ACCESS_KEY: /apps/shared/minio/accesskey
+        SECRET_MINIO_SECRET_KEY: /apps/shared/minio/secretkey
       name: minio
       labels:
         app: minio
     spec:
       serviceAccountName: minio
+      initContainers:
+        - name: init
+          image: rebelinblue/vault-consumer:0.0.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VAULT_ROLE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: role_id
+                  name: minio-approle
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  key: secret_id
+                  name: minio-approle
+          volumeMounts:
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
       containers:
         - name: minio
           image: jessestuart/minio:RELEASE.2019-10-12T01-39-57Z-arm
           imagePullPolicy: IfNotPresent
-          command: [ "/bin/sh",
-                     "-ce",
-                     "/usr/bin/docker-entrypoint.sh minio -C /root/.minio/ server /export" ]
-          volumeMounts:
-            - name: export
-              mountPath: /export
-            - name: minio-config-dir
-              mountPath: /root/.minio/
+          command:
+            - /bin/sh
+            - -ce
+          args:
+            - source /env/secrets;
+              /usr/bin/docker-entrypoint.sh minio -C /root/.minio/ server /export
           ports:
             - name: service
               containerPort: 9000
           env:
-            - name: MINIO_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: minio
-                  key: accesskey
-            - name: MINIO_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: minio
-                  key: secretkey
             - name: MINIO_BROWSER
               value: "on"
           livenessProbe:
@@ -221,7 +232,24 @@ spec:
               cpu: 25m
             limits:
               memory: 500Mi
+          volumeMounts:
+            - name: export
+              mountPath: /export
+            - name: minio-config-dir
+              mountPath: /root/.minio/
+            - mountPath: /env
+              name: env
       volumes:
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
         - name: export
           persistentVolumeClaim:
             claimName: minio
