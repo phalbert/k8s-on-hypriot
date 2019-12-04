@@ -34,6 +34,7 @@ spec:
       initContainers:
         - name: init
           image: rebelinblue/vault-consumer:0.0.1
+          imagePullPolicy: IfNotPresent
           env:
             - name: VAULT_ROLE_ID
               valueFrom:
@@ -75,8 +76,6 @@ spec:
           volumeMounts:
             - mountPath: /env
               name: env
-      securityContext:
-        runAsUser: 999
       volumes:
         - name: env
           emptyDir: {}
