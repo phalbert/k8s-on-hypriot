@@ -57,7 +57,7 @@ spec:
       serviceAccountName: velero-server
       initContainers:
         - name: init
-          image: rebelinblue/vault-consumer:0.0.1
+          image: rebelinblue/vault-consumer:0.0.2
           command:
             - /bin/sh
             - -c
@@ -185,7 +185,7 @@ spec:
         runAsUser: 0
       initContainers:
         - name: init
-          image: rebelinblue/vault-consumer:0.0.1
+          image: rebelinblue/vault-consumer:0.0.2
           command:
             - /bin/sh
             - -c
