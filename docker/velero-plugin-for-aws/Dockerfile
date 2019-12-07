@@ -4,8 +4,6 @@
 
 FROM golang:1.12-alpine as build
 
-ARG ARCH
-ARG ARCH_VERSION
 ARG VELERO_AWS_PLUGIN_VERSION
 
 ENV GO111MODULE=on \
@@ -18,7 +16,7 @@ WORKDIR /go/src/github.com/vmware-tanzu/velero-plugin-for-aws
 
 RUN apk add --no-cache curl ca-certificates git
 RUN git clone https://github.com/vmware-tanzu/velero-plugin-for-aws.git .
-RUN git checkout v1.0.0
+RUN git checkout ${VELERO_AWS_PLUGIN_VERSION}
 RUN go build -o /go/bin/velero-plugin-for-aws ./velero-plugin-for-aws
 
 #

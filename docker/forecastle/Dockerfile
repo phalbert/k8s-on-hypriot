@@ -1,11 +1,17 @@
-FROM alpine:3.10 as clone
+#
+# Compile
+#
+
+FROM alpine:3.10.0 as clone
+
+ARG FORECASTLE_VERSION
 
 RUN apk add --no-cache git
 
 WORKDIR /usr/src/app
 
 RUN git clone https://github.com/stakater/Forecastle.git .
-RUN git checkout v1.0.36
+RUN git checkout ${FORECASTLE_VERSION}
 
 FROM node:12.11.1 as build-ui
 
@@ -21,12 +27,9 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=arm
 
-RUN apk update
+RUN mkdir -p "${GOPATH}/src/github.com/stakater/Forecastle/frontend/"
 
-RUN apk -v --update \
-    add git build-base && \
-    rm -rf /var/cache/apk/* && \
-    mkdir -p "$GOPATH/src/github.com/stakater/Forecastle/frontend/"
+RUN apk add --no-cache git build-base
 
 WORKDIR $GOPATH/src/github.com/stakater/Forecastle
 
@@ -52,12 +55,17 @@ RUN go mod download && \
     packr2 clean && \
     chmod +x /Forecastle
 
-## Run
+FROM alpine:3.10.0@sha256:ca1c944a4f8486a153024d9965aafbe24f5723c1d5c02f4964c045a16d19dc54 as certs
 
-FROM arm32v6/alpine:3.9
+RUN apk --no-cache add ca-certificates
 
-RUN apk add --update ca-certificates
+#
+# Deploy
+#
 
+FROM arm32v6/alpine:3.10.0
+
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=build /Forecastle /bin/Forecastle
 
 ENTRYPOINT ["/bin/Forecastle"]

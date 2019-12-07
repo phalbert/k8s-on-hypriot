@@ -1,7 +1,10 @@
 FROM arm32v6/python:3.8-alpine
 
-RUN pip3 install --no-cache-dir linode-dynamic-dns
+ARG DYNDNS_VERSION
 
-ENV FREQUENCY=15
+ENV FREQUENCY=900
+    # 15 minutes
 
-CMD linode-dynamic-dns -s "$(expr "$FREQUENCY" '*' 60)"
+RUN pip3 install --no-cache-dir linode-dynamic-dns==${DYNDNS_VERSION}
+
+CMD ["linode-dynamic-dns", "-s", "${FREQUENCY}"]

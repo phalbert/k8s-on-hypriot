@@ -1,17 +1,32 @@
-FROM arm32v6/golang:1.13.1-alpine3.10 AS build
+#
+# Compile
+#
+
+FROM golang:1.13.1-alpine3.10 AS build
+
+ARG CONFD_VERSION
+
+ENV CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=arm
 
 RUN apk add --no-cache make git
 
 RUN mkdir -p /go/src/github.com/kelseyhightower/ && \
   ln -s /go/src/github.com/kelseyhightower/confd /app
 
-RUN git clone https://github.com/kelseyhightower/confd.git /go/src/github.com/kelseyhightower/confd && \
-    cd /go/src/github.com/kelseyhightower/confd && \
+WORKDIR /go/src/github.com/kelseyhightower/confd
+
+RUN git clone https://github.com/kelseyhightower/confd.git . && \
+    git checkout master && \
     make
+ # ${CONFD_VERSION}
 
-# ====================
+#
+# Deploy
+#
 
-FROM arm32v6/alpine:3.9
+FROM arm32v6/alpine:3.10
 
 COPY entrypoint.sh /entrypoint.sh
 
@@ -28,6 +43,7 @@ RUN apk add --update --no-cache \
     mkdir /etc/confd && \
     chmod +x /usr/bin/confd /entrypoint.sh
 
+# User needs to be root as the entrypoint needs to write to /etc
 USER root
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,4 +1,10 @@
+#
+# Compile
+#
+
 FROM node:10-alpine as vue-build
+
+ARG KUBEVIEW_VERSION
 
 RUN apk add --no-cache openssh-client 'git>=2.12.0' 'gnutls>=3.6.7' gnupg gawk socat build-base gcc wget bash curl \
     && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing git-secret
@@ -24,7 +30,7 @@ RUN npm run build
 FROM golang:1.12-alpine as go-build
 
 ARG goPackage="github.com/benc-uk/kubeview/cmd/server"
-ARG version="0.1.9"
+ARG version="${KUBEVIEW_VERSION}"
 ARG buildInfo="Local Docker build"
 
 COPY --from=vue-build /build/cmd /build/cmd
@@ -41,7 +47,7 @@ ENV GO111MODULE=on \
 ENV PORT 8000
 
 # Install system dependencies
-RUN apk update && apk add git gcc musl-dev
+RUN apk --no-cache add git gcc musl-dev
 
 # Fetch and cache Go modules
 RUN go mod download
@@ -57,8 +63,10 @@ RUN GO111MODULE=on CGO_ENABLED=0 GOOS=linux go build \
 #
 # Deploy
 #
+
 FROM scratch
 WORKDIR /app
+
 EXPOSE 8000
 
 # Copy in output from Vue bundle (the dist)

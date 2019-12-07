@@ -1,5 +1,7 @@
 FROM golang:1.12-alpine as build
 
+ARG EVENTROUTER_VERSION
+
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
     GOOS=linux \
@@ -11,7 +13,7 @@ RUN apk add --no-cache openssh-client 'git>=2.12.0' 'gnutls>=3.6.7' gnupg gawk s
     && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing git-secret
 
 RUN git clone https://github.com/heptiolabs/eventrouter.git .
-RUN git checkout master # v0.3
+RUN git checkout ${EVENTROUTER_VERSION}
 RUN go build
 
 #
@@ -22,7 +24,7 @@ FROM arm32v6/alpine:3.9
 
 WORKDIR /app
 
-RUN apk update --no-cache && apk add ca-certificates
+RUN apk add --no-cache ca-certificates
 
 COPY --from=build /go/src/github.com/heptiolabs/eventrouter/eventrouter /app/eventrouter
 RUN chmod +x /app/eventrouter
