@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
         - name: kube-eventrouter
-          image: rebelinblue/eventrouter:v0.3
+          image: rebelinblue/eventrouter:0.3
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config-volume

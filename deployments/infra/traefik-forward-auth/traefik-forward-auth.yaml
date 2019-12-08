@@ -41,7 +41,7 @@ spec:
             - mountPath: /tmpfs
               name: podinfo
       containers:
-        - image: rebelinblue/traefik-forward-auth:v2.0.0-rc2
+        - image: rebelinblue/traefik-forward-auth:2.0.0-rc2
           name: traefik-forward-auth
           command:
             - sh
