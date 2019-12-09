@@ -103,3 +103,33 @@ spec:
     - hosts:
         - kubeview.cluster.rebelinblue.com
       secretName: kubeview-tls
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubeview-images
+  namespace: apps
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  rules:
+    - host: kubeview.cluster.rebelinblue.com
+      http:
+        paths:
+          - path: /img
+            backend:
+              serviceName: kubeview
+              servicePort: 80
+          - path: /css
+            backend:
+              serviceName: kubeview
+              servicePort: 80
+          - path: /js
+            backend:
+              serviceName: kubeview
+              servicePort: 80
+  tls:
+    - hosts:
+        - kubeview.cluster.rebelinblue.com
+      secretName: kubeview-tls
