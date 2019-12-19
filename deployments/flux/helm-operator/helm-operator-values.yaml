@@ -1,0 +1,15 @@
+createCRD: true
+git:
+  ssh:
+    secretName: flux-git-deploy
+image:
+  repository: rebelinblue/helm-operator
+  tag: helm-v3-dev
+  pullPolicy: Always
+chartsSyncInterval: "5m"
+statusUpdateInterval: "5m"
+prometheus:
+  enabled: true
+extraEnvs:
+  - name: HELM_VERSION
+    value: v3
