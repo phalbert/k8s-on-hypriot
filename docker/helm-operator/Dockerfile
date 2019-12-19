@@ -11,18 +11,31 @@ ARG VERSION
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
-    GOOS=linux \
-    VERSION=${VERSION} \
-    KUBECTL_VERSION=${KUBECTL_VERSION} \
-    HELM_VERSION=${HELM_VERSION}
+    GOARCH=arm\
+    GOARM=7 \
+    GOOS=linux
 
 RUN apk add --no-cache openssh-client git gnutls gnupg gawk socat curl ca-certificates \
     && apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing git-secret
 
 WORKDIR /go/src/github.com/fluxcd/helm-operator
-COPY build-helm3.sh /build.sh
-RUN chmod +x /build.sh \
-    && sh /build.sh
+
+RUN curl -k -sSfL -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VERSION}/bin/linux/${GOARCH}/kubectl
+
+RUN curl -k -sSfL -o /tmp/helm-${HELM_VERSION}-linux-${GOARCH}.tar.gz https://get.helm.sh/helm-${HELM_VERSION}-linux-${GOARCH}.tar.gz && \
+    tar -xvf /tmp/helm-${HELM_VERSION}-linux-${GOARCH}.tar.gz -C /tmp && \
+    mv /tmp/linux-${GOARCH}/helm /usr/local/bin/helm2 && \
+    chmod +x /usr/local/bin/helm2 && \
+    rm -rf /tmp/*
+
+RUN curl -k -sSfL -o /tmp/helm-${HELM3_VERSION}-linux-${GOARCH}.tar.gz https://get.helm.sh/helm-${HELM3_VERSION}-linux-${GOARCH}.tar.gz && \
+    tar -xvf /tmp/helm-${HELM3_VERSION}-linux-${GOARCH}.tar.gz -C /tmp && \
+    mv /tmp/linux-${GOARCH}/helm /usr/local/bin/helm3 && \
+    chmod +x /usr/local/bin/helm3 && \
+    rm -rf /tmp/*
+
+RUN git clone --depth 1 -b ${VERSION} https://github.com/fluxcd/helm-operator . && \
+    go build -o helm-operator ./cmd/helm-operator
 
 #
 # Deploy
