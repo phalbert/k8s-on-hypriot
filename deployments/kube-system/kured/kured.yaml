@@ -18,7 +18,6 @@ spec:
       tag: 1.2.0
     extraArgs:
       prometheus-url: http://prometheus.monitoring.svc.cluster.local:8080
-      period: 0h1m0s
       #slack-hook-url:
     podAnnotations:
       prometheus.io/scrape: "true"
