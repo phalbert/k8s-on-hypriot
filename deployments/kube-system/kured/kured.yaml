@@ -14,5 +14,12 @@ spec:
     version: 1.4.1
   values:
     image:
-      repository: billimek/kured
+      repository: rebelinblue/kured
       tag: 1.2.0
+    extraArgs:
+      prometheus-url: http://prometheus.monitoring.svc.cluster.local
+      slack-hook-url: https://hooks.slack.com/services/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
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/path: "/metrics"
+      prometheus.io/port: "8080"

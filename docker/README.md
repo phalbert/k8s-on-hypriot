@@ -85,6 +85,20 @@ docker build -f Dockerfile \
 docker push rebelinblue/kubeview
 ```
 
+## Kured
+
+```bash
+cd kured
+
+docker build -f Dockerfile \
+    --build-arg KUBECTL_VERSION="v1.14.7" \
+    --build-arg VERSION="master" \
+    -t rebelinblue/kured:1.2.0 \
+    -t rebelinblue/kured:latest .
+
+docker push rebelinblue/kured
+```
+
 ## Linode Dynamic DNS
 
 ```bash
