@@ -18,6 +18,7 @@ spec:
       tag: 1.2.0
     extraArgs:
       prometheus-url: http://prometheus.monitoring.svc.cluster.local:8080
+      alert-filter-regexp: ^Reboot Required$
       #slack-hook-url:
     podAnnotations:
       prometheus.io/scrape: "true"
