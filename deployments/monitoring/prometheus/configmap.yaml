@@ -874,6 +874,17 @@ data:
     groups:
       - name: Nodes
         rules:
+          - alert: Reboot Required
+            annotations:
+              summary: Machine(s) require being rebooted, and the reboot daemon has failed to do so for 24 hours
+              impact: Cluster nodes more vulnerable to security exploits. Eventually, no disk space left.
+              description: Machine(s) require being rebooted, probably due to kernel update.
+            expr: |
+              max(kured_reboot_required) != 0
+            for: 24h
+            labels:
+              severity: critical
+
           - alert: High Node Memory Usage
             annotations:
               summary: Node {{$labels.kubernetes_io_hostname}} has more than 80% memory used.
