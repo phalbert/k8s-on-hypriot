@@ -1,26 +1,138 @@
-apiVersion: helm.fluxcd.io/v1
-kind: HelmRelease
+---
+apiVersion: v1
+kind: ServiceAccount
 metadata:
   name: kured
   namespace: kube-system
-  annotations:
-    fluxcd.io/automated: "false"
-    fluxcd.io/tag.chart-image: semver:~1
-spec:
-  releaseName: kured
-  chart:
-    repository: https://kubernetes-charts.storage.googleapis.com/
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kured
+  labels:
+    app: kured
+rules:
+  # Allow kured to read spec.unschedulable
+  # Allow kubectl to drain/uncordon
+  #
+  # NB: These permissions are tightly coupled to the bundled version of kubectl; the ones below
+  # match https://github.com/kubernetes/kubernetes/blob/v1.12.1/pkg/kubectl/cmd/drain.go
+  #
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs:     ["get", "patch"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs:     ["list","delete","get"]
+  - apiGroups: ["extensions"]
+    resources: ["daemonsets"]
+    verbs:     ["get"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets"]
+    verbs:     ["get"]
+  - apiGroups: [""]
+    resources: ["pods/eviction"]
+    verbs:     ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kured
+  labels:
+    app: kured
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kured
+subjects:
+  - kind: ServiceAccount
     name: kured
-    version: 1.4.1
-  values:
-    image:
-      repository: rebelinblue/kured
-      tag: 1.2.0
-    extraArgs:
-      prometheus-url: http://prometheus.monitoring.svc.cluster.local:8080
-      alert-filter-regexp: ^Reboot Required$
-      #slack-hook-url:
-    podAnnotations:
-      prometheus.io/scrape: "true"
-      prometheus.io/path: "/metrics"
-      prometheus.io/port: "8080"
+    namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: kube-system
+  name: kured
+  labels:
+    app: kured
+rules:
+  # Allow kured to lock/unlock itself
+  - apiGroups:     ["extensions"]
+    resources:     ["daemonsets"]
+    resourceNames: ["kured"]
+    verbs:         ["update", "patch"]
+  - apiGroups:     ["apps"]
+    resources:     ["daemonsets"]
+    resourceNames: ["kured"]
+    verbs:         ["update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: kube-system
+  name: kured
+  labels:
+    app: kured
+subjects:
+  - kind: ServiceAccount
+    namespace: kube-system
+    name: kured
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kured
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kured
+  namespace: kube-system
+  labels:
+    app: kured
+spec:
+  updateStrategy:
+    type: OnDelete
+  selector:
+    matchLabels:
+      app: kured
+  template:
+    metadata:
+      labels:
+        app: kured
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "8080"
+    spec:
+      serviceAccountName: kured
+      hostPID: true
+      restartPolicy: Always
+      containers:
+        - name: kured
+          image: rebelinblue/kured:1.2.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true # Give permission to nsenter /proc/1/ns/mnt
+          resources:
+            null
+          command:
+            - /usr/bin/kured
+          args:
+            - --ds-name=RELEASE-NAME-kured
+            - --ds-namespace=apps
+            - --prometheus-url=http://prometheus.monitoring.svc.cluster.local:8080
+            - --alert-filter-regexp=^Reboot Required$
+          ports:
+            - containerPort: 8080
+              name: metrics
+          env:
+            # Pass in the name of the node on which this pod is scheduled
+            # for use with drain/uncordon operations and lock acquisition
+            - name: KURED_NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
