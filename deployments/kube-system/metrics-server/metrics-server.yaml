@@ -11,7 +11,7 @@ spec:
   chart:
     repository: https://kubernetes-charts.storage.googleapis.com/
     name: metrics-server
-    version: 0.2.3
+    version: 2.8.8
   values:
     image:
       repository: k8s.gcr.io/metrics-server-arm
