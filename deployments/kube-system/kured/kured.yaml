@@ -119,7 +119,7 @@ spec:
           command:
             - /usr/bin/kured
           args:
-            - --ds-name=RELEASE-NAME-kured
+            - --ds-name=kured
             - --ds-namespace=apps
             - --prometheus-url=http://prometheus.monitoring.svc.cluster.local:8080
             - --alert-filter-regexp=^Reboot Required$
