@@ -14,7 +14,7 @@ groups:
         annotations:
           summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) is restarting {{ printf "%.2f" $value }} times / 5 minutes.
         expr: |
-          rate(kube_pod_container_status_restarts_total{job="kube-state-metrics"}[15m]) * 60 * 5 > 0
+          rate(kube_pod_container_status_restarts_total{app_kubernetes_io_name="kube-state-metrics"}[15m]) * 60 * 5 > 0
         for: 1h
         labels:
           severity: critical
@@ -23,7 +23,7 @@ groups:
         annotations:
           summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
         expr: |
-          sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown"}) > 0
+          sum by (namespace, pod) (kube_pod_status_phase{app_kubernetes_io_name="kube-state-metrics", phase=~"Pending|Unknown"}) > 0
         for: 1h
         labels:
           severity: critical
