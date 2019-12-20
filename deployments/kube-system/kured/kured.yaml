@@ -101,6 +101,7 @@ spec:
       labels:
         app: kured
       annotations:
+        SECRET_SLACK_URL: /apps/shared/slack/slack_url
         prometheus.io/scrape: "true"
         prometheus.io/path: "/metrics"
         prometheus.io/port: "8080"
@@ -108,21 +109,42 @@ spec:
       serviceAccountName: kured
       hostPID: true
       restartPolicy: Always
+      initContainers:
+        - name: init
+          image: rebelinblue/vault-consumer:0.0.2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VAULT_ROLE_ID
+              valueFrom:
+                secretKeyRef:
+                  key: role_id
+                  name: fluxcloud-approle
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  key: secret_id
+                  name: fluxcloud-approle
+          volumeMounts:
+            - mountPath: /env
+              name: env
+            - mountPath: /tmpfs
+              name: podinfo
       containers:
         - name: kured
           image: rebelinblue/kured:1.2.0
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true # Give permission to nsenter /proc/1/ns/mnt
-          resources:
-            null
           command:
-            - /usr/bin/kured
+            - sh
+            - -c
           args:
-            - --ds-name=kured
-            - --ds-namespace=apps
-            - --prometheus-url=http://prometheus.monitoring.svc.cluster.local:8080
-            - --alert-filter-regexp=^Reboot Required$
+            - source /env/secrets; /usr/bin/kured \
+                --ds-name=kured \
+                --ds-namespace=apps \
+                --prometheus-url=http://prometheus.monitoring.svc.cluster.local:8080 \
+                --alert-filter-regexp=^Reboot Required$ \
+                --slack-hook-url=$SLACK_URL
           ports:
             - containerPort: 8080
               name: metrics
@@ -133,6 +155,20 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+          volumeMounts:
+            - mountPath: /env
+              name: env
+      volumes:
+        - name: env
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            defaultMode: 420
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.annotations
+                path: annotations
       tolerations:
         - effect: NoSchedule
           key: node-role.kubernetes.io/master
