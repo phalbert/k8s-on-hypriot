@@ -1,121 +1,25 @@
----
-kind: ServiceAccount
-apiVersion: v1
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
 metadata:
   name: nfs-client-provisioner
   namespace: infra
----
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: nfs-client-provisioner-runner
-rules:
-  - apiGroups: [""]
-    resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch", "create", "delete"]
-  - apiGroups: [""]
-    resources: ["persistentvolumeclaims"]
-    verbs: ["get", "list", "watch", "update"]
-  - apiGroups: ["storage.k8s.io"]
-    resources: ["storageclasses"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["create", "update", "patch"]
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: run-nfs-client-provisioner
-subjects:
-  - kind: ServiceAccount
-    name: nfs-client-provisioner
-    namespace: infra
-roleRef:
-  kind: ClusterRole
-  name: nfs-client-provisioner-runner
-  apiGroup: rbac.authorization.k8s.io
----
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: leader-locking-nfs-client-provisioner
-  namespace: infra
-rules:
-  - apiGroups: [""]
-    resources: ["endpoints"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
----
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: leader-locking-nfs-client-provisioner
-  namespace: infra
-subjects:
-  - kind: ServiceAccount
-    name: nfs-client-provisioner
-    namespace: infra
-roleRef:
-  kind: Role
-  name: leader-locking-nfs-client-provisioner
-  apiGroup: rbac.authorization.k8s.io
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: nfs-client-provisioner
-  namespace: infra
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nfs-client-provisioner
-  strategy:
-    type: RollingUpdate
-  template:
-    metadata:
-      labels:
-        app: nfs-client-provisioner
-    spec:
-      serviceAccountName: nfs-client-provisioner
-      containers:
-        - name: nfs-client-provisioner
-          image: quay.io/external_storage/nfs-client-provisioner-arm:latest
-          volumeMounts:
-            - name: nfs-client-root
-              mountPath: /persistentvolumes
-          env:
-            - name: PROVISIONER_NAME
-              value: nfs-provisioner/nfs-hdd
-            - name: NFS_SERVER
-              value: 10.0.0.1
-            - name: NFS_PATH
-              value: /media/usb
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 100
-              podAffinityTerm:
-                labelSelector:
-                  matchExpressions:
-                    - key: app
-                      operator: In
-                      values:
-                        - nfs-client-provisioner
-                topologyKey: kubernetes.io/hostname
-
-      volumes:
-        - name: nfs-client-root
-          nfs:
-            server: 10.0.0.1
-            path: /media/usb
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: nfs-hdd
   annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
-provisioner: nfs-provisioner/nfs-hdd
-parameters:
-  archiveOnDelete: "true"
+    fluxcd.io/automated: "true"
+    fluxcd.io/tag.chart-image: semver:~v3.1
+spec:
+  releaseName: nfs-client-provisioner
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: nfs-client-provisioner
+    version: 1.2.8
+  values:
+    provisionerName: nfs-provisioner/nfs-hdd
+    image:
+      repository: quay.io/external_storage/nfs-client-provisioner-arm
+      tag: v3.1.0-k8s1.11
+    nfs:
+      server: 10.0.0.1
+      path: /media/usb
+    storageClass:
+      name: nfs-hdd
+      defaultClass: true
