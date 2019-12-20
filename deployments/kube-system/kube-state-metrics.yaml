@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
   annotations:
     fluxcd.io/automated: "false"
-    fluxcd.io/tag.chart-image: semver:~1.9
+    fluxcd.io/tag.chart-image: semver:~1.8
 spec:
   releaseName: kube-state-metrics
   chart:
@@ -15,5 +15,5 @@ spec:
   values:
     priorityClassName: system-cluster-critical
     image:
-      repository: corberos/kube-state-metrics
-      tag: v1.9.0
+      repository: cyrilix/kube-state-metrics
+      tag: 1.8.0
