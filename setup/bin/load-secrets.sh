@@ -93,6 +93,9 @@ kapprole "fluxcloud" "flux"
 kpolicy "alertmanager"
 kapprole "alertmanager" "monitoring"
 
+kpolicy "kured"
+kapprole "kured" "kube-system"
+
 vault kv put apps/shared/slack slack_url="$SLACK_URL"
 
 kpolicy "minio"
