@@ -1,0 +1,6 @@
+fullnameOverride: loki
+image:
+  repository: grafana/loki
+  tag: v1.2.0-arm
+persistence:
+  enabled: true
