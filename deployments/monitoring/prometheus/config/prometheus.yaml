@@ -15,7 +15,7 @@ alerting:
 scrape_configs:
   - job_name: traefik
     static_configs:
-      - targets: ['traefik-ingress-controller-dashboard.infra.svc:80']
+      - targets: ['traefik-ingress-controller-prometheus.infra.svc:9100']
 
   # FIXME: This does not work
   # - job_name: etcd
