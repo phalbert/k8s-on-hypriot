@@ -12,8 +12,6 @@ spec:
     repository: https://kubernetes-charts.storage.googleapis.com/
     name: kube-state-metrics
     version: 2.5.0
-  values:
-    priorityClassName: system-cluster-critical
-    image:
-      repository: cyrilix/kube-state-metrics
-      tag: 1.8.0
+  valuesFrom:
+    - externalSourceRef:
+        url: https://raw.githubusercontent.com/REBELinBLUE/k8s-on-hypriot/master/deployments/kube-system/kube-state-metrics/kube-state-metrics-values.yaml

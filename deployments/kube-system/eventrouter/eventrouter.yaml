@@ -12,8 +12,6 @@ spec:
     repository: https://kubernetes-charts.storage.googleapis.com/
     name: eventrouter
     version: 0.2.3
-  values:
-    image:
-      repository: rebelinblue/eventrouter
-      tag: 0.3
-    sink: stdout
+  valuesFrom:
+    - externalSourceRef:
+        url: https://raw.githubusercontent.com/REBELinBLUE/k8s-on-hypriot/master/deployments/kube-system/eventrouter/eventrouter-values.yaml

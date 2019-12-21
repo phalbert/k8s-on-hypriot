@@ -12,9 +12,6 @@ spec:
     repository: https://kubernetes-charts.storage.googleapis.com/
     name: prometheus-node-exporter
     version: 1.8.1
-  values:
-    nameOverride: node-exporter
-    image:
-      repository: prom/node-exporter
-      tag: v0.18.1
-    priorityClassName: system-node-critical
+  valuesFrom:
+    - externalSourceRef:
+        url: https://raw.githubusercontent.com/REBELinBLUE/k8s-on-hypriot/master/deployments/kube-system/node-exporter/node-exporter-values.yaml

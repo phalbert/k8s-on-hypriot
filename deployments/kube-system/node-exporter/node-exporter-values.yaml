@@ -1,0 +1,5 @@
+nameOverride: node-exporter
+image:
+  repository: prom/node-exporter
+  tag: v0.18.1
+priorityClassName: system-node-critical
