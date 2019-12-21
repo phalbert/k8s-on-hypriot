@@ -61,6 +61,8 @@ docker push rebelinblue/forecastle
 ```bash
 cd helm-operator
 
+cd helm-operator
+
 docker build -f Dockerfile \
     --build-arg KUBECTL_VERSION="v1.14.7" \
     --build-arg HELM_VERSION="v2.16.1" \
@@ -148,9 +150,8 @@ docker build -f Dockerfile \
 
 docker push rebelinblue/vault
 ```
-
-
 ## Vault Consumer
+
 
 ```bash
 cd vault-consumer
