@@ -1136,7 +1136,7 @@ data:
     scrape_configs:
       - job_name: traefik
         static_configs:
-          - targets: ['traefik-ingress-controller.infra.svc:8080']
+          - targets: ['traefik-ingress-controller-dashboard.infra.svc:80']
 
       # FIXME: This does not work
       # - job_name: etcd
