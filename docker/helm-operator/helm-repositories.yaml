@@ -56,3 +56,11 @@ repositories:
     password: ""
     url: https://aws.github.io/eks-charts
     username: ""
+  - caFile: ""
+    cache: /var/fluxd/helm/repository/cache/jetstack-index.yaml
+    certFile: ""
+    keyFile: ""
+    name: eks
+    password: ""
+    url: https://charts.jetstack.io
+    username: ""
