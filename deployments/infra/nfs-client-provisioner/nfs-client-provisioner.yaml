@@ -5,7 +5,6 @@ metadata:
   namespace: infra
   annotations:
     fluxcd.io/automated: "true"
-    fluxcd.io/tag.chart-image: semver:~v3.1
 spec:
   releaseName: nfs-client-provisioner
   chart:
