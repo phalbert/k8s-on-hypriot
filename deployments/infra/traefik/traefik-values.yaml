@@ -1,0 +1,45 @@
+image: traefik
+imageTag: 1.7.20
+serviceType: NodePort
+ssl:
+  enabled: true
+  enforced: true
+  permanentRedirect: true
+  generateTLS: false
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+nodeSelector:
+  beta.kubernetes.io/arch: arm
+  node-role.kubernetes.io/master: "true"
+metrics:
+  prometheus:
+    enabled: true
+cpuRequest: 25m
+memoryRequest: 128Mi
+cpuLimit: 200m
+memoryLimit: 384Mi
+deployment:
+  hostPort:
+    httpEnabled: 80
+    httpsEnabled: 443
+    dashboardEnabled: 8080
+rbac:
+  enabled: true
+kubernetes:
+  ingressEndpoint:
+    useDefaultPublishedService: true
+dashboard:
+  enabled: true
+  domain: traefik.cluster.rebelinblue.com
+  ingress:
+    tls:
+      - hosts:
+          - traefik.cluster.rebelinblue.com
+        secretName: traefik-tls
+    annotations:
+      kubernetes.io/tls-acme: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      ingress.kubernetes.io/auth-type: forward
+      ingress.kubernetes.io/auth-url: http://traefik-forward-auth.infra.svc
+      ingress.kubernetes.io/auth-response-headers: X-Forwarded-User
