@@ -50,7 +50,7 @@ groups:
         annotations:
           summary: Kube State Metrics has disappeared.
         expr: |
-          absent(up{app_kubernetes_io_name="kube-state-metrics"} == 1)
+          absent(up{job="kube-state-metrics"} == 1)
         for: 15m
         labels:
           severity: critical
@@ -68,7 +68,7 @@ groups:
         annotations:
           summary: Node Exporter has disappeared.
         expr: |
-          absent(up{app="node-exporter"} == 1)
+          absent(up{job="node-exporter"} == 1)
         for: 15m
         labels:
           severity: critical

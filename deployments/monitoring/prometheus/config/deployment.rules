@@ -5,9 +5,9 @@ groups:
         annotations:
           summary: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back.
         expr: |
-          kube_deployment_status_observed_generation{app_kubernetes_io_name="kube-state-metrics"}
+          kube_deployment_status_observed_generation{job="kube-state-metrics"}
             !=
-          kube_deployment_metadata_generation{app_kubernetes_io_name="kube-state-metrics"}
+          kube_deployment_metadata_generation{job="kube-state-metrics"}
         for: 15m
         labels:
           severity: critical
@@ -16,9 +16,9 @@ groups:
         annotations:
           summary: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number of replicas for longer than an hour.
         expr: |
-          kube_deployment_spec_replicas{app_kubernetes_io_name="kube-state-metrics"}
+          kube_deployment_spec_replicas{job="kube-state-metrics"}
             !=
-          kube_deployment_status_replicas_available{app_kubernetes_io_name="kube-state-metrics"}
+          kube_deployment_status_replicas_available{job="kube-state-metrics"}
         for: 1h
         labels:
           severity: critical
