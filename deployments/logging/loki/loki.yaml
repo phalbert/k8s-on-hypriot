@@ -6,6 +6,7 @@ metadata:
   annotations:
     fluxcd.io/automated: "false"
 spec:
+  releaseName: loki
   chart:
     repository: https://grafana.github.io/loki/charts
     name: loki
