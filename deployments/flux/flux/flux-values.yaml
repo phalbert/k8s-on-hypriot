@@ -4,6 +4,7 @@ git:
   url: "git@github.com:rebelinblue/k8s-on-hypriot.git"
   branch: master
   path: deployments
+  readonly: true
 image:
   repository: rebelinblue/flux
   tag: 1.15.0
@@ -11,6 +12,8 @@ image:
 registry:
   rps: 1
   burst: 1
+sync:
+  state: secret
 memcached:
   enabled: true
 additionalArgs:
