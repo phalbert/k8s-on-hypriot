@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_SPEEDTESTS",
-      "label": "Speedtests",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
+  "__inputs": [],
   "__requires": [
     {
       "type": "grafana",
@@ -63,7 +54,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_SPEEDTESTS}",
+      "datasource": "Speedtests",
       "format": "bps",
       "gauge": {
         "maxValue": 100,
@@ -175,7 +166,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(50, 172, 45, 0.97)"
       ],
-      "datasource": "${DS_SPEEDTESTS}",
+      "datasource": "Speedtests",
       "format": "bps",
       "gauge": {
         "maxValue": 100,
@@ -289,7 +280,7 @@
         "rgba(237, 129, 40, 0.89)",
         "rgba(245, 54, 54, 0.9)"
       ],
-      "datasource": "${DS_SPEEDTESTS}",
+      "datasource": "Speedtests",
       "format": "ms",
       "gauge": {
         "maxValue": 100,
@@ -436,7 +427,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_SPEEDTESTS}",
+      "datasource": "Speedtests",
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
