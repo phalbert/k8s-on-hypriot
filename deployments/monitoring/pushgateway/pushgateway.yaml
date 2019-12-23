@@ -1,0 +1,16 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: pushgateway
+  namespace: monitoring
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: pushgateway
+  chart:
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    name: prometheus-pushgateway
+    version: 1.2.10
+  valuesFrom:
+    - externalSourceRef:
+        url: https://raw.githubusercontent.com/REBELinBLUE/k8s-on-hypriot/master/deployments/monitoring/pushgateway/pushgateway-values.yaml
