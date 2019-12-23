@@ -98,3 +98,5 @@ schedules:
     schedule: "0 6 * * *"
     template:
       ttl: 120h
+
+snapshotsEnabled: false
