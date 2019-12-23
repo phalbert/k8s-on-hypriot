@@ -1,4 +1,5 @@
 priorityClassName: system-cluster-critical
+
 image:
   repository: cyrilix/kube-state-metrics
   tag: 1.8.0

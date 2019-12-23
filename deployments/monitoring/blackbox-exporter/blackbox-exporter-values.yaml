@@ -1,9 +1,12 @@
 fullnameOverride: blackbox-exporter
+
 image:
   repository: lwolf/blackbox-exporter
   tag: v0.16.0-armv6
+
 podDisruptionBudget:
   enabled: false
+
 config:
   modules:
     http_2xx:
@@ -21,6 +24,7 @@ config:
           - 307
           - 401
           - 403
+
 ingress:
   enabled: true
   hosts:
@@ -35,6 +39,7 @@ ingress:
     - hosts:
         - blackbox.cluster.rebelinblue.com
       secretName: blackbox-exporter-tls
+
 service:
   annotations:
     prometheus.io/scrape: "true"

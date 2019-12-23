@@ -1,4 +1,5 @@
 fullnameOverride: influxdb
+
 image:
   repository: arm32v7/influxdb
   tag: 1.7.9

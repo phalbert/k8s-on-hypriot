@@ -1,10 +1,13 @@
 fullnameOverride: velero
+
 image:
   repository: rebelinblue/velero
   tag: 1.2.0
+
 podAnnotations:
   SECRET_MINIO_ACCESS_KEY: /apps/shared/minio/accesskey
   SECRET_MINIO_SECRET_KEY: /apps/shared/minio/secretkey
+
 initContainers:
   - name: init
     image: rebelinblue/vault-consumer:0.0.2
@@ -42,9 +45,11 @@ initContainers:
     volumeMounts:
       - mountPath: /target
         name: plugins
+
 extraVolumeMounts:
   - name: config
     mountPath: /credentials
+
 extraVolumes:
   - name: env
     emptyDir: {}
@@ -61,8 +66,10 @@ extraVolumes:
       name: velero-aws
   - name: config
     emptyDir: {}
+
 credentials:
   useSecret: false
+
 configMaps:
   aws:
     data:
@@ -70,7 +77,9 @@ configMaps:
         [default]
         aws_access_key_id = MINIO_ACCESS_KEY
         aws_secret_access_key = MINIO_SECRET_KEY
+
 deployRestic: false
+
 configuration:
   provider: aws
   extraEnvVars:
@@ -83,6 +92,7 @@ configuration:
       s3ForcePathStyle: "true"
       s3Url: http://minio.infra.svc:9000
       publicUrl: https://minio.cluster.rebelinblue.com
+
 schedules:
   daily-backup:
     schedule: "0 6 * * *"

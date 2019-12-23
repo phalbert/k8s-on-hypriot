@@ -1,25 +1,33 @@
 helmOperator:
   create: false
+
 git:
   url: "git@github.com:rebelinblue/k8s-on-hypriot.git"
   branch: master
   path: deployments
   readonly: true
+
 image:
   repository: rebelinblue/flux
   tag: 1.15.0
   pullPolicy: Always
+
 registry:
   rps: 1
   burst: 1
+
 sync:
   state: secret
+
 memcached:
   enabled: true
+
 additionalArgs:
   - --connect=ws://fluxcloud
+
 prometheus:
   enabled: true
+
 syncGarbageCollection:
   enabled: true
   dry: false

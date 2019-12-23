@@ -1,13 +1,17 @@
 fullnameOverride: promtail
+
 image:
   repository: grafana/promtail
   tag: v0.4.0-arm
+
 pipelineStages:
   - cri: {}
+
 loki:
   serviceName: loki
   servicePort: 3100
   serviceScheme: http
+
 volumes:
   - name: containers
     hostPath:
@@ -15,6 +19,7 @@ volumes:
   - name: pods
     hostPath:
       path: /var/log/pods
+
 volumeMounts:
   - name: containers
     mountPath: /var/log/containers

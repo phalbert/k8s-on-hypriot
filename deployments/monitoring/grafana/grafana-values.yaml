@@ -1,7 +1,9 @@
 fullnameOverride: grafana
+
 image:
   repository: grafana/grafana
   tag: 6.5.2
+
 ingress:
   enabled: true
   annotations:
@@ -16,14 +18,19 @@ ingress:
     - hosts:
         - grafana.cluster.rebelinblue.com
       secretName: grafana-tls
+
 persistence:
   enabled: true
+
 initChownData:
   enabled: false
+
 testFramework:
   enabled: false
+
 plugins:
   - grafana-piechart-panel
+
 datasources:
   datasources.yaml:
     apiVersion: 1
@@ -47,6 +54,7 @@ datasources:
         access: proxy
         editable: false
         isDefault: false
+
 grafana.ini:
   paths:
     data: /var/lib/grafana/data
@@ -72,9 +80,11 @@ grafana.ini:
     org_role: Editor
   auth.basic:
     enabled: false
+
 downloadDashboardsImage:
   repository: lucashalbert/curl
   tag: arm32v6-7.67.0-r0
+
 dashboardProviders:
   dashboardproviders.yaml:
     apiVersion: 1
@@ -95,6 +105,7 @@ dashboardProviders:
       editable: true
       options:
         path: /var/lib/grafana/dashboards/kubernetes
+
 dashboards:
   default:
     speedtest:

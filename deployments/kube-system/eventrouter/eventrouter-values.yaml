@@ -1,4 +1,5 @@
 image:
   repository: rebelinblue/eventrouter
   tag: 0.3
+
 sink: stdout
