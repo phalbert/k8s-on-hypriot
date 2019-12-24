@@ -136,7 +136,7 @@ spec:
               mountPath: /etc/alertmanager
       containers:
         - name: alertmanager
-          image: prom/alertmanager:v0.19.0
+          image: prom/alertmanager:v0.20.0
           imagePullPolicy: Always
           args:
             - --config.file=/etc/alertmanager/config.yml
