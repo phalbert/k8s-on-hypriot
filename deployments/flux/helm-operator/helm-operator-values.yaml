@@ -15,6 +15,9 @@ statusUpdateInterval: "5m"
 prometheus:
   enabled: true
 
+helm:
+  versions: "v3"
+
 extraEnvs:
   - name: HELM_VERSION
     value: v3
