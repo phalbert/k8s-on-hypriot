@@ -60,7 +60,7 @@ groups:
         annotations:
           summary: '{{ $labels.node }} has been unready for more than an hour.'
         expr: |
-          kube_node_status_condition{app_kubernetes_io_name="kube-state-metrics",condition="Ready",status="true"} == 0
+          kube_node_status_condition{job="kube-state-metrics",condition="Ready",status="true"} == 0
         for: 1h
         labels:
           severity: warning

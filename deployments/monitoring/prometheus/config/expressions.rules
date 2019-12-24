@@ -51,6 +51,42 @@ groups:
           )
         record: namespace_name:kube_pod_container_resource_requests_cpu_cores:sum
 
+      - expr: |-
+          sum(
+            label_replace(
+              label_replace(
+                kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"},
+                "replicaset", "$1", "owner_name", "(.*)"
+              ) * on(replicaset, namespace) group_left(owner_name) kube_replicaset_owner{job="kube-state-metrics"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod)
+        labels:
+          workload_type: deployment
+        record: mixin_pod_workload
+
+      - expr: |-
+          sum(
+            label_replace(
+              kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod)
+        labels:
+          workload_type: daemonset
+        record: mixin_pod_workload
+
+      - expr: |-
+          sum(
+            label_replace(
+              kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"},
+              "workload", "$1", "owner_name", "(.*)"
+            )
+          ) by (namespace, workload, pod)
+        labels:
+          workload_type: statefulset
+        record: mixin_pod_workload
+
   - name: Kubernetes Scheduler
     rules:
       - expr: |
@@ -325,7 +361,7 @@ groups:
       - expr: |
           max(
             max(
-              kube_pod_info{app_kubernetes_io_name="kube-state-metrics", host_ip!=""}
+              kube_pod_info{job="kube-state-metrics", host_ip!=""}
             ) by (node, host_ip)
             * on (host_ip) group_right (node)
             label_replace(
@@ -337,7 +373,7 @@ groups:
       - expr: |
           max(
             max(
-              kube_pod_info{app_kubernetes_io_name="kube-state-metrics", host_ip!=""}
+              kube_pod_info{job="kube-state-metrics", host_ip!=""}
             ) by (node, host_ip)
             * on (host_ip) group_right (node)
             label_replace(

@@ -134,7 +134,7 @@ groups:
         annotations:
           summary: Cluster has overcommitted CPU resource requests for Namespaces.
         expr: |
-          sum(kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard", resource="cpu"})
+          sum(kube_resourcequota{job="kube-state-metrics", type="hard", resource="cpu"})
             /
           sum(node:node_num_cpu:sum)
             > 1.5
@@ -146,7 +146,7 @@ groups:
         annotations:
           summary: Cluster has overcommitted memory resource requests for Namespaces.
         expr: |
-          sum(kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard", resource="memory"})
+          sum(kube_resourcequota{job="kube-state-metrics", type="hard", resource="memory"})
             /
           sum(node_memory_MemTotal_bytes{job="node-exporter"})
             > 1.5
@@ -158,9 +158,9 @@ groups:
         annotations:
           summary: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value }}% of its {{ $labels.resource }} quota.
         expr: |
-          100 * kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="used"}
+          100 * kube_resourcequota{job="kube-state-metrics", type="used"}
             / ignoring(instance, job, type)
-          (kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard"} > 0)
+          (kube_resourcequota{job="kube-state-metrics", type="hard"} > 0)
             > 90
         for: 15m
         labels:
@@ -184,9 +184,9 @@ groups:
             }} in Namespace {{ $labels.namespace }} is only {{ printf "%0.2f" $value
             }}% free.
         expr: |
-          100 * kubelet_volume_stats_available_bytes{job="kubelet"}
+          100 * kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}
             /
-          kubelet_volume_stats_capacity_bytes{job="kubelet"}
+          kubelet_volume_stats_capacity_bytes{job="kubernetes-nodes-kubelet"}
             < 3
         for: 1m
         labels:
@@ -199,12 +199,12 @@ groups:
             days. Currently {{ printf "%0.2f" $value }}% is available.
         expr: |
           100 * (
-            kubelet_volume_stats_available_bytes{job="kubelet"}
+            kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}
               /
-            kubelet_volume_stats_capacity_bytes{job="kubelet"}
+            kubelet_volume_stats_capacity_bytes{job="kubernetes-nodes-kubelet"}
           ) < 15
           and
-          predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[6h], 4 * 24 * 3600) < 0
+          predict_linear(kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}[6h], 4 * 24 * 3600) < 0
         for: 5m
         labels:
           severity: critical
@@ -213,7 +213,7 @@ groups:
         annotations:
           summary: The persistent volume {{ $labels.persistentvolume }} has status {{ $labels.phase }}.
         expr: |
-          kube_persistentvolume_status_phase{phase=~"Failed|Pending", app_kubernetes_io_name="kube-state-metrics"} > 0
+          kube_persistentvolume_status_phase{phase=~"Failed|Pending", job="kube-state-metrics"} > 0
         for: 5m
         labels:
           severity: critical

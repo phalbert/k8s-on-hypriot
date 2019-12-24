@@ -110,6 +110,42 @@ data:
               )
             record: namespace_name:kube_pod_container_resource_requests_cpu_cores:sum
 
+          - expr: |-
+              sum(
+                label_replace(
+                  label_replace(
+                    kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"},
+                    "replicaset", "$1", "owner_name", "(.*)"
+                  ) * on(replicaset, namespace) group_left(owner_name) kube_replicaset_owner{job="kube-state-metrics"},
+                  "workload", "$1", "owner_name", "(.*)"
+                )
+              ) by (namespace, workload, pod)
+            labels:
+              workload_type: deployment
+            record: mixin_pod_workload
+
+          - expr: |-
+              sum(
+                label_replace(
+                  kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"},
+                  "workload", "$1", "owner_name", "(.*)"
+                )
+              ) by (namespace, workload, pod)
+            labels:
+              workload_type: daemonset
+            record: mixin_pod_workload
+
+          - expr: |-
+              sum(
+                label_replace(
+                  kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"},
+                  "workload", "$1", "owner_name", "(.*)"
+                )
+              ) by (namespace, workload, pod)
+            labels:
+              workload_type: statefulset
+            record: mixin_pod_workload
+
       - name: Kubernetes Scheduler
         rules:
           - expr: |
@@ -384,7 +420,7 @@ data:
           - expr: |
               max(
                 max(
-                  kube_pod_info{app_kubernetes_io_name="kube-state-metrics", host_ip!=""}
+                  kube_pod_info{job="kube-state-metrics", host_ip!=""}
                 ) by (node, host_ip)
                 * on (host_ip) group_right (node)
                 label_replace(
@@ -396,7 +432,7 @@ data:
           - expr: |
               max(
                 max(
-                  kube_pod_info{app_kubernetes_io_name="kube-state-metrics", host_ip!=""}
+                  kube_pod_info{job="kube-state-metrics", host_ip!=""}
                 ) by (node, host_ip)
                 * on (host_ip) group_right (node)
                 label_replace(
@@ -677,7 +713,7 @@ data:
             annotations:
               summary: Cluster has overcommitted CPU resource requests for Namespaces.
             expr: |
-              sum(kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard", resource="cpu"})
+              sum(kube_resourcequota{job="kube-state-metrics", type="hard", resource="cpu"})
                 /
               sum(node:node_num_cpu:sum)
                 > 1.5
@@ -689,7 +725,7 @@ data:
             annotations:
               summary: Cluster has overcommitted memory resource requests for Namespaces.
             expr: |
-              sum(kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard", resource="memory"})
+              sum(kube_resourcequota{job="kube-state-metrics", type="hard", resource="memory"})
                 /
               sum(node_memory_MemTotal_bytes{job="node-exporter"})
                 > 1.5
@@ -701,9 +737,9 @@ data:
             annotations:
               summary: Namespace {{ $labels.namespace }} is using {{ printf "%0.0f" $value }}% of its {{ $labels.resource }} quota.
             expr: |
-              100 * kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="used"}
+              100 * kube_resourcequota{job="kube-state-metrics", type="used"}
                 / ignoring(instance, job, type)
-              (kube_resourcequota{app_kubernetes_io_name="kube-state-metrics", type="hard"} > 0)
+              (kube_resourcequota{job="kube-state-metrics", type="hard"} > 0)
                 > 90
             for: 15m
             labels:
@@ -727,9 +763,9 @@ data:
                 }} in Namespace {{ $labels.namespace }} is only {{ printf "%0.2f" $value
                 }}% free.
             expr: |
-              100 * kubelet_volume_stats_available_bytes{job="kubelet"}
+              100 * kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}
                 /
-              kubelet_volume_stats_capacity_bytes{job="kubelet"}
+              kubelet_volume_stats_capacity_bytes{job="kubernetes-nodes-kubelet"}
                 < 3
             for: 1m
             labels:
@@ -742,12 +778,12 @@ data:
                 days. Currently {{ printf "%0.2f" $value }}% is available.
             expr: |
               100 * (
-                kubelet_volume_stats_available_bytes{job="kubelet"}
+                kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}
                   /
-                kubelet_volume_stats_capacity_bytes{job="kubelet"}
+                kubelet_volume_stats_capacity_bytes{job="kubernetes-nodes-kubelet"}
               ) < 15
               and
-              predict_linear(kubelet_volume_stats_available_bytes{job="kubelet"}[6h], 4 * 24 * 3600) < 0
+              predict_linear(kubelet_volume_stats_available_bytes{job="kubernetes-nodes-kubelet"}[6h], 4 * 24 * 3600) < 0
             for: 5m
             labels:
               severity: critical
@@ -756,13 +792,22 @@ data:
             annotations:
               summary: The persistent volume {{ $labels.persistentvolume }} has status {{ $labels.phase }}.
             expr: |
-              kube_persistentvolume_status_phase{phase=~"Failed|Pending", app_kubernetes_io_name="kube-state-metrics"} > 0
+              kube_persistentvolume_status_phase{phase=~"Failed|Pending", job="kube-state-metrics"} > 0
             for: 5m
             labels:
               severity: critical
 
       - name: Kubernetes System
         rules:
+          - alert: Version Mismatch
+            annotations:
+              summary: There are {{ $value }} different semantic versions of Kubernetes components running.
+            expr: |
+              count(count by (gitVersion) (label_replace(kubernetes_build_info{job!="kube-dns"},"gitVersion","$1","gitVersion","(v[0-9]*.[0-9]*.[0-9]*).*"))) > 1
+            for: 1h
+            labels:
+              severity: warning
+
           - alert: Version Mismatch
             annotations:
               summary: There are {{ $value }} different semantic versions of Kubernetes components running.
@@ -934,7 +979,7 @@ data:
             annotations:
               summary: '{{ $labels.node }} has been unready for more than an hour.'
             expr: |
-              kube_node_status_condition{app_kubernetes_io_name="kube-state-metrics",condition="Ready",status="true"} == 0
+              kube_node_status_condition{job="kube-state-metrics",condition="Ready",status="true"} == 0
             for: 1h
             labels:
               severity: warning
@@ -964,7 +1009,7 @@ data:
             annotations:
               summary: Pod {{ $labels.namespace }}/{{ $labels.pod }} has been in a non-ready state for longer than an hour.
             expr: |
-              sum by (namespace, pod) (kube_pod_status_phase{app_kubernetes_io_name="kube-state-metrics", phase=~"Pending|Unknown"}) > 0
+              sum by (namespace, pod) (kube_pod_status_phase{job="kube-state-metrics", phase=~"Pending|Unknown"}) > 0
             for: 1h
             labels:
               severity: critical
@@ -1000,7 +1045,7 @@ data:
             annotations:
               summary: Kubelet {{ $labels.instance }} is running {{ $value }} Pods, close to the limit of 110.
             expr: |
-              kubelet_running_pod_count{job="kubelet"} > 110 * 0.9
+              kubelet_running_pod_count{job="kubernetes-nodes-kubelet"} > 110 * 0.9
             for: 15m
             labels:
               severity: warning
