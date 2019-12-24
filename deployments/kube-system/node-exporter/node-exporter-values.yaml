@@ -5,3 +5,5 @@ image:
   tag: v0.18.1
 
 priorityClassName: system-node-critical
+
+# FIXME: Allow to be scheduled on master

@@ -27,3 +27,5 @@ volumeMounts:
   - name: pods
     mountPath: /var/log/pods
     readOnly: true
+
+# FIXME: Allow to be scheduled on master
