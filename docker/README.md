@@ -43,6 +43,30 @@ docker build -f Dockerfile \
 docker push rebelinblue/fluxcloud
 ```
 
+## Flux Web - Backend
+
+```bash
+cd fluxcloud/backend
+
+docker build -f Dockerfile \
+    -t rebelinblue/fluxweb-backend:master \
+    -t rebelinblue/fluxweb-backend:latest .
+
+docker push rebelinblue/fluxweb-backend
+```
+
+## Flux Web - Frontend
+
+```bash
+cd fluxcloud/frontend
+
+docker build -f Dockerfile \
+    -t rebelinblue/fluxweb-frontend:master \
+    -t rebelinblue/fluxweb-frontend:latest .
+
+docker push rebelinblue/fluxweb-frontend
+```
+
 ## Forecastle
 
 ```bash
