@@ -32,6 +32,10 @@ helm repo add fluxcd https://charts.fluxcd.io
 helm upgrade --install flux --values $REPO_ROOT/deployments/flux/flux/flux-values.yaml --namespace flux fluxcd/flux
 helm upgrade --install helm-operator --values $REPO_ROOT/deployments/flux/helm-operator/helm-operator-values.yaml --namespace flux fluxcd/helm-operator
 
+message "Installing NFS Provisioner"
+kubectl create namespace infra
+helm upgrade --install nfs-client-provisioner --values $REPO_ROOT/deployments/infra/nfs-client-provisioner/nfs-client-provisioner-values.yaml --namespace infra stable/nfs-client-provisioner
+
 FLUX_READY=1
 while [ ${FLUX_READY} != 0 ]; do
     echo "Waiting for flux pod to be fully ready..."
