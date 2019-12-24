@@ -60,7 +60,6 @@ COPY ./ssh_config /etc/ssh/ssh_config
 RUN mkdir -p /var/fluxd/helm/repository/cache/
 COPY ./helm-repositories.yaml /var/fluxd/helm/repository/repositories.yaml
 
-
 COPY --from=build /go/src/github.com/fluxcd/helm-operator/helm-operator /usr/local/bin/helm-operator
 RUN chmod +x /usr/local/bin/helm-operator
 

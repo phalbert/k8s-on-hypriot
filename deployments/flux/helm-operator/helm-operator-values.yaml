@@ -6,7 +6,7 @@ git:
 
 image:
   repository: rebelinblue/helm-operator
-  tag: helm-v3-dev
+  tag: master
   pullPolicy: Always
 
 chartsSyncInterval: "5m"

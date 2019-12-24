@@ -85,14 +85,12 @@ docker push rebelinblue/forecastle
 ```bash
 cd helm-operator
 
-cd helm-operator
-
 docker build -f Dockerfile \
-    --build-arg KUBECTL_VERSION="v1.14.7" \
+    --build-arg KUBECTL_VERSION="v1.15.7" \
     --build-arg HELM_VERSION="v2.16.1" \
     --build-arg HELM3_VERSION="v3.0.1" \
-    --build-arg VERSION="helm-v3-dev" \
-    -t rebelinblue/helm-operator:helm-v3-dev \
+    --build-arg VERSION="master" \
+    -t rebelinblue/helm-operator:master \
     -t rebelinblue/helm-operator:latest .
 
 docker push rebelinblue/helm-operator
