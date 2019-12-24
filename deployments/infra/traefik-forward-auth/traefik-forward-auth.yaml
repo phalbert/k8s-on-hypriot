@@ -105,7 +105,7 @@ metadata:
   namespace: infra
   annotations:
     kubernetes.io/tls-acme: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     ingress.kubernetes.io/auth-trust-headers: "true"
     ingress.kubernetes.io/ssl-redirect: "true"
     ingress.kubernetes.io/auth-type: forward
