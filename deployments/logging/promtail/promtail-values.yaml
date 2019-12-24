@@ -28,4 +28,6 @@ volumeMounts:
     mountPath: /var/log/pods
     readOnly: true
 
-# FIXME: Allow to be scheduled on master
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
