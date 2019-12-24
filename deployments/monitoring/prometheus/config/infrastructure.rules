@@ -59,7 +59,7 @@ groups:
         annotations:
           summary: Kubelet has disappeared.
         expr: |
-          absent(up{job="kubernetes-nodes-kubelet"} == 1)
+          absent(up{job="kubernetes-nodes"} == 1)
         for: 15m
         labels:
           severity: critical
