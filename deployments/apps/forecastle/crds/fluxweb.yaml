@@ -9,7 +9,7 @@ spec:
   icon: https://avatars3.githubusercontent.com/u/9976052?s=400&v=4
   networkRestricted: true
   properties:
-    Version: 0.1
+    Version: "0.1"
   urlFrom:
     ingressRef:
       name: fluxweb
