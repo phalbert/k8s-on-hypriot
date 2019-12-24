@@ -30,4 +30,4 @@ prometheus:
 
 syncGarbageCollection:
   enabled: true
-  dry: false
+  dry: true
