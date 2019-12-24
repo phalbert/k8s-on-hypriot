@@ -4,10 +4,6 @@ image:
   repository: prom/pushgateway
   tag: v1.0.1
 
-podAnnotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/path: /metrics
-
 ingress:
   enabled: true
 
