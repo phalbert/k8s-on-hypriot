@@ -23,6 +23,7 @@ metadata:
   name: prometheus-claim
   namespace: monitoring
 spec:
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:
@@ -44,6 +45,12 @@ spec:
       labels:
         app: prometheus-server
     spec:
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
+      nodeSelector:
+        beta.kubernetes.io/arch: arm
+        node-role.kubernetes.io/master: "true"
       serviceAccountName: monitoring
       initContainers:
         - name: init-chown-data
