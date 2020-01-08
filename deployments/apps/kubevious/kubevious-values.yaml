@@ -1,0 +1,18 @@
+kubevious:
+  image:
+    repository: kubevious/kubevious
+    tag: 0.1.88
+    pullPolicy: IfNotPresent
+  name: kubevious
+  svcName: kubevious-svc
+  port: 4000
+ui:
+  image:
+    repository: kubevious/ui
+    tag: 0.1.17
+    pullPolicy: IfNotPresent
+  name: kubevious-ui
+  svcName: kubevious-ui-svc
+  port: 3000
+ingress:
+  enabled: false

@@ -1,0 +1,16 @@
+apiVersion: helm.fluxcd.io/v1
+kind: HelmRelease
+metadata:
+  name: kubevious
+  namespace: apps
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  releaseName: kubevious
+  chart:
+    git: git@github.com:kubevious/deploy.git
+    path: deploy/kubernetes/kubevious
+    ref: master
+  valuesFrom:
+    - externalSourceRef:
+        url: https://raw.githubusercontent.com/REBELinBLUE/k8s-on-hypriot/master/deployments/apps/kubevious/kubevious-values.yaml
