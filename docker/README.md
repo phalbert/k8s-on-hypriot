@@ -90,7 +90,7 @@ docker build -f Dockerfile \
     --build-arg HELM_VERSION="v2.16.1" \
     --build-arg HELM3_VERSION="v3.0.1" \
     --build-arg VERSION="master" \
-    -t rebelinblue/helm-operator:master \
+    -t rebelinblue/helm-operator:v1.0.0-rc7 \
     -t rebelinblue/helm-operator:latest .
 
 docker push rebelinblue/helm-operator
@@ -201,7 +201,7 @@ docker push rebelinblue/velero
 ```
 
 ## Velero AWS Plug-in
-   
+
 ```bash
 cd velero-plugin-for-aws
 
