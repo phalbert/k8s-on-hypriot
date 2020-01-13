@@ -21,10 +21,11 @@ docker push rebelinblue/eventrouter
 cd flux
 
 docker build -f Dockerfile \
-    --build-arg FLUX_VERSION="1.16.0" \
+    --build-arg FLUX_VERSION="1.17.1" \
     --build-arg KUBECTL_VERSION="v1.14.7" \
     --build-arg KUSTOMIZE_VERSION="v3.2.0" \
-    -t rebelinblue/flux:1.16.0 \
+    --build-arg SOPS_VERSION="v3.5.0" \
+    -t rebelinblue/flux:1.17.1 \
     -t rebelinblue/flux:latest .
 
 docker push rebelinblue/flux

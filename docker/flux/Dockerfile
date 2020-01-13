@@ -7,6 +7,7 @@ FROM golang:1.12-alpine as build
 ARG FLUX_VERSION
 ARG KUBECTL_VERSION
 ARG KUSTOMIZE_VERSION
+ARG SOPS_VERSION
 
 ENV GO111MODULE=on \
     CGO_ENABLED=0 \
@@ -32,6 +33,11 @@ WORKDIR /go/src/github.com/kubernetes-sigs/kustomize
 RUN git clone https://github.com/kubernetes-sigs/kustomize.git .
 RUN git checkout ${KUSTOMIZE_VERSION}
 RUN go build -o kustomize ./cmd/kustomize
+
+WORKDIR /go/src/github.com/mozilla/sops/
+RUN git clone https://github.com/mozilla/sops.git .
+RUN git checkout ${SOPS_VERSION}
+RUN go build -o sops ./cmd/sops
 
 FROM quay.io/squaremo/kubeyaml:0.7.0 as kubeyaml
 
@@ -65,10 +71,13 @@ RUN chmod +x /usr/local/bin/fluxctl
 COPY --from=build /go/src/github.com/kubernetes-sigs/kustomize /usr/local/bin/kustomize
 RUN chmod +x /usr/local/bin/kustomize
 
+COPY --from=build /go/src/github.com/mozilla/sops/sops /usr/local/bin/sops
+RUN chmod +x /usr/local/bin/sops
+
 COPY --from=build /usr/local/bin/kubectl /usr/local/bin/kubectl
 RUN chmod +x /usr/local/bin/kubectl
 
-COPY --from=kubeyaml /usr/lib/kubeyaml /usr/lib/kubeyaml/
+COPY --from=kubeyaml /usr/lib/kubeyaml/ /usr/lib/kubeyaml/
 
 ENV PATH=/bin:/usr/bin:/usr/local/bin:/usr/lib/kubeyaml
 
