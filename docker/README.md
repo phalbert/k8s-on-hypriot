@@ -47,7 +47,7 @@ docker push rebelinblue/fluxcloud
 ## Flux Web - Backend
 
 ```bash
-cd fluxcloud/backend
+cd fluxweb/backend
 
 docker build -f Dockerfile \
     -t rebelinblue/fluxweb-backend:master \
@@ -59,7 +59,7 @@ docker push rebelinblue/fluxweb-backend
 ## Flux Web - Frontend
 
 ```bash
-cd fluxcloud/frontend
+cd fluxweb/frontend
 
 docker build -f Dockerfile \
     -t rebelinblue/fluxweb-frontend:master \
