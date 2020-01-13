@@ -167,8 +167,8 @@ docker push rebelinblue/traefik-forward-auth
 cd vault
 
 docker build -f Dockerfile \
-    --build-arg VAULT_VERSION="1.3.0" \
-    -t rebelinblue/vault:1.3.0 \
+    --build-arg VAULT_VERSION="1.3.1" \
+    -t rebelinblue/vault:1.3.1 \
     -t rebelinblue/vault:latest .
 
 docker push rebelinblue/vault
