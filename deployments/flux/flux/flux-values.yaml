@@ -1,6 +1,3 @@
-helmOperator:
-  create: false
-
 git:
   url: "git@github.com:rebelinblue/k8s-on-hypriot.git"
   branch: master
