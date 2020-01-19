@@ -130,6 +130,7 @@ metadata:
   name: jenkins
   namespace: apps
   annotations:
+    kubernetes.io/ingress.class: traefik
     kubernetes.io/tls-acme: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
