@@ -5,3 +5,8 @@ image:
 args:
   - --kubelet-insecure-tls
   - --kubelet-preferred-address-types=InternalIP
+
+service:
+  labels:
+    kubernetes.io/cluster-service: "true"
+    kubernetes.io/name: "Metrics Server"
