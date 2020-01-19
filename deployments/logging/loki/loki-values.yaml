@@ -6,3 +6,4 @@ image:
 
 persistence:
   enabled: true
+  storageClassName: nfs-hdd

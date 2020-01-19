@@ -81,6 +81,7 @@ metadata:
   name: alertmanager-claim
   namespace: monitoring
 spec:
+  storageClassName: nfs-hdd
   accessModes:
     - ReadWriteOnce
   resources:

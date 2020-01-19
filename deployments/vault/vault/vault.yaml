@@ -200,6 +200,7 @@ spec:
     - metadata:
         name: vault-data
       spec:
+        storageClassName: nfs-hdd
         accessModes:
           - ReadWriteOnce
         resources:

@@ -10,4 +10,4 @@ nfs:
 
 storageClass:
   name: nfs-hdd
-  defaultClass: true
+  defaultClass: false

@@ -21,6 +21,7 @@ ingress:
 
 persistence:
   enabled: true
+  storageClassName: nfs-hdd
 
 initChownData:
   enabled: false
