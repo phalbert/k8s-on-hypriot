@@ -9,7 +9,7 @@ args:
 service:
   labels:
     kubernetes.io/cluster-service: "true"
-    kubernetes.io/name: "Metrics Server"
+    kubernetes.io/name: "Metrics-Server"
 
 podAnnotations:
   scheduler.alpha.kubernetes.io/critical-pod: ''
